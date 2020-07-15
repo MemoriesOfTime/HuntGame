@@ -1,0 +1,15 @@
+name: BlockHunt
+main: cn.lanink.blockhunt.BlockHunt
+version: "0.0.1-SNAPSHOT"
+api: ["1.0.9"]
+load: POSTWORLD
+author: "LT_Name"
+loadbefore:
+  - "ScoreboardPlugin"
+  - "ScoreboardAPI"
+
+permissions:
+  MurderMystery.command.user:
+    default: true
+  MurderMystery.command.admin:
+    default: op
