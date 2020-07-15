@@ -131,12 +131,6 @@ public class Tools {
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
     }
 
-    public static void sendMessage(RoomBase roomBase, String string) {
-        for (Player player : roomBase.getPlayers().keySet()) {
-            player.sendMessage(string);
-        }
-    }
-
     /**
      * 添加声音
      * @param room 房间

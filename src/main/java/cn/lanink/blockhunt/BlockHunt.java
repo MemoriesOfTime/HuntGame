@@ -40,7 +40,7 @@ public class BlockHunt extends PluginBase {
     private String cmdUser, cmdAdmin;
     private final HashMap<String, Language> languageHashMap = new HashMap<>();
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
-    private Skin corpseSkin;
+    private final Skin corpseSkin = new Skin();
 
     public static BlockHunt getInstance() {
         return BLOCK_HUNT;
@@ -108,6 +108,11 @@ public class BlockHunt extends PluginBase {
         getLogger().info(this.getLanguage(null).pluginEnable);
     }
 
+    @Override
+    public Config getConfig() {
+        return this.config;
+    }
+
     /**
      * 注册房间类
      *
@@ -125,12 +130,13 @@ public class BlockHunt extends PluginBase {
     public Language getLanguage(Object object) {
         if (object instanceof Player) {
             Player player = (Player) object;
-            String language = this.playerLanguageHashMap.getOrDefault(player, "zh_CN");
+            String language = this.playerLanguageHashMap.getOrDefault(player,
+                    this.config.getString("defaultLanguage", "zh_CN"));
             if (this.languageHashMap.containsKey(language)) {
                 return this.languageHashMap.get(language);
             }
         }
-        return this.languageHashMap.get("zh_CN");
+        return this.languageHashMap.get(this.config.getString("defaultLanguage", "zh_CN"));
     }
 
     public HashMap<Player, String> getPlayerLanguageHashMap() {
@@ -153,6 +159,7 @@ public class BlockHunt extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
+        saveResource("room.yml", "/Rooms/" + level + ".yml", false);
         Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
         this.roomConfigs.put(level, config);
         return config;

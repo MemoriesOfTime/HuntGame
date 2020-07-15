@@ -92,7 +92,7 @@ public class Language {
     public String waitBottom = "§c等待玩家加入中,当前已有: %playerNumber% 位玩家";
     public String gameTimeScoreBoard = "§l§a当前身份:§e %mode% \n §l§a存活人数:§e %playerNumber% \n §l§a剩余时间:§e %time% §a秒 ";
     public String gameTimeBottom = "§a身份:§e %mode% \n §a距游戏结束还有:§e %time% §a秒\n当前还有:§e %playerNumber% §a人存活";
-    public String huntersKillPrey = "";
+    public String huntersKillPrey = "%damagePlayer% 抓到了 %player%";
 
     //UI相关
     public String userMenuButton1 = "§e随机加入房间";

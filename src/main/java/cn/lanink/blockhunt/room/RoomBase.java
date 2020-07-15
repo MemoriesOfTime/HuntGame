@@ -31,6 +31,8 @@ public abstract class RoomBase {
     protected final Level level;
     protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1猎物 2猎人
     protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
+    protected final HashMap<Player, Integer[]> playerCamouflageBlock = new HashMap<>();
+    protected final ArrayList<String> camouflageBlocks;
 
     /**
      * 初始化
@@ -54,6 +56,7 @@ public abstract class RoomBase {
                     Integer.parseInt(s[2]),
                     this.level));
         }
+        this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
         this.mode = 0;
         this.initTime();
     }
@@ -175,6 +178,19 @@ public abstract class RoomBase {
         }else {
             return 0;
         }
+    }
+
+    public HashMap<Player, Integer[]> getPlayerCamouflageBlock() {
+        return this.playerCamouflageBlock;
+    }
+
+    /**
+     * 获取玩家伪装的方块
+     * @param player 玩家
+     * @return 方块id
+     */
+    public Integer[] getPlayerCamouflageBlock(Player player) {
+        return this.playerCamouflageBlock.get(player);
     }
 
     /**

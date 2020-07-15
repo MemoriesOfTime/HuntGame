@@ -114,6 +114,13 @@ public class RoomClassicMode extends RoomBase {
                 x = 0;
             }
             player.teleport(this.getRandomSpawn().get(x));
+            String[] s = this.camouflageBlocks.get(new Random().nextInt(this.camouflageBlocks.size())).split(":");
+            Integer[] integers = new Integer[2];
+            integers[0] = Integer.parseInt(s[0]);
+            integers[1] = Integer.parseInt(s[1]);
+            this.playerCamouflageBlock.put(player, integers);
+            player.getInventory().setItem(8, Item.get(integers[0], integers[1]));
+            //TODO 为猎物生成实体用于猎人攻击判断
             x++;
         }
         Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -245,6 +252,11 @@ public class RoomClassicMode extends RoomBase {
     public void playerDamage(Player damage, Player player) {
         if (this.getPlayers(player) == 1) {
             this.playerDeath(player);
+            for (Player p : this.players.keySet()) {
+                p.sendMessage(this.blockHunt.getLanguage(p).huntersKillPrey
+                        .replace("%damagePlayer%", damage.getName())
+                        .replace("%player%", player.getName()));
+            }
         }
     }
 
