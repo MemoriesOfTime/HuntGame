@@ -26,18 +26,18 @@ public class VictoryTask extends PluginTask<BlockHunt> {
         this.victoryTime = 10;
         this.victory = victory;
         for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-            if (victory == 3) {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryKillerTitle,
+            if (victory == 2) {
+                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryHuntersTitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).victoryKillerBottom);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(owner.getLanguage(entry.getKey()).victoryKillerScoreBoard.split("\n")));
+                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).victoryHuntersBottom);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(owner.getLanguage(entry.getKey()).victoryHuntersScoreBoard.split("\n")));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         owner.getLanguage(entry.getKey()).scoreBoardTitle, ms);
             }else {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryCommonPeopleSubtitle,
+                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryPreySubtitle,
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).victoryCommonPeopleBottom);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(owner.getLanguage(entry.getKey()).victoryCommonPeopleScoreBoard.split("\n")));
+                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).victoryPreyBottom);
+                LinkedList<String> ms = new LinkedList<>(Arrays.asList(owner.getLanguage(entry.getKey()).victoryPreyScoreBoard.split("\n")));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         owner.getLanguage(entry.getKey()).scoreBoardTitle, ms);
             }

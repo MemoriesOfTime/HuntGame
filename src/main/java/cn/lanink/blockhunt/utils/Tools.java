@@ -1,5 +1,6 @@
 package cn.lanink.blockhunt.utils;
 
+import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -50,12 +51,17 @@ public class Tools {
         }
     }
 
+    public static Item getBlockHuntItem(int tagNumber) {
+        return getBlockHuntItem(tagNumber, null);
+    }
+
     /**
      * 根据编号获取物品
      * @param tagNumber 道具编号
+     * @param player 玩家
      * @return 物品
      */
-    public static Item getBlockHuntItem(int tagNumber) {
+    public static Item getBlockHuntItem(int tagNumber, Player player) {
         Item item;
         switch (tagNumber) {
             case 1:
@@ -63,6 +69,14 @@ public class Tools {
                 return item;
             case 2:
                 item = Item.get(267, 0, 1);
+                return item;
+            case 10:
+                item = Item.get(324, 0, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isMurderItem", true)
+                        .putInt("MurderType", 10));
+                item.setCustomName(BlockHunt.getInstance().getLanguage(player).itemQuitRoom);
+                item.setLore(BlockHunt.getInstance().getLanguage(player).itemQuitRoomLore.split("\n"));
                 return item;
         }
         return null;

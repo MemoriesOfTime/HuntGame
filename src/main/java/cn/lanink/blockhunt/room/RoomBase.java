@@ -9,10 +9,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 房间抽象类
@@ -33,6 +30,7 @@ public abstract class RoomBase {
     protected final Position waitSpawn;
     protected final Level level;
     protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1猎物 2猎人
+    protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
 
     /**
      * 初始化
@@ -277,6 +275,13 @@ public abstract class RoomBase {
      * @param player 玩家
      */
     public abstract void playerDeath(Player player);
+
+    /**
+     * 玩家复活
+     *
+     * @param player 玩家
+     */
+    public abstract void playerRespawn(Player player);
 
     /**
      * 尸体生成
