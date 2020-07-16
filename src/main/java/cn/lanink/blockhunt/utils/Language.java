@@ -23,8 +23,7 @@ public class Language {
     public String userHelp = "§eMurderMystery--命令帮助 \n " +
             "§a/%cmdName% §e打开ui \n " +
             "§a/%cmdName% join 房间名称 §e加入游戏 \n " +
-            "§a/%cmdName% quit §e退出游戏 \n " +
-            "§a/%cmdName% list §e查看房间列表";
+            "§a/%cmdName% quit §e退出游戏";
     public String noPermission = "§c你没有权限！";
     public String joinRoom = "§a你已加入房间: %name%";
     public String joinRoomOnRoom = "§c你已经在一个房间中了!";
@@ -40,13 +39,10 @@ public class Language {
     public String useCmdInCon = "请在游戏内输入！";
     public String adminHelp = "§eMurderMystery--命令帮助 \n " +
             "§a/%cmdName% §e打开ui \n " +
-            "§a/%cmdName% setwaitspawn §e设置当前位置为游戏出生点 \n " +
-            "§a/%cmdName% addrandomspawn  §e添加当前位置为游戏等待出生点 \n " +
-            "§a/%cmdName% addgoldspawn §e添加当前位置为金锭生成点 \n " +
-            "§a/%cmdName% setgoldspawntime 数字 §e设置金锭生成间隔 \n " +
+            "§a/%cmdName% setwaitspawn §e设置当前位置为等待出生点 \n " +
+            "§a/%cmdName% addrandomspawn  §e添加当前位置为游戏出生点 \n " +
             "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n " +
-            "§a/%cmdName% setgametime 数字 §e设置每轮游戏最长时间 \n " +
-            "§a/%cmdName% setgamemode 模式 §e设置房间游戏模式 \n " +
+            "§a/%cmdName% setgametime 数字 §e设置每局游戏最长时间 \n " +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n " +
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
