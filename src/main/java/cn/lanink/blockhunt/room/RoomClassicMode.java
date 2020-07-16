@@ -133,7 +133,7 @@ public class RoomClassicMode extends RoomBase {
             tag.putFloat("Scale", 1.0F);
             tag.putString("playerName", player.getName());
             EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag);
-            entity.setSkin(player.getSkin());
+            entity.setSkin(this.blockHunt.getCorpseSkin());
             entity.spawnToAll();
             this.entityCamouflageBlocks.put(player, entity);
         }
@@ -373,6 +373,9 @@ public class RoomClassicMode extends RoomBase {
                 break;
             default:
                 skin = this.blockHunt.getCorpseSkin();
+        }
+        if (skin.getSkinResourcePatch().trim().equals("")) {
+            skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         }
         CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
         nbt.putCompound("Skin", new CompoundTag()

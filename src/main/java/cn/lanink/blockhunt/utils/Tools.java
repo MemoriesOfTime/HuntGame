@@ -191,19 +191,15 @@ public class Tools {
      */
     public static double getFloorY(Player player) {
         if (player.getFloorY() <= 0) return 1;
-        try {
-            for (int y = 0; y < 15; y++) {
-                Level level = player.getLevel();
-                Block block = level.getBlock(player.getFloorX(), player.getFloorY() - y, player.getFloorZ());
-                if (block != null && block.getId() != 0) {
-                    if (block.getBoundingBox() != null) {
-                        return block.getBoundingBox().getMaxY() + 0.2;
-                    }
-                    return block.getMinY() + 0.2;
+        for (int y = 0; y < 15; y++) {
+            Level level = player.getLevel();
+            Block block = level.getBlock(player.getFloorX(), player.getFloorY() - y, player.getFloorZ());
+            if (block != null && block.getId() != 0) {
+                if (block.getBoundingBox() != null) {
+                    return block.getBoundingBox().getMaxY() + 0.2;
                 }
+                return block.getMinY() + 0.2;
             }
-        } catch (Exception ignored) {
-
         }
         return player.getFloorY();
     }

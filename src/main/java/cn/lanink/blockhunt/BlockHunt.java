@@ -29,7 +29,7 @@ import java.util.*;
  */
 public class BlockHunt extends PluginBase {
 
-    public static final String VERSION = "0.0.1-SNAPSHOT git-06f79ef";
+    public static final String VERSION = "?";
     private static BlockHunt BLOCK_HUNT;
     private IScoreboard scoreboard;
     public final LinkedList<Integer> taskList = new LinkedList<>();
@@ -62,12 +62,13 @@ public class BlockHunt extends PluginBase {
             }
         }
         //默认尸体皮肤
+        this.corpseSkin.setTrusted(true);
+        this.corpseSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         BufferedImage skinData = null;
         try {
             skinData = ImageIO.read(this.getResource("skin.png"));
         } catch (IOException ignored) { }
         if (skinData != null) {
-            this.corpseSkin.setTrusted(true);
             this.corpseSkin.setSkinData(skinData);
             this.corpseSkin.setSkinId("default");
             getLogger().info(this.getLanguage(null).defaultSkinSuccess);
