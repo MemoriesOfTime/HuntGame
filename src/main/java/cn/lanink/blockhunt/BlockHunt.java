@@ -29,7 +29,7 @@ import java.util.*;
  */
 public class BlockHunt extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "0.0.1-SNAPSHOT git-cffa905";
     private static BlockHunt BLOCK_HUNT;
     private IScoreboard scoreboard;
     public final LinkedList<Integer> taskList = new LinkedList<>();
