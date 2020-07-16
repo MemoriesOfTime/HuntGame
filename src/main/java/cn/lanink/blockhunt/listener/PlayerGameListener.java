@@ -1,18 +1,22 @@
 package cn.lanink.blockhunt.listener;
 
 import cn.lanink.blockhunt.BlockHunt;
+import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * @author lt_name
@@ -26,25 +30,32 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player) {
+            Player damager = (Player) event.getDamager();
+            RoomBase room = this.blockHunt.getRooms().getOrDefault(damager.getLevel().getName(), null);
+            if (room == null) return;
+            event.setCancelled(true);
+            Entity entity = event.getEntity();
+            if (room.getPlayers(damager) == 2 && entity instanceof EntityCamouflageBlock && entity.namedTag != null) {
+                Player player = Server.getInstance().getPlayer(entity.namedTag.getString("playerName"));
+                room.playerDamage(damager, player);
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         RoomBase room = this.blockHunt.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room == null || room.getMode() != 2) return;
-        if (room.getPlayers(player) == 2) {
-            Vector3 vector3 = event.getBlock().getLocation();
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                if (entry.getValue() == 1) {
-                    if (vector3.getFloorX() == entry.getKey().getFloorX() &&
-                            vector3.getFloorY() == entry.getKey().getFloorY() &&
-                            vector3.getFloorZ() == entry.getKey().getFloorZ()) {
-                        room.playerDamage(player, entry.getKey());
-                    }
-                }
+        if (room == null) return;
+        if (room.getMode() == 1) {
+            CompoundTag tag = event.getItem() != null ? event.getItem().getNamedTag() : null;
+            if (tag != null && tag.getBoolean("isBlockHuntItem") && tag.getInt("BlockHuntType") == 10) {
+                room.quitRoom(player, true);
+                event.setCancelled(true);
             }
-
         }
-        event.setCancelled(true);
-
     }
 
     @EventHandler
@@ -55,20 +66,20 @@ public class PlayerGameListener implements Listener {
         if (room.getPlayers(player) == 1) {
             Level level = player.getLevel();
             LinkedList<Player> players = new LinkedList<>();
-            for (Player p: room.getPlayers().keySet()) {
+            for (Player p: level.getPlayers().values()) {
                 if (p != player) {
                     p.hidePlayer(player);
                     players.add(p);
                 }
             }
-            Block block = level.getBlock(event.getFrom());
-            block.x = event.getFrom().getFloorX();
-            block.y = event.getFrom().getFloorY();
-            block.z = event.getFrom().getFloorZ();
-            level.sendBlocks(players.toArray(new Player[0]), new Block[] { block });
             Integer[] integers = room.getPlayerCamouflageBlock(player);
-            block = Block.get(integers[0], integers[1], event.getTo());
-            level.sendBlocks(players.toArray(new Player[0]), new Block[] { block });
+            Block block = Block.get(integers[0], integers[1], event.getTo().floor());
+            Vector3 vector3 = event.getTo().floor();
+            vector3.x += 0.5;
+            vector3.z += 0.5;
+            room.getEntityCamouflageBlocks(player).setPosition(vector3);
+            level.sendBlocks(players.toArray(new Player[0]), new Vector3[] {
+                    event.getFrom().floor(), block });
         }
     }
 

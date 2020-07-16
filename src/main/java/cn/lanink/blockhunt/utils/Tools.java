@@ -73,8 +73,8 @@ public class Tools {
             case 10:
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
-                        .putBoolean("isMurderItem", true)
-                        .putInt("MurderType", 10));
+                        .putBoolean("isBlockHuntItem", true)
+                        .putInt("BlockHuntType", 10));
                 item.setCustomName(BlockHunt.getInstance().getLanguage(player).itemQuitRoom);
                 item.setLore(BlockHunt.getInstance().getLanguage(player).itemQuitRoomLore.split("\n"));
                 return item;
@@ -113,6 +113,7 @@ public class Tools {
      */
     public static void rePlayerState(Player player, boolean joinRoom) {
         player.setGamemode(0);
+        player.setScale(1);
         player.removeAllEffects();
         player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());

@@ -1,6 +1,7 @@
 package cn.lanink.blockhunt.room;
 
 import cn.lanink.blockhunt.BlockHunt;
+import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.tasks.VictoryTask;
 import cn.lanink.blockhunt.tasks.WaitTask;
 import cn.nukkit.Player;
@@ -32,6 +33,7 @@ public abstract class RoomBase {
     protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1猎物 2猎人
     protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
     protected final HashMap<Player, Integer[]> playerCamouflageBlock = new HashMap<>();
+    protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlocks = new HashMap<>();
     protected final ArrayList<String> camouflageBlocks;
 
     /**
@@ -191,6 +193,14 @@ public abstract class RoomBase {
      */
     public Integer[] getPlayerCamouflageBlock(Player player) {
         return this.playerCamouflageBlock.get(player);
+    }
+
+    public HashMap<Player, EntityCamouflageBlock> getEntityCamouflageBlocks() {
+        return this.entityCamouflageBlocks;
+    }
+
+    public EntityCamouflageBlock getEntityCamouflageBlocks(Player player) {
+        return this.entityCamouflageBlocks.get(player);
     }
 
     /**

@@ -1,5 +1,6 @@
 package cn.lanink.blockhunt.room;
 
+import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
 import cn.lanink.blockhunt.tasks.game.TimeTask;
 import cn.lanink.blockhunt.tasks.game.TipsTask;
@@ -113,15 +114,24 @@ public class RoomClassicMode extends RoomBase {
             if (x >= this.getRandomSpawn().size()) {
                 x = 0;
             }
+            x++;
             player.teleport(this.getRandomSpawn().get(x));
+            player.setScale(0.5F);
             String[] s = this.camouflageBlocks.get(new Random().nextInt(this.camouflageBlocks.size())).split(":");
             Integer[] integers = new Integer[2];
             integers[0] = Integer.parseInt(s[0]);
             integers[1] = Integer.parseInt(s[1]);
             this.playerCamouflageBlock.put(player, integers);
             player.getInventory().setItem(8, Item.get(integers[0], integers[1]));
-            //TODO 为猎物生成实体用于猎人攻击判断
-            x++;
+            CompoundTag tag = Entity.getDefaultNBT(player);
+            tag.putCompound("Skin", new CompoundTag()
+                    .putByteArray("Data", this.blockHunt.getCorpseSkin().getSkinData().data)
+                    .putString("ModelId", this.blockHunt.getCorpseSkin().getSkinId()));
+            tag.putFloat("Scale", 1.0F);
+            tag.putString("playerName", player.getName());
+            EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag);
+            entity.spawnToAll();
+            this.entityCamouflageBlocks.put(player, entity);
         }
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.blockHunt, new TimeTask(this.blockHunt, this), 20,true);
@@ -185,7 +195,21 @@ public class RoomClassicMode extends RoomBase {
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
-            if (this.getSurvivorPlayerNumber() <= 0) {
+            int x = 0;
+            boolean hunters = false;
+            for (Integer integer : this.players.values()) {
+                switch (integer) {
+                    case 1:
+                        x++;
+                        break;
+                    case 2:
+                        hunters = true;
+                        break;
+                }
+            }
+            if (!hunters) {
+                this.victory(1);
+            }else if (x <= 0) {
                 this.victory(2);
             }
         }else {
@@ -200,6 +224,8 @@ public class RoomClassicMode extends RoomBase {
                 }
             }
         }
+        //TODO 实体更新
+
     }
 
     /**
