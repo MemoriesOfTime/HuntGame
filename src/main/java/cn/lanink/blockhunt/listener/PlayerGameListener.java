@@ -12,6 +12,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -37,7 +38,9 @@ public class PlayerGameListener implements Listener {
             if (room == null) return;
             event.setCancelled(true);
             Entity entity = event.getEntity();
-            if (room.getPlayers(damager) == 2 && entity instanceof EntityCamouflageBlock && entity.namedTag != null) {
+            Item item = damager.getInventory() != null ? damager.getInventory().getItemInHand() : null;
+            if (room.getPlayers(damager) == 2 && item != null && item.getId() == 276 &&
+                    entity instanceof EntityCamouflageBlock && entity.namedTag != null) {
                 Player player = Server.getInstance().getPlayer(entity.namedTag.getString("playerName"));
                 room.playerDamage(damager, player);
             }

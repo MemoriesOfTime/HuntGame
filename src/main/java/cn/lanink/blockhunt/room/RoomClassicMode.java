@@ -175,29 +175,6 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public void asyncTimeTask() {
-        //计时与胜利判断
-        if (this.gameTime > 0) {
-            this.gameTime--;
-            int x = 0;
-            boolean hunters = false;
-            for (Integer integer : this.players.values()) {
-                switch (integer) {
-                    case 1:
-                        x++;
-                        break;
-                    case 2:
-                        hunters = true;
-                        break;
-                }
-            }
-            if (!hunters) {
-                this.victory(1);
-            }else if (x <= 0) {
-                this.victory(2);
-            }
-        }else {
-            this.victory(1);
-        }
         int time = this.gameTime - (this.getSetGameTime() - 60);
         if (time >= 0) {
             if (time%10 == 0) {
@@ -232,6 +209,29 @@ public class RoomClassicMode extends RoomBase {
                     }
                 }
             }
+        }
+        //计时与胜利判断
+        if (this.gameTime > 0) {
+            this.gameTime--;
+            int x = 0;
+            boolean hunters = false;
+            for (Integer integer : this.players.values()) {
+                switch (integer) {
+                    case 1:
+                        x++;
+                        break;
+                    case 2:
+                        hunters = true;
+                        break;
+                }
+            }
+            if (!hunters) {
+                this.victory(1);
+            }else if (x <= 0) {
+                this.victory(2);
+            }
+        }else {
+            this.victory(1);
         }
         //复活
         for (Map.Entry<Player, Integer> entry : this.playerRespawnTime.entrySet()) {
