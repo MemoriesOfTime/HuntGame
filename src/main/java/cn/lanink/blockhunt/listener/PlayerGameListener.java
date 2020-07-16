@@ -49,6 +49,9 @@ public class PlayerGameListener implements Listener {
         Player player = event.getPlayer();
         RoomBase room = this.blockHunt.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null) return;
+        if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
+            player.setAllowModifyWorld(false);
+        }
         if (room.getMode() == 1) {
             CompoundTag tag = event.getItem() != null ? event.getItem().getNamedTag() : null;
             if (tag != null && tag.getBoolean("isBlockHuntItem") && tag.getInt("BlockHuntType") == 10) {

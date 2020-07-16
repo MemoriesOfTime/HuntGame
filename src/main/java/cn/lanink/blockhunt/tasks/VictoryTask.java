@@ -26,6 +26,7 @@ public class VictoryTask extends PluginTask<BlockHunt> {
         this.victoryTime = 10;
         this.victory = victory;
         for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            this.room.getPlayers().keySet().forEach(player -> entry.getKey().showPlayer(player));
             if (victory == 2) {
                 entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryHuntersTitle,
                         "", 10, 30, 10);

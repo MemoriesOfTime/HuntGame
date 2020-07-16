@@ -69,7 +69,7 @@ public class BlockHunt extends PluginBase {
         if (skinData != null) {
             this.corpseSkin.setTrusted(true);
             this.corpseSkin.setSkinData(skinData);
-            this.corpseSkin.setSkinId("defaultSkin");
+            this.corpseSkin.setSkinId("default");
             getLogger().info(this.getLanguage(null).defaultSkinSuccess);
         }else {
             getLogger().error(this.getLanguage(null).defaultSkinFailure);

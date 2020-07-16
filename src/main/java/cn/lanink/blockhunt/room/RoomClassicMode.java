@@ -16,6 +16,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
@@ -92,11 +93,13 @@ public class RoomClassicMode extends RoomBase {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
         if (online) {
+            this.players.keySet().forEach(player::showPlayer);
             this.blockHunt.getScoreboard().closeScoreboard(player);
             player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
             Tools.rePlayerState(player, false);
             SavePlayerInventory.restore(player);
         }
+        this.players.keySet().forEach(p -> p.showPlayer(player));
     }
 
     /**
@@ -130,6 +133,7 @@ public class RoomClassicMode extends RoomBase {
             tag.putFloat("Scale", 1.0F);
             tag.putString("playerName", player.getName());
             EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag);
+            entity.setSkin(player.getSkin());
             entity.spawnToAll();
             this.entityCamouflageBlocks.put(player, entity);
         }
@@ -171,27 +175,6 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public void asyncTimeTask() {
-        int time = this.gameTime - (this.getSetGameTime() - 60);
-        if (time >= 0) {
-            if (time <= 5) {
-                Tools.addSound(this, Sound.RANDOM_CLICK);
-            }
-            if (time == 0) {
-                Item[] armor = new Item[4];
-                armor[0] = Item.get(306);
-                armor[1] = Item.get(307);
-                armor[2] = Item.get(308);
-                armor[3] = Item.get(309);
-                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-                    if (entry.getValue() == 2) {
-                        entry.getKey().teleport(this.getRandomSpawn().get(
-                                new Random().nextInt(this.getRandomSpawn().size())));
-                        entry.getKey().getInventory().setArmorContents(armor);
-                        entry.getKey().getInventory().addItem(Item.get(276));
-                    }
-                }
-            }
-        }
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
@@ -215,6 +198,41 @@ public class RoomClassicMode extends RoomBase {
         }else {
             this.victory(1);
         }
+        int time = this.gameTime - (this.getSetGameTime() - 60);
+        if (time >= 0) {
+            if (time%10 == 0) {
+                Effect e1 = Effect.getEffect(15); //失明
+                e1.setDuration(300).setVisible(false);
+                Effect e2 = Effect.getEffect(1); //速度提升
+                e2.setDuration(300).setVisible(false);
+                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+                    if (entry.getValue() == 2) {
+                        entry.getKey().addEffect(e1);
+                    }else {
+                        entry.getKey().addEffect(e2);
+                    }
+                }
+            }
+            if (time <= 5) {
+                Tools.addSound(this, Sound.RANDOM_CLICK);
+            }
+            if (time == 0) {
+                Item[] armor = new Item[4];
+                armor[0] = Item.get(306);
+                armor[1] = Item.get(307);
+                armor[2] = Item.get(308);
+                armor[3] = Item.get(309);
+                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+                    entry.getKey().removeAllEffects();
+                    if (entry.getValue() == 2) {
+                        entry.getKey().teleport(this.getRandomSpawn().get(
+                                new Random().nextInt(this.getRandomSpawn().size())));
+                        entry.getKey().getInventory().setArmorContents(armor);
+                        entry.getKey().getInventory().addItem(Item.get(276));
+                    }
+                }
+            }
+        }
         //复活
         for (Map.Entry<Player, Integer> entry : this.playerRespawnTime.entrySet()) {
             if (entry.getValue() > 0) {
@@ -225,7 +243,12 @@ public class RoomClassicMode extends RoomBase {
             }
         }
         //TODO 实体更新
+        /*Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
+            @Override
+            public void onRun(int i) {
 
+            }
+        }, 1);*/
     }
 
     /**
@@ -293,6 +316,7 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public void playerDeath(Player player) {
+        this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
@@ -319,6 +343,7 @@ public class RoomClassicMode extends RoomBase {
             }
         }, 1);
         this.players.put(player, 2);
+        this.players.keySet().forEach(p -> p.showPlayer(player));
         player.teleport(this.getRandomSpawn().get(
                 new Random().nextInt(this.getRandomSpawn().size())));
         Tools.rePlayerState(player, true);
