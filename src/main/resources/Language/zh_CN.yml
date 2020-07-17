@@ -1,5 +1,4 @@
 scoreboardAPINotFound: "§c请安装计分板前置！"
-defaultSkinSuccess: "§a 默认尸体皮肤加载完成"
 defaultSkinFailure: "§c 默认尸体皮肤加载失败！请检查插件完整性！"
 startLoadingRoom: "§e开始加载房间..."
 roomLoadedSuccess: "§a房间：%name% 已加载！"
@@ -80,15 +79,14 @@ waitScoreBoard: |-
     玩家: §a %playerNumber%/16
     最低游戏人数为 3 人
     等待玩家加入中
-waitTimeBottom: |-
-    §a当前已有: %playerNumber% 位玩家
-    §a游戏还有: %time% 秒开始!
-waitBottom: "§c等待玩家加入中,当前已有: %playerNumber% 位玩家"
+waitTimeBottom: "§a游戏还有: §e%time% §a秒开始!"
+waitBottom: "§c等待玩家加入中"
 gameTimeScoreBoard: |-
     §l§a当前身份:§e %mode%
     §l§a存活人数:§e %playerNumber%
     §l§a剩余时间:§e %time% §a秒
-gameTimeBottom: "§a身份:§e %mode% \n §a距游戏结束还有:§e %time% §a秒\n当前还有:§e %playerNumber% §a人存活"
+huntersDispatchedTimeBottom: "§a猎人将在§e%time%§a秒后出动"
+respawnTimeBottom: "§a将在%time%秒后复活成为猎人！"
 huntersKillPrey: "%damagePlayer% 抓到了 %player%"
 userMenuButton1: "§e随机加入房间"
 userMenuButton2: "§e退出当前房间"

@@ -32,6 +32,12 @@ import java.util.Random;
 
 public class Tools {
 
+    public static void sendMessage(RoomBase roomBase, String message) {
+        for (Player player : roomBase.getPlayers().keySet()) {
+            player.sendMessage(message);
+        }
+    }
+
     /**
      * 执行命令
      * @param player 玩家
