@@ -10,6 +10,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.item.Item;
@@ -89,5 +90,20 @@ public class PlayerGameListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = event.getPlayer();
+        if (player == null || event.getInventory() == null) {
+            return;
+        }
+        RoomBase room = this.blockHunt.getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null || room.getMode() != 2 || !room.isPlaying(player)) {
+            return;
+        }
+        if (event.getSlot() >= event.getInventory().getSize() ||
+                (room.getPlayers(player) == 1 && event.getSlot() == 8)) {
+            event.setCancelled(true);
+        }
+    }
 
 }

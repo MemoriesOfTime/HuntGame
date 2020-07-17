@@ -108,8 +108,8 @@ public class RoomClassicMode extends RoomBase {
     @Override
     public synchronized void gameStart() {
         if (this.mode == 2) return;
-        Tools.cleanEntity(this.getLevel(), true);
         this.setMode(2);
+        Tools.cleanEntity(this.getLevel(), true);
         this.assignIdentity();
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
@@ -181,9 +181,9 @@ public class RoomClassicMode extends RoomBase {
                     .huntersDispatchedTimeBottom.replace("time%", time + "")));
             if (time%10 == 0) {
                 Effect e1 = Effect.getEffect(15); //失明
-                e1.setDuration(300).setVisible(false);
+                e1.setDuration(400).setVisible(false);
                 Effect e2 = Effect.getEffect(1); //速度提升
-                e2.setDuration(300).setVisible(false);
+                e2.setDuration(400).setVisible(false);
                 for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
                     if (entry.getValue() == 2) {
                         entry.getKey().addEffect(e1);
@@ -196,18 +196,18 @@ public class RoomClassicMode extends RoomBase {
                 Tools.addSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                Item[] armor = new Item[4];
-                armor[0] = Item.get(306);
-                armor[1] = Item.get(307);
-                armor[2] = Item.get(308);
-                armor[3] = Item.get(309);
                 for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
                     entry.getKey().removeAllEffects();
                     if (entry.getValue() == 2) {
                         entry.getKey().teleport(this.getRandomSpawn().get(
                                 new Random().nextInt(this.getRandomSpawn().size())));
+                        Item[] armor = new Item[4];
+                        armor[0] = Item.get(306);
+                        armor[1] = Item.get(307);
+                        armor[2] = Item.get(308);
+                        armor[3] = Item.get(309);
                         entry.getKey().getInventory().setArmorContents(armor);
-                        entry.getKey().getInventory().addItem(Item.get(276));
+                        entry.getKey().getInventory().setItem(0, Item.get(276));
                     }
                 }
             }
@@ -320,6 +320,7 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public void playerDeath(Player player) {
+        if (this.getPlayers(player) == 0) return;
         this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -329,6 +330,7 @@ public class RoomClassicMode extends RoomBase {
         Tools.setPlayerInvisible(player, true);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
         this.playerCorpseSpawn(player);
+        this.playerRespawnTime.put(player, 20);
     }
 
     @Override
@@ -367,7 +369,6 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public void playerCorpseSpawn(Player player) {
-        this.playerRespawnTime.put(player, 20);
         Skin skin = player.getSkin();
         switch(skin.getSkinData().data.length) {
             case 8192:

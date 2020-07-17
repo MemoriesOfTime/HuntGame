@@ -13,8 +13,8 @@ import cn.nukkit.command.CommandSender;
 public class UserCommand extends BaseCommand {
 
     public UserCommand(String name) {
-        super(name, "MurderMystery 命令");
-        this.setPermission("MurderMystery.command.user");
+        super(name, "BlockHunt 命令");
+        this.setPermission("blockhunt.command.user");
         this.addSubCommand(new JoinRoom("join"));
         this.addSubCommand(new QuitRoom("quit"));
         this.loadCommandBase();
