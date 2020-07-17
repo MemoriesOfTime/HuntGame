@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class BlockHunt extends PluginBase {
 
-    public static final String VERSION = "0.0.1-SNAPSHOT git-cffa905";
+    public static final String VERSION = "?";
     private static BlockHunt BLOCK_HUNT;
     private IScoreboard scoreboard;
     public final LinkedList<Integer> taskList = new LinkedList<>();
@@ -51,6 +51,11 @@ public class BlockHunt extends PluginBase {
 
     @Override
     public void onLoad() {
+        if (!getServer().getName().equals("Nukkit PetteriM1 Edition")) {
+            getServer().getLogger().error("This branch is only for Nukkit PetteriM1 Edition!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         BLOCK_HUNT = this;
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
@@ -83,6 +88,11 @@ public class BlockHunt extends PluginBase {
 
     @Override
     public void onEnable() {
+        if (!getServer().getName().equals("Nukkit PetteriM1 Edition")) {
+            getServer().getLogger().error("This branch is only for Nukkit PetteriM1 Edition!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
         //加载计分板
