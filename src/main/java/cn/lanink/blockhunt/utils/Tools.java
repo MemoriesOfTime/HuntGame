@@ -32,6 +32,12 @@ import java.util.Random;
 
 public class Tools {
 
+    public static void sendMessage(RoomBase roomBase, String message) {
+        for (Player player : roomBase.getPlayers().keySet()) {
+            player.sendMessage(message);
+        }
+    }
+
     /**
      * 执行命令
      * @param player 玩家
@@ -169,7 +175,7 @@ public class Tools {
                 if (entity instanceof EntityItem) {
                     Item item = ((EntityItem) entity).getItem();
                     CompoundTag tag = item.getNamedTag();
-                    if (tag != null && tag.getBoolean("isBlockHuntItem")) {
+                    if (tag != null && tag.getBoolean("isBlockHuntEntity")) {
                         if (cleanAll) {
                             entity.close();
                         }
