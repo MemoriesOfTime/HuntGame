@@ -8,6 +8,7 @@ import cn.lanink.blockhunt.listener.RoomLevelProtection;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.lanink.blockhunt.room.RoomClassicMode;
 import cn.lanink.blockhunt.utils.Language;
+import cn.lanink.blockhunt.utils.MetricsLite;
 import cn.lanink.lib.scoreboard.IScoreboard;
 import cn.lanink.lib.scoreboard.ScoreboardDe;
 import cn.lanink.lib.scoreboard.ScoreboardGt;
@@ -42,6 +43,7 @@ public class BlockHunt extends PluginBase {
     private HashMap<String, String> languageMappingTable;
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
     private final Skin defaultSkin = new Skin();
+    private MetricsLite metricsLite;
 
     public static BlockHunt getInstance() {
         return BLOCK_HUNT;
@@ -104,9 +106,12 @@ public class BlockHunt extends PluginBase {
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
-
         this.loadRooms();
+        try {
+            this.metricsLite = new MetricsLite(this, 8215);
+        } catch (Exception ignored) {
 
+        }
         getLogger().info(this.getLanguage(null).pluginEnable);
     }
 
@@ -169,7 +174,6 @@ public class BlockHunt extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
-        saveResource("room.yml", "/Rooms/" + level + ".yml", false);
         Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
         this.roomConfigs.put(level, config);
         return config;
@@ -190,6 +194,7 @@ public class BlockHunt extends PluginBase {
                             config.getInt("gameTime", 0) == 0 ||
                             config.getString("waitSpawn", "").trim().equals("") ||
                             config.getStringList("randomSpawn").size() == 0 ||
+                            config.getStringList("blocks").size() == 0 ||
                             config.getString("world", "").trim().equals("")) {
                         getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", fileName[0]));
                         continue;
@@ -200,10 +205,13 @@ public class BlockHunt extends PluginBase {
                         continue;
                     }
                     try {
-                        Constructor<? extends RoomBase> constructor =  ROOM_CLASS.get(
-                                config.getString("gameMode", "classic")).getConstructor(Config.class);
+                        String gameMode = config.getString("gameMode", "classic");
+                        if (!ROOM_CLASS.containsKey(gameMode)) {
+                            gameMode = "classic";
+                        }
+                        Constructor<? extends RoomBase> constructor = ROOM_CLASS.get(gameMode).getConstructor(Config.class);
                         RoomBase roomBase = constructor.newInstance(config);
-                        roomBase.setGameName(config.getString("gameMode", "classic"));
+                        roomBase.setGameName(gameMode);
                         this.rooms.put(fileName[0], roomBase);
                         getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", fileName[0]));
                     } catch (Exception e) {

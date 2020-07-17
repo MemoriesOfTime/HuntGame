@@ -16,6 +16,7 @@ public class AdminCommand extends BaseCommand {
         this.setPermission("MurderMystery.command.admin");
         this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
         this.addSubCommand(new AddRandomSpawn("addrandomspawn"));
+        this.addSubCommand(new AddBlock("addblock"));
         this.addSubCommand(new SetWaitTime("setwaittime"));
         this.addSubCommand(new SetGameTime("setgametime"));
         this.addSubCommand(new StartRoom("startroom"));
@@ -31,6 +32,8 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendUI(CommandSender sender) {
+        this.sendHelp(sender);
+        //TODO GUI!
         //GuiCreate.sendAdminMenu((Player) sender);
     }
 

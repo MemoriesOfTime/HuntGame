@@ -34,6 +34,7 @@ adminHelp: |-
     §a/%cmdName% §e打开ui
     §a/%cmdName% setwaitspawn §e设置当前位置为等待出生点
     §a/%cmdName% addrandomspawn  §e添加当前位置为随机出生点
+    §a/%cmdName% addblock §e将手中的方块添加为可伪装的方块
     §a/%cmdName% setgoldspawntime <时间> §e设置金锭生成间隔
     §a/%cmdName% setwaittime <时间> §e设置游戏人数足够后的等待时间
     §a/%cmdName% setgametime <时间> §e设置每局游戏最长时间
@@ -42,6 +43,8 @@ adminHelp: |-
     §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
 adminSetSpawn: "§a默认出生点设置成功！"
 adminAddRandomSpawn: "§a随机出生点添加成功！"
+adminAddBlock: "§a已将方块%id%添加为可伪装方块！"
+adminAddBlockFailure: "§c物品:%id%无法设置为可伪装的方块！"
 adminNotNumber: "§a输入的参数不是数字！"
 adminSetWaitTime: "§a等待时间已设置为：%time%"
 adminSetGameTime: "§a游戏时间已设置为：%time%"

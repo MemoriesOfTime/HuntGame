@@ -40,6 +40,7 @@ public class Language {
             "§a/%cmdName% §e打开ui \n " +
             "§a/%cmdName% setwaitspawn §e设置当前位置为等待出生点 \n " +
             "§a/%cmdName% addrandomspawn  §e添加当前位置为游戏出生点 \n " +
+            "§a/%cmdName% addblock §e将手中的方块添加为可伪装的方块 \n " +
             "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n " +
             "§a/%cmdName% setgametime 数字 §e设置每局游戏最长时间 \n " +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
@@ -47,6 +48,8 @@ public class Language {
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetSpawn = "§a默认出生点设置成功！";
     public String adminAddRandomSpawn = "§a随机出生点添加成功！";
+    public String adminAddBlock = "§a已将方块%id%添加为可伪装方块！";
+    public String adminAddBlockFailure = "§c物品:%id%无法设置为可伪装的方块！";
     public String adminNotNumber = "§a输入的参数不是数字！";
     public String adminSetWaitTime = "§a等待时间已设置为：%time%";
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
@@ -138,6 +141,8 @@ public class Language {
         this.adminHelp = config.getString("adminHelp", this.adminHelp);
         this.adminSetSpawn = config.getString("adminSetSpawn", this.adminSetSpawn);
         this.adminAddRandomSpawn = config.getString("adminAddRandomSpawn", this.adminAddRandomSpawn);
+        this.adminAddBlock = config.getString("adminAddBlock", this.adminAddBlock);
+        this.adminAddBlockFailure = config.getString("adminAddBlockFailure", this.adminAddBlockFailure);
         this.adminNotNumber = config.getString("adminNotNumber", this.adminNotNumber);
         this.adminSetWaitTime = config.getString("adminSetWaitTime", this.adminSetWaitTime);
         this.adminSetGameTime = config.getString("adminSetGameTime", this.adminSetGameTime);
