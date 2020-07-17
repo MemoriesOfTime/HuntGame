@@ -39,8 +39,9 @@ public class BlockHunt extends PluginBase {
     private Config config;
     private String cmdUser, cmdAdmin;
     private final HashMap<String, Language> languageHashMap = new HashMap<>();
+    private HashMap<String, String> languageMappingTable;
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
-    private final Skin corpseSkin = new Skin();
+    private final Skin defaultSkin = new Skin();
 
     public static BlockHunt getInstance() {
         return BLOCK_HUNT;
@@ -51,6 +52,7 @@ public class BlockHunt extends PluginBase {
         BLOCK_HUNT = this;
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
         //语言文件
         saveResource("Language/zh_CN.yml", false);
         File[] files = new File(getDataFolder() + "/Language").listFiles();
@@ -61,17 +63,16 @@ public class BlockHunt extends PluginBase {
                 getLogger().info("§aLanguage: " + name + " loaded !");
             }
         }
-        //默认尸体皮肤
-        this.corpseSkin.setTrusted(true);
-        this.corpseSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
+        //默认皮肤
+        this.defaultSkin.setTrusted(true);
+        this.defaultSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         BufferedImage skinData = null;
         try {
             skinData = ImageIO.read(this.getResource("skin.png"));
         } catch (IOException ignored) { }
         if (skinData != null) {
-            this.corpseSkin.setSkinData(skinData);
-            this.corpseSkin.setSkinId("default");
-            getLogger().info(this.getLanguage(null).defaultSkinSuccess);
+            this.defaultSkin.setSkinData(skinData);
+            this.defaultSkin.setSkinId("default");
         }else {
             getLogger().error(this.getLanguage(null).defaultSkinFailure);
         }
@@ -128,14 +129,22 @@ public class BlockHunt extends PluginBase {
         return this.scoreboard;
     }
 
+    /**
+     * 传入玩家将返回玩家所用语言
+     * 否则返回设置的默认语言
+     *
+     * @param object 参数
+     * @return 语言类
+     */
     public Language getLanguage(Object object) {
         if (object instanceof Player) {
             Player player = (Player) object;
             String language = this.playerLanguageHashMap.getOrDefault(player,
                     this.config.getString("defaultLanguage", "zh_CN"));
-            if (this.languageHashMap.containsKey(language)) {
-                return this.languageHashMap.get(language);
+            if (!this.languageHashMap.containsKey(language)) {
+                language = this.languageMappingTable.getOrDefault(language, "zh_CN");
             }
+            return this.languageHashMap.get(language);
         }
         return this.languageHashMap.get(this.config.getString("defaultLanguage", "zh_CN"));
     }
@@ -144,8 +153,8 @@ public class BlockHunt extends PluginBase {
         return this.playerLanguageHashMap;
     }
 
-    public Skin getCorpseSkin() {
-        return this.corpseSkin;
+    public Skin getDefaultSkin() {
+        return this.defaultSkin;
     }
 
     public LinkedHashMap<String, RoomBase> getRooms() {

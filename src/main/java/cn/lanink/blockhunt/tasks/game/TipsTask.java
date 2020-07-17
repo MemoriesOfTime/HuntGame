@@ -44,10 +44,6 @@ public class TipsTask extends PluginTask<BlockHunt> {
                         mode = owner.getLanguage(entry.getKey()).death;
                         break;
                 }
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).gameTimeBottom
-                        .replace("%mode%", mode)
-                        .replace("%playerNumber%", playerNumber + "")
-                        .replace("%time%", room.gameTime + ""));
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : owner.getLanguage(entry.getKey()).gameTimeScoreBoard.split("\n")) {
                     ms.add(string.replace("%mode%", mode)

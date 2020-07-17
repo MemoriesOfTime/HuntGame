@@ -6,7 +6,6 @@ public class Language {
 
     //控制台
     public String scoreboardAPINotFound = "§c请安装计分板前置！";
-    public String defaultSkinSuccess = "§a 默认尸体皮肤加载完成";
     public String defaultSkinFailure = "§c 默认尸体皮肤加载失败！请检查插件完整性！";
     public String startLoadingRoom = "§e开始加载房间...";
     public String roomLoadedSuccess = "§a房间：%name% 已加载！";
@@ -87,7 +86,8 @@ public class Language {
     public String waitTimeBottom = "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！";
     public String waitBottom = "§c等待玩家加入中,当前已有: %playerNumber% 位玩家";
     public String gameTimeScoreBoard = "§l§a当前身份:§e %mode% \n §l§a存活人数:§e %playerNumber% \n §l§a剩余时间:§e %time% §a秒 ";
-    public String gameTimeBottom = "§a身份:§e %mode% \n §a距游戏结束还有:§e %time% §a秒\n当前还有:§e %playerNumber% §a人存活";
+    public String huntersDispatchedTimeBottom = "§a猎人将在§e%time%§a秒后出动";
+    public String respawnTimeBottom = "§a将在%time%秒后复活成为猎人！";
     public String huntersKillPrey = "%damagePlayer% 抓到了 %player%";
 
     //UI相关
@@ -109,7 +109,6 @@ public class Language {
 
     public Language(Config config) {
         this.scoreboardAPINotFound = config.getString("scoreboardAPINotFound", this.scoreboardAPINotFound);
-        this.defaultSkinSuccess = config.getString("defaultSkinSuccess", this.defaultSkinSuccess);
         this.defaultSkinFailure = config.getString("defaultSkinFailure", this.defaultSkinFailure);
         this.startLoadingRoom = config.getString("startLoadingRoom", this.startLoadingRoom);
         this.roomLoadedSuccess = config.getString("roomLoadedSuccess", this.roomLoadedSuccess);
@@ -174,7 +173,8 @@ public class Language {
         this.waitTimeBottom = config.getString("waitTimeBottom", this.waitTimeBottom);
         this.waitBottom = config.getString("waitBottom", this.waitBottom);
         this.gameTimeScoreBoard = config.getString("gameTimeScoreBoard", this.gameTimeScoreBoard);
-        this.gameTimeBottom = config.getString("gameTimeBottom", this.gameTimeBottom);
+        this.huntersDispatchedTimeBottom = config.getString("huntersDispatchedTimeBottom", this.huntersDispatchedTimeBottom);
+        this.respawnTimeBottom = config.getString("respawnTimeBottom", this.respawnTimeBottom);
         this.huntersKillPrey = config.getString("huntersKillPrey", this.huntersKillPrey);
         this.userMenuButton1 = config.getString("userMenuButton1", this.userMenuButton1);
         this.userMenuButton2 = config.getString("userMenuButton2", this.userMenuButton2);
