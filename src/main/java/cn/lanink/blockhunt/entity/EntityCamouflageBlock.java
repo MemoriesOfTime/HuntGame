@@ -15,6 +15,7 @@ public class EntityCamouflageBlock extends EntityHuman {
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
         this.setDataFlag(0, 5, true);
+        this.namedTag.putBoolean("isBlockHuntEntity", true);
     }
 
     @Override

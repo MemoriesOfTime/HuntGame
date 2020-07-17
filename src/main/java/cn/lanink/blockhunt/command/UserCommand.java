@@ -27,6 +27,8 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendUI(CommandSender sender) {
+        this.sendHelp(sender);
+        //TODO GUI!
         //GuiCreate.sendUserMenu((Player) sender);
     }
 

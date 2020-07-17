@@ -10,6 +10,7 @@ public class EntityPlayerCorpse extends EntityHuman {
         super(chunk, nbt);
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
+        this.namedTag.putBoolean("isBlockHuntEntity", true);
     }
 
 }

@@ -128,12 +128,12 @@ public class RoomClassicMode extends RoomBase {
             player.getInventory().setItem(8, Item.get(integers[0], integers[1]));
             CompoundTag tag = Entity.getDefaultNBT(player);
             tag.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", this.blockHunt.getCorpseSkin().getSkinData().data)
-                    .putString("ModelId", this.blockHunt.getCorpseSkin().getSkinId()));
+                    .putByteArray("Data", this.blockHunt.getDefaultSkin().getSkinData().data)
+                    .putString("ModelId", this.blockHunt.getDefaultSkin().getSkinId()));
             tag.putFloat("Scale", 1.0F);
             tag.putString("playerName", player.getName());
             EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag);
-            entity.setSkin(this.blockHunt.getCorpseSkin());
+            entity.setSkin(this.blockHunt.getDefaultSkin());
             entity.spawnToAll();
             this.entityCamouflageBlocks.put(player, entity);
         }
@@ -177,6 +177,8 @@ public class RoomClassicMode extends RoomBase {
     public void asyncTimeTask() {
         int time = this.gameTime - (this.getSetGameTime() - 60);
         if (time >= 0) {
+            this.players.keySet().forEach(player -> player.sendTip(this.blockHunt.getLanguage(player)
+                    .huntersDispatchedTimeBottom.replace("time%", time + "")));
             if (time%10 == 0) {
                 Effect e1 = Effect.getEffect(15); //失明
                 e1.setDuration(300).setVisible(false);
@@ -237,6 +239,8 @@ public class RoomClassicMode extends RoomBase {
         for (Map.Entry<Player, Integer> entry : this.playerRespawnTime.entrySet()) {
             if (entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
+                entry.getKey().sendTip(this.blockHunt.getLanguage(entry.getKey())
+                        .respawnTimeBottom.replace("%time%", entry.getValue() + ""));
                 if (entry.getValue() == 0) {
                     this.playerRespawn(entry.getKey());
                 }
@@ -372,7 +376,7 @@ public class RoomClassicMode extends RoomBase {
             case 65536:
                 break;
             default:
-                skin = this.blockHunt.getCorpseSkin();
+                skin = this.blockHunt.getDefaultSkin();
         }
         if (skin.getSkinResourcePatch().trim().equals("")) {
             skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
