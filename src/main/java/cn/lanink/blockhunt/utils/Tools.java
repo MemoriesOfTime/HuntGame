@@ -175,7 +175,7 @@ public class Tools {
                 if (entity instanceof EntityItem) {
                     Item item = ((EntityItem) entity).getItem();
                     CompoundTag tag = item.getNamedTag();
-                    if (tag != null && tag.getBoolean("isBlockHuntItem")) {
+                    if (tag != null && tag.getBoolean("isBlockHuntEntity")) {
                         if (cleanAll) {
                             entity.close();
                         }
