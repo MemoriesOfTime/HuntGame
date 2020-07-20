@@ -29,7 +29,6 @@ public class TipsTask extends PluginTask<BlockHunt> {
             return;
         }
         if (room.getPlayers().values().size() > 0) {
-            int playerNumber = this.room.getSurvivorPlayerNumber();
             String mode;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                 entry.getKey().setNameTag("");
@@ -47,7 +46,7 @@ public class TipsTask extends PluginTask<BlockHunt> {
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : owner.getLanguage(entry.getKey()).gameTimeScoreBoard.split("\n")) {
                     ms.add(string.replace("%mode%", mode)
-                            .replace("%playerNumber%", playerNumber + "")
+                            .replace("%playerNumber%", this.room.getSurvivorPlayerNumber() + "")
                             .replace("%time%", room.gameTime + ""));
                 }
                 owner.getScoreboard().showScoreboard(entry.getKey(), owner.getLanguage(entry.getKey()).scoreBoardTitle, ms);

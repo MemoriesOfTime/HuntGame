@@ -196,20 +196,25 @@ public class RoomClassicMode extends RoomBase {
                 Tools.addSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-                    entry.getKey().removeAllEffects();
-                    if (entry.getValue() == 2) {
-                        entry.getKey().teleport(this.getRandomSpawn().get(
-                                new Random().nextInt(this.getRandomSpawn().size())));
-                        Item[] armor = new Item[4];
-                        armor[0] = Item.get(306);
-                        armor[1] = Item.get(307);
-                        armor[2] = Item.get(308);
-                        armor[3] = Item.get(309);
-                        entry.getKey().getInventory().setArmorContents(armor);
-                        entry.getKey().getInventory().setItem(0, Item.get(276));
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
+                    @Override
+                    public void onRun(int i) {
+                        for (Map.Entry<Player, Integer> entry : players.entrySet()) {
+                            entry.getKey().removeAllEffects();
+                            if (entry.getValue() == 2) {
+                                entry.getKey().teleport(randomSpawn.get(
+                                        new Random().nextInt(randomSpawn.size())));
+                                Item[] armor = new Item[4];
+                                armor[0] = Item.get(306);
+                                armor[1] = Item.get(307);
+                                armor[2] = Item.get(308);
+                                armor[3] = Item.get(309);
+                                entry.getKey().getInventory().setArmorContents(armor);
+                                entry.getKey().getInventory().setItem(0, Item.get(276));
+                            }
+                        }
                     }
-                }
+                }, 1);
             }
         }
         //计时与胜利判断
