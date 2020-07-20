@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.room;
 
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
+import cn.lanink.blockhunt.event.BlockHuntRoomEndEvent;
 import cn.lanink.blockhunt.tasks.game.TimeTask;
 import cn.lanink.blockhunt.tasks.game.TipsTask;
 import cn.lanink.blockhunt.utils.SavePlayerInventory;
@@ -149,6 +150,7 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public synchronized void endGame(boolean normal) {
+        Server.getInstance().getPluginManager().callEvent(new BlockHuntRoomEndEvent(this));
         mode = 0;
         if (normal) {
             Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
@@ -247,7 +249,7 @@ public class RoomClassicMode extends RoomBase {
                 entry.getKey().sendTip(this.blockHunt.getLanguage(entry.getKey())
                         .respawnTimeBottom.replace("%time%", entry.getValue() + ""));
                 if (entry.getValue() == 0) {
-                    this.playerRespawn(entry.getKey());
+                    this.playerRespawnEvent(entry.getKey());
                 }
             }
         }
@@ -303,16 +305,16 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 符合游戏条件的攻击
      *
-     * @param damage 攻击者
+     * @param damager 攻击者
      * @param player 被攻击者
      */
     @Override
-    public void playerDamage(Player damage, Player player) {
+    public void playerDamage(Player damager, Player player) {
         if (this.getPlayers(player) == 1) {
-            this.playerDeath(player);
+            this.playerDeathEvent(player);
             for (Player p : this.players.keySet()) {
                 p.sendMessage(this.blockHunt.getLanguage(p).huntersKillPrey
-                        .replace("%damagePlayer%", damage.getName())
+                        .replace("%damagePlayer%", damager.getName())
                         .replace("%player%", player.getName()));
             }
         }
@@ -334,7 +336,7 @@ public class RoomClassicMode extends RoomBase {
         this.players.put(player, 0);
         Tools.setPlayerInvisible(player, true);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
-        this.playerCorpseSpawn(player);
+        this.playerCorpseSpawnEvent(player);
         this.playerRespawnTime.put(player, 20);
     }
 

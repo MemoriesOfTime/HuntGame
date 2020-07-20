@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.room;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
+import cn.lanink.blockhunt.event.*;
 import cn.lanink.blockhunt.tasks.VictoryTask;
 import cn.lanink.blockhunt.tasks.WaitTask;
 import cn.nukkit.Player;
@@ -251,6 +252,11 @@ public abstract class RoomBase {
         return this.level;
     }
 
+    public final void gameStartEvent() {
+        Server.getInstance().getPluginManager().callEvent(new BlockHuntRoomStartEvent(this));
+        this.gameStart();
+    }
+
     /**
      * 房间开始游戏
      */
@@ -259,7 +265,7 @@ public abstract class RoomBase {
     /**
      * 结束本局游戏
      */
-    public void endGame() {
+    public synchronized void endGame() {
         this.endGame(true);
     }
 
@@ -287,13 +293,29 @@ public abstract class RoomBase {
      */
     public abstract int getSurvivorPlayerNumber();
 
+    public final void playerDamageEvent(Player damager, Player player) {
+        BlockHuntPlayerDamageEvent ev = new BlockHuntPlayerDamageEvent(this, damager, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.playerDamage(damager, player);
+        }
+    }
+
     /**
      * 符合游戏条件的攻击
      *
-     * @param damage 攻击者
+     * @param damager 攻击者
      * @param player 被攻击者
      */
-    public abstract void playerDamage(Player damage, Player player);
+    public abstract void playerDamage(Player damager, Player player);
+
+    public final void playerDeathEvent(Player player) {
+        BlockHuntPlayerDeathEvent ev = new BlockHuntPlayerDeathEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.playerDeath(player);
+        }
+    }
 
     /**
      * 玩家死亡
@@ -302,12 +324,28 @@ public abstract class RoomBase {
      */
     public abstract void playerDeath(Player player);
 
+    public final void playerRespawnEvent(Player player) {
+        BlockHuntPlayerRespawnEvent ev = new BlockHuntPlayerRespawnEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.playerRespawn(player);
+        }
+    }
+
     /**
      * 玩家复活
      *
      * @param player 玩家
      */
     public abstract void playerRespawn(Player player);
+
+    public final void playerCorpseSpawnEvent(Player player) {
+        BlockHuntPlayerCorpseSpawnEvent ev = new BlockHuntPlayerCorpseSpawnEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled()) {
+            this.playerCorpseSpawn(player);
+        }
+    }
 
     /**
      * 尸体生成

@@ -26,6 +26,9 @@ public class WaitTask extends PluginTask<BlockHunt> {
             return;
         }
         if (this.room.getPlayers().size() >= 3) {
+            if (this.room.getPlayers().size() == 16 && this.room.waitTime > 10) {
+                this.room.waitTime = 10;
+            }
             if (this.room.waitTime > 0) {
                 this.room.waitTime--;
                 if (this.room.waitTime <= 5) {
@@ -43,7 +46,7 @@ public class WaitTask extends PluginTask<BlockHunt> {
                     owner.getScoreboard().showScoreboard(player,owner.getLanguage(player).scoreBoardTitle, ms);
                 }
             }else {
-                this.room.gameStart();
+                this.room.gameStartEvent();
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {

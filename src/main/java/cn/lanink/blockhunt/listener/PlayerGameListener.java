@@ -43,7 +43,7 @@ public class PlayerGameListener implements Listener {
             if (room.getPlayers(damager) == 2 && item != null && item.getId() == 276 &&
                     entity instanceof EntityCamouflageBlock && entity.namedTag != null) {
                 Player player = Server.getInstance().getPlayer(entity.namedTag.getString("playerName"));
-                room.playerDamage(damager, player);
+                room.playerDamageEvent(damager, player);
             }
         }
     }
