@@ -359,8 +359,8 @@ public abstract class RoomBase {
      *
      * @param victoryMode 胜利队伍
      */
-    protected void victory(int victoryMode) {
-        if (this.getPlayers().values().size() > 0) {
+    protected synchronized void victory(int victoryMode) {
+        if (this.getPlayers().size() > 0) {
             this.setStatus(3);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
                     new VictoryTask(this.blockHunt, this, victoryMode), 20);

@@ -23,9 +23,10 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * @author lt_name
@@ -100,13 +101,8 @@ public class PlayerGameListener implements Listener {
         Player player = event.getPlayer();
         if (room.getPlayers(player) == 1) {
             Level level = player.getLevel();
-            LinkedList<Player> players = new LinkedList<>();
-            for (Player p: level.getPlayers().values()) {
-                if (p != player) {
-                    p.hidePlayer(player);
-                    players.add(p);
-                }
-            }
+            Set<Player> players = new HashSet<>(room.getPlayers().keySet());
+            players.remove(player);
             Integer[] integers = room.getPlayerCamouflageBlock(player);
             Block block = Block.get(integers[0], integers[1], event.getTo().floor());
             Vector3 vector3 = event.getTo().floor();

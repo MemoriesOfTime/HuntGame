@@ -135,6 +135,7 @@ public class RoomClassicMode extends RoomBase {
             entity.setSkin(this.blockHunt.getDefaultSkin());
             entity.spawnToAll();
             this.entityCamouflageBlocks.put(player, entity);
+            this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.blockHunt, new TimeTask(this.blockHunt, this), 20,true);
@@ -153,6 +154,7 @@ public class RoomClassicMode extends RoomBase {
         Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
             @Override
             public void onRun(int i) {
+                players.keySet().forEach(p1 -> players.keySet().forEach(p1::showPlayer));
                 if (normal) {
                     Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
                     while(it.hasNext()) {
@@ -260,7 +262,7 @@ public class RoomClassicMode extends RoomBase {
                 public void onRun(int i) {
                     for (Map.Entry<Player, Integer> entry : players.entrySet()) {
                         if (entry.getValue() != 1) continue;
-                        ArrayList<Player> p = new ArrayList<>(players.keySet());
+                        Set<Player> p = new HashSet<>(players.keySet());
                         p.remove(entry.getKey());
                         Integer[] integers = getPlayerCamouflageBlock(entry.getKey());
                         Block block = Block.get(integers[0], integers[1], entry.getKey().floor());
