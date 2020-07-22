@@ -25,7 +25,7 @@ public abstract class RoomBase {
     protected String gameMode = null;
     protected BlockHunt blockHunt = BlockHunt.getInstance();
 
-    protected int mode; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
+    protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
     protected final int setWaitTime, setGameTime;
     public int waitTime, gameTime; //秒
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
@@ -60,7 +60,7 @@ public abstract class RoomBase {
                     this.level));
         }
         this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
-        this.mode = 0;
+        this.status = 0;
         this.initTime();
     }
 
@@ -86,8 +86,8 @@ public abstract class RoomBase {
      * 初始化Task
      */
     protected void initTask() {
-        if (this.mode != 1) {
-            this.setMode(1);
+        if (this.status != 1) {
+            this.setStatus(1);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.blockHunt, new WaitTask(this.blockHunt, this), 20);
         }
@@ -96,17 +96,17 @@ public abstract class RoomBase {
 
 
     /**
-     * @param mode 房间状态
+     * @param status 房间状态
      */
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     /**
      * @return 房间状态
      */
-    public int getMode() {
-        return this.mode;
+    public int getStatus() {
+        return this.status;
     }
 
     /**
@@ -361,7 +361,7 @@ public abstract class RoomBase {
      */
     protected void victory(int victoryMode) {
         if (this.getPlayers().values().size() > 0) {
-            this.setMode(3);
+            this.setStatus(3);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
                     new VictoryTask(this.blockHunt, this, victoryMode), 20);
         }else {

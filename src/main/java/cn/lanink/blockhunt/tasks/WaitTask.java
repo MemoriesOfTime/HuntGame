@@ -21,7 +21,7 @@ public class WaitTask extends PluginTask<BlockHunt> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 1) {
+        if (this.room.getStatus() != 1) {
             this.cancel();
             return;
         }

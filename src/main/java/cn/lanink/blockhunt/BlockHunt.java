@@ -130,6 +130,14 @@ public class BlockHunt extends PluginBase {
         ROOM_CLASS.put(name, roomClass);
     }
 
+    public String getCmdUser() {
+        return this.cmdUser;
+    }
+
+    public String getCmdAdmin() {
+        return this.cmdAdmin;
+    }
+
     public IScoreboard getScoreboard() {
         return this.scoreboard;
     }

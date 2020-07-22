@@ -30,13 +30,24 @@ public class EntityCamouflageBlock extends EntityHuman {
     }
 
     @Override
+    public boolean onUpdate(int currentTick) {
+        this.deadTicks = 0;
+        return super.onUpdate(currentTick);
+    }
+
+    @Override
+    public float getLength() {
+        return 1.05F;
+    }
+
+    @Override
     public float getWidth() {
-        return 1.2F;
+        return 1.05F;
     }
 
     @Override
     public float getHeight() {
-        return 1.2F;
+        return 1.05F;
     }
 
 }

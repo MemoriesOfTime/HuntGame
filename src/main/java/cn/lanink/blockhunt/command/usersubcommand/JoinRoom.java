@@ -42,7 +42,7 @@ public class JoinRoom extends BaseSubCommand {
             }
             if (args.length < 2) {
                 for (RoomBase room : this.blockHunt.getRooms().values()) {
-                    if ((room.getMode() == 0 || room.getMode() == 1) && room.getPlayers().size() < 16) {
+                    if ((room.getStatus() == 0 || room.getStatus() == 1) && room.getPlayers().size() < 16) {
                         room.joinRoom(player);
                         sender.sendMessage(this.blockHunt.getLanguage(sender).joinRandomRoom);
                         return true;
@@ -50,7 +50,7 @@ public class JoinRoom extends BaseSubCommand {
                 }
             }else if (this.blockHunt.getRooms().containsKey(args[1])) {
                 RoomBase room = this.blockHunt.getRooms().get(args[1]);
-                if (room.getMode() == 2 || room.getMode() == 3) {
+                if (room.getStatus() == 2 || room.getStatus() == 3) {
                     sender.sendMessage(this.blockHunt.getLanguage(sender).joinRoomIsPlaying);
                 }else if (room.getPlayers().values().size() >= 16) {
                     sender.sendMessage(this.blockHunt.getLanguage(sender).joinRoomIsFull);

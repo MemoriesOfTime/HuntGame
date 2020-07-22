@@ -11,6 +11,7 @@ import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
@@ -21,10 +22,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * 经典模式房间类
@@ -50,7 +48,7 @@ public class RoomClassicMode extends RoomBase {
     @Override
     public synchronized void joinRoom(Player player) {
         if (this.players.values().size() < 16) {
-            if (this.mode == 0) {
+            if (this.status == 0) {
                 this.initTask();
             }
             this.addPlaying(player);
@@ -108,8 +106,8 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public synchronized void gameStart() {
-        if (this.mode == 2) return;
-        this.setMode(2);
+        if (this.status == 2) return;
+        this.setStatus(2);
         Tools.cleanEntity(this.getLevel(), true);
         this.assignIdentity();
         int x=0;
@@ -151,22 +149,25 @@ public class RoomClassicMode extends RoomBase {
     @Override
     public synchronized void endGame(boolean normal) {
         Server.getInstance().getPluginManager().callEvent(new BlockHuntRoomEndEvent(this));
-        mode = 0;
-        if (normal) {
-            Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
-            while(it.hasNext()) {
-                Map.Entry<Player, Integer> entry = it.next();
-                it.remove();
-                quitRoom(entry.getKey());
-            }
-        }else {
-            getLevel().getPlayers().values().forEach(
-                    player -> player.kick(this.blockHunt.getLanguage(player).roomSafeKick));
-        }
-        initTime();
+        status = 0;
         Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
             @Override
             public void onRun(int i) {
+                if (normal) {
+                    Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+                    while(it.hasNext()) {
+                        Map.Entry<Player, Integer> entry = it.next();
+                        it.remove();
+                        quitRoom(entry.getKey());
+                    }
+                }else {
+                    getLevel().getPlayers().values().forEach(
+                            player -> player.kick(blockHunt.getLanguage(player).roomSafeKick));
+                }
+                initTime();
+                playerCamouflageBlock.clear();
+                playerRespawnTime.clear();
+                entityCamouflageBlocks.clear();
                 Tools.cleanEntity(getLevel(), true);
             }
         }, 1);
@@ -253,13 +254,21 @@ public class RoomClassicMode extends RoomBase {
                 }
             }
         }
-        //TODO 实体更新
-        /*Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
-            @Override
-            public void onRun(int i) {
-
-            }
-        }, 1);*/
+        if (this.gameTime%5 == 0) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
+                @Override
+                public void onRun(int i) {
+                    for (Map.Entry<Player, Integer> entry : players.entrySet()) {
+                        if (entry.getValue() != 1) continue;
+                        ArrayList<Player> p = new ArrayList<>(players.keySet());
+                        p.remove(entry.getKey());
+                        Integer[] integers = getPlayerCamouflageBlock(entry.getKey());
+                        Block block = Block.get(integers[0], integers[1], entry.getKey().floor());
+                        entry.getKey().getLevel().sendBlocks(p.toArray(new Player[0]), new Vector3[] { block });
+                    }
+                }
+            }, 1);
+        }
     }
 
     /**
