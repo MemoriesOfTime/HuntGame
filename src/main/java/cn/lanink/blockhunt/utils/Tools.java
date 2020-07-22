@@ -11,7 +11,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
-import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
@@ -31,6 +30,17 @@ import java.util.Random;
 
 
 public class Tools {
+
+    public static String getStringIdentity(RoomBase room, Player player) {
+        switch (room.getPlayers(player)) {
+            case 1:
+                return BlockHunt.getInstance().getLanguage(player).prey;
+            case 2:
+                return BlockHunt.getInstance().getLanguage(player).hunters;
+            default:
+                return BlockHunt.getInstance().getLanguage(player).death;
+        }
+    }
 
     public static void sendMessage(RoomBase roomBase, String message) {
         for (Player player : roomBase.getPlayers().keySet()) {
@@ -172,14 +182,9 @@ public class Tools {
     public static void cleanEntity(Level level, boolean cleanAll) {
         for (Entity entity : level.getEntities()) {
             if (!(entity instanceof Player)) {
-                if (entity instanceof EntityItem) {
-                    Item item = ((EntityItem) entity).getItem();
-                    CompoundTag tag = item.getNamedTag();
-                    if (tag != null && tag.getBoolean("isBlockHuntEntity")) {
-                        if (cleanAll) {
-                            entity.close();
-                        }
-                    }else {
+                CompoundTag tag = entity.namedTag;
+                if (tag != null && tag.getBoolean("isBlockHuntEntity")) {
+                    if (cleanAll) {
                         entity.close();
                     }
                 }else {

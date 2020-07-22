@@ -4,6 +4,7 @@ import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
 import java.util.Arrays;
@@ -27,6 +28,8 @@ public class VictoryTask extends PluginTask<BlockHunt> {
         this.victory = victory;
         for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
             this.room.getPlayers().keySet().forEach(player -> entry.getKey().showPlayer(player));
+            this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
+                    new Vector3[] { entry.getKey().floor() });
             if (victory == 2) {
                 entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryHuntersTitle,
                         "", 10, 30, 10);
@@ -47,7 +50,7 @@ public class VictoryTask extends PluginTask<BlockHunt> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 3) {
+        if (this.room.getStatus() != 3) {
             this.cancel();
             return;
         }

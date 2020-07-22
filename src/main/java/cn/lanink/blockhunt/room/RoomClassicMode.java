@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.room;
 
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
+import cn.lanink.blockhunt.event.BlockHuntRoomEndEvent;
 import cn.lanink.blockhunt.tasks.game.TimeTask;
 import cn.lanink.blockhunt.tasks.game.TipsTask;
 import cn.lanink.blockhunt.utils.SavePlayerInventory;
@@ -10,6 +11,7 @@ import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
@@ -20,10 +22,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * 经典模式房间类
@@ -49,7 +48,7 @@ public class RoomClassicMode extends RoomBase {
     @Override
     public synchronized void joinRoom(Player player) {
         if (this.players.values().size() < 16) {
-            if (this.mode == 0) {
+            if (this.status == 0) {
                 this.initTask();
             }
             this.addPlaying(player);
@@ -107,9 +106,9 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public synchronized void gameStart() {
-        if (this.mode == 2) return;
+        if (this.status == 2) return;
+        this.setStatus(2);
         Tools.cleanEntity(this.getLevel(), true);
-        this.setMode(2);
         this.assignIdentity();
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
@@ -136,6 +135,7 @@ public class RoomClassicMode extends RoomBase {
             entity.setSkin(this.blockHunt.getDefaultSkin());
             entity.spawnToAll();
             this.entityCamouflageBlocks.put(player, entity);
+            this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.blockHunt, new TimeTask(this.blockHunt, this), 20,true);
@@ -149,22 +149,27 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public synchronized void endGame(boolean normal) {
-        mode = 0;
-        if (normal) {
-            Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
-            while(it.hasNext()) {
-                Map.Entry<Player, Integer> entry = it.next();
-                it.remove();
-                quitRoom(entry.getKey());
-            }
-        }else {
-            getLevel().getPlayers().values().forEach(
-                    player -> player.kick(this.blockHunt.getLanguage(player).roomSafeKick));
-        }
-        initTime();
+        Server.getInstance().getPluginManager().callEvent(new BlockHuntRoomEndEvent(this));
+        status = 0;
         Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
             @Override
             public void onRun(int i) {
+                players.keySet().forEach(p1 -> players.keySet().forEach(p1::showPlayer));
+                if (normal) {
+                    Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+                    while(it.hasNext()) {
+                        Map.Entry<Player, Integer> entry = it.next();
+                        it.remove();
+                        quitRoom(entry.getKey());
+                    }
+                }else {
+                    getLevel().getPlayers().values().forEach(
+                            player -> player.kick(blockHunt.getLanguage(player).roomSafeKick));
+                }
+                initTime();
+                playerCamouflageBlock.clear();
+                playerRespawnTime.clear();
+                entityCamouflageBlocks.clear();
                 Tools.cleanEntity(getLevel(), true);
             }
         }, 1);
@@ -181,9 +186,9 @@ public class RoomClassicMode extends RoomBase {
                     .huntersDispatchedTimeBottom.replace("time%", time + "")));
             if (time%10 == 0) {
                 Effect e1 = Effect.getEffect(15); //失明
-                e1.setDuration(300).setVisible(false);
+                e1.setDuration(400).setVisible(false);
                 Effect e2 = Effect.getEffect(1); //速度提升
-                e2.setDuration(300).setVisible(false);
+                e2.setDuration(400).setVisible(false);
                 for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
                     if (entry.getValue() == 2) {
                         entry.getKey().addEffect(e1);
@@ -196,20 +201,25 @@ public class RoomClassicMode extends RoomBase {
                 Tools.addSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                Item[] armor = new Item[4];
-                armor[0] = Item.get(306);
-                armor[1] = Item.get(307);
-                armor[2] = Item.get(308);
-                armor[3] = Item.get(309);
-                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-                    entry.getKey().removeAllEffects();
-                    if (entry.getValue() == 2) {
-                        entry.getKey().teleport(this.getRandomSpawn().get(
-                                new Random().nextInt(this.getRandomSpawn().size())));
-                        entry.getKey().getInventory().setArmorContents(armor);
-                        entry.getKey().getInventory().addItem(Item.get(276));
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
+                    @Override
+                    public void onRun(int i) {
+                        for (Map.Entry<Player, Integer> entry : players.entrySet()) {
+                            entry.getKey().removeAllEffects();
+                            if (entry.getValue() == 2) {
+                                entry.getKey().teleport(randomSpawn.get(
+                                        new Random().nextInt(randomSpawn.size())));
+                                Item[] armor = new Item[4];
+                                armor[0] = Item.get(306);
+                                armor[1] = Item.get(307);
+                                armor[2] = Item.get(308);
+                                armor[3] = Item.get(309);
+                                entry.getKey().getInventory().setArmorContents(armor);
+                                entry.getKey().getInventory().setItem(0, Item.get(276));
+                            }
+                        }
                     }
-                }
+                }, 1);
             }
         }
         //计时与胜利判断
@@ -242,17 +252,25 @@ public class RoomClassicMode extends RoomBase {
                 entry.getKey().sendTip(this.blockHunt.getLanguage(entry.getKey())
                         .respawnTimeBottom.replace("%time%", entry.getValue() + ""));
                 if (entry.getValue() == 0) {
-                    this.playerRespawn(entry.getKey());
+                    this.playerRespawnEvent(entry.getKey());
                 }
             }
         }
-        //TODO 实体更新
-        /*Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
-            @Override
-            public void onRun(int i) {
-
-            }
-        }, 1);*/
+        if (this.gameTime%5 == 0) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
+                @Override
+                public void onRun(int i) {
+                    for (Map.Entry<Player, Integer> entry : players.entrySet()) {
+                        if (entry.getValue() != 1) continue;
+                        Set<Player> p = new HashSet<>(players.keySet());
+                        p.remove(entry.getKey());
+                        Integer[] integers = getPlayerCamouflageBlock(entry.getKey());
+                        Block block = Block.get(integers[0], integers[1], entry.getKey().floor());
+                        entry.getKey().getLevel().sendBlocks(p.toArray(new Player[0]), new Vector3[] { block });
+                    }
+                }
+            }, 1);
+        }
     }
 
     /**
@@ -298,16 +316,16 @@ public class RoomClassicMode extends RoomBase {
     /**
      * 符合游戏条件的攻击
      *
-     * @param damage 攻击者
+     * @param damager 攻击者
      * @param player 被攻击者
      */
     @Override
-    public void playerDamage(Player damage, Player player) {
+    public void playerDamage(Player damager, Player player) {
         if (this.getPlayers(player) == 1) {
-            this.playerDeath(player);
+            this.playerDeathEvent(player);
             for (Player p : this.players.keySet()) {
                 p.sendMessage(this.blockHunt.getLanguage(p).huntersKillPrey
-                        .replace("%damagePlayer%", damage.getName())
+                        .replace("%damagePlayer%", damager.getName())
                         .replace("%player%", player.getName()));
             }
         }
@@ -320,6 +338,7 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public void playerDeath(Player player) {
+        if (this.getPlayers(player) == 0) return;
         this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -328,7 +347,8 @@ public class RoomClassicMode extends RoomBase {
         this.players.put(player, 0);
         Tools.setPlayerInvisible(player, true);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
-        this.playerCorpseSpawn(player);
+        this.playerCorpseSpawnEvent(player);
+        this.playerRespawnTime.put(player, 20);
     }
 
     @Override
@@ -367,7 +387,6 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public void playerCorpseSpawn(Player player) {
-        this.playerRespawnTime.put(player, 20);
         Skin skin = player.getSkin();
         switch(skin.getSkinData().data.length) {
             case 8192:

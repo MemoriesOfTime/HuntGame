@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.tasks.game;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.RoomClassicMode;
+import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -24,30 +25,17 @@ public class TipsTask extends PluginTask<BlockHunt> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.room.getStatus() != 2) {
             this.cancel();
             return;
         }
-        if (room.getPlayers().values().size() > 0) {
-            int playerNumber = this.room.getSurvivorPlayerNumber();
-            String mode;
+        if (this.room.getPlayers().size() > 0) {
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                 entry.getKey().setNameTag("");
-                switch (entry.getValue()) {
-                    case 1:
-                        mode = owner.getLanguage(entry.getKey()).prey;
-                        break;
-                    case 2:
-                        mode = owner.getLanguage(entry.getKey()).hunters;
-                        break;
-                    default:
-                        mode = owner.getLanguage(entry.getKey()).death;
-                        break;
-                }
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : owner.getLanguage(entry.getKey()).gameTimeScoreBoard.split("\n")) {
-                    ms.add(string.replace("%mode%", mode)
-                            .replace("%playerNumber%", playerNumber + "")
+                    ms.add(string.replace("%mode%", Tools.getStringIdentity(this.room, entry.getKey()))
+                            .replace("%playerNumber%", this.room.getSurvivorPlayerNumber() + "")
                             .replace("%time%", room.gameTime + ""));
                 }
                 owner.getScoreboard().showScoreboard(entry.getKey(), owner.getLanguage(entry.getKey()).scoreBoardTitle, ms);

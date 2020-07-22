@@ -13,7 +13,7 @@ public class AdminCommand extends BaseCommand {
 
     public AdminCommand(String name) {
         super(name, "BlockHunt 管理命令");
-        this.setPermission("MurderMystery.command.admin");
+        this.setPermission("blockhunt.command.admin");
         this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
         this.addSubCommand(new AddRandomSpawn("addrandomspawn"));
         this.addSubCommand(new AddBlock("addblock"));

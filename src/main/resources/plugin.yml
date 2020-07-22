@@ -9,7 +9,7 @@ loadbefore:
   - "ScoreboardAPI"
 
 permissions:
-  MurderMystery.command.user:
+  blockhunt.command.user:
     default: true
-  MurderMystery.command.admin:
+  blockhunt.command.admin:
     default: op
