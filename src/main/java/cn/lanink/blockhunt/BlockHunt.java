@@ -130,6 +130,10 @@ public class BlockHunt extends PluginBase {
         ROOM_CLASS.put(name, roomClass);
     }
 
+    public static LinkedHashMap<String, Class<? extends RoomBase>> getRoomClass() {
+        return ROOM_CLASS;
+    }
+
     public String getCmdUser() {
         return this.cmdUser;
     }
