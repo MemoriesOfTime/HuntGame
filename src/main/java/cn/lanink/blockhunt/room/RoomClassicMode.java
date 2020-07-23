@@ -40,6 +40,11 @@ public class RoomClassicMode extends RoomBase {
         super(config);
     }
 
+    @Override
+    public boolean useDefaultListener() {
+        return true;
+    }
+
     /**
      * 加入房间
      *
@@ -320,7 +325,7 @@ public class RoomClassicMode extends RoomBase {
      * @param player 被攻击者
      */
     @Override
-    public void playerDamage(Player damager, Player player) {
+    protected void playerDamage(Player damager, Player player) {
         if (this.getPlayers(player) == 1) {
             this.playerDeathEvent(player);
             for (Player p : this.players.keySet()) {
@@ -337,7 +342,7 @@ public class RoomClassicMode extends RoomBase {
      * @param player 玩家
      */
     @Override
-    public void playerDeath(Player player) {
+    protected void playerDeath(Player player) {
         if (this.getPlayers(player) == 0) return;
         this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
         player.getInventory().clearAll();
@@ -352,7 +357,7 @@ public class RoomClassicMode extends RoomBase {
     }
 
     @Override
-    public void playerRespawn(Player player) {
+    protected void playerRespawn(Player player) {
         Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
             @Override
             public void onRun(int i) {
@@ -386,7 +391,7 @@ public class RoomClassicMode extends RoomBase {
      * @param player 玩家
      */
     @Override
-    public void playerCorpseSpawn(Player player) {
+    protected void playerCorpseSpawn(Player player) {
         Skin skin = player.getSkin();
         switch(skin.getSkinData().data.length) {
             case 8192:

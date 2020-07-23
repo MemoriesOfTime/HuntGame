@@ -75,6 +75,15 @@ public abstract class RoomBase {
     }
 
     /**
+     * 是否使用默认监听器
+     * 如果重写此方法并返回false
+     * BlockHunt PlayerGameListener 将不会操作此房间类！
+     *
+     * @return 使用默认监听器
+     */
+    public abstract boolean useDefaultListener();
+
+    /**
      * 初始化时间参数
      */
     public void initTime() {
@@ -307,7 +316,7 @@ public abstract class RoomBase {
      * @param damager 攻击者
      * @param player 被攻击者
      */
-    public abstract void playerDamage(Player damager, Player player);
+    protected abstract void playerDamage(Player damager, Player player);
 
     public final void playerDeathEvent(Player player) {
         BlockHuntPlayerDeathEvent ev = new BlockHuntPlayerDeathEvent(this, player);
@@ -322,7 +331,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public abstract void playerDeath(Player player);
+    protected abstract void playerDeath(Player player);
 
     public final void playerRespawnEvent(Player player) {
         BlockHuntPlayerRespawnEvent ev = new BlockHuntPlayerRespawnEvent(this, player);
@@ -337,7 +346,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public abstract void playerRespawn(Player player);
+    protected abstract void playerRespawn(Player player);
 
     public final void playerCorpseSpawnEvent(Player player) {
         BlockHuntPlayerCorpseSpawnEvent ev = new BlockHuntPlayerCorpseSpawnEvent(this, player);
@@ -352,7 +361,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public abstract void playerCorpseSpawn(Player player);
+    protected abstract void playerCorpseSpawn(Player player);
 
     /**
      * 胜利
