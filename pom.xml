@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink.cn</groupId>
     <artifactId>BlockHunt</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <licenses>
         <license>
@@ -24,7 +24,7 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>${artifactId}-${project.version}</finalName>
+        <finalName>${artifactId}-v${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -142,6 +142,13 @@
             <version>1.7.2</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/Tips_v1.7.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>updata.AutoData</groupId>
+            <artifactId>AutoUpData</artifactId>
+            <version>1.2.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/AutoUpData_v1.2.2.jar</systemPath>
         </dependency>
     </dependencies>
 

@@ -45,6 +45,7 @@ public class Language {
             "§a/%cmdName% setgametime <时间> §e设置每局游戏最长时间 \n" +
             "§a/%cmdName% setgamemode <模式> §e设置房间游戏模式 \n" +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
+            "§a/%cmdName% stoproom §e强制结束所在地图的房间 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n" +
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetSpawn = "§a默认出生点设置成功！";
@@ -58,6 +59,7 @@ public class Language {
     public String adminSetGameMode = "§a房间游戏模式已设置为: %mode%";
     public String adminSetGameModeNotFound = "§c房间游戏模式: %mode% 不存在！";
     public String adminStartNoPlayer = "§a房间人数不足三人,无法开始游戏！";
+    public String adminStopRoom = "§a已强制结束房间！";
     public String adminLevelNoRoom = "§a当前地图不是游戏房间！";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
@@ -153,6 +155,7 @@ public class Language {
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
         this.adminSetGameModeNotFound = config.getString("adminSetGameModeNotFound", this.adminSetGameModeNotFound);
         this.adminStartNoPlayer = config.getString("adminStartNoPlayer", this.adminStartNoPlayer);
+        this.adminStopRoom = config.getString("adminStopRoom", this.adminStopRoom);
         this.adminLevelNoRoom = config.getString("adminLevelNoRoom", this.adminLevelNoRoom);
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);

@@ -102,8 +102,6 @@ public abstract class RoomBase {
         }
     }
 
-
-
     /**
      * @param status 房间状态
      */
@@ -214,19 +212,6 @@ public abstract class RoomBase {
     }
 
     /**
-     * @deprecated
-     * @param player 玩家
-     * @return 玩家身份
-     */
-    public int getPlayerMode(Player player) {
-        if (isPlaying(player)) {
-            return this.players.get(player);
-        }else {
-            return 0;
-        }
-    }
-
-    /**
      * @return 出生点
      */
     public Position getWaitSpawn() {
@@ -274,8 +259,14 @@ public abstract class RoomBase {
     /**
      * 结束本局游戏
      */
-    public synchronized void endGame() {
-        this.endGame(true);
+    public synchronized void endGameEvent() {
+        this.endGameEvent(true, 0);
+    }
+
+    public final void endGameEvent(boolean normal, int victory) {
+        BlockHuntRoomEndEvent ev = new BlockHuntRoomEndEvent(this, victory);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        this.endGame(normal, ev.getVictory());
     }
 
     /**
@@ -283,7 +274,7 @@ public abstract class RoomBase {
      *
      * @param normal 正常关闭
      */
-    public abstract void endGame(boolean normal);
+    protected abstract void endGame(boolean normal, int victory);
 
     /**
      * 计时Task
@@ -374,7 +365,7 @@ public abstract class RoomBase {
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
                     new VictoryTask(this.blockHunt, this, victoryMode), 20);
         }else {
-            this.endGame();
+            this.endGameEvent();
         }
     }
 
@@ -383,13 +374,12 @@ public abstract class RoomBase {
         if (this == o) return true;
         if (!(o instanceof RoomBase)) return false;
         RoomBase roomBase = (RoomBase) o;
-        return gameMode.equals(roomBase.gameMode) &&
-                level.equals(roomBase.level);
+        return level.equals(roomBase.level);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameMode, level);
+        return Objects.hash(level);
     }
 
 }

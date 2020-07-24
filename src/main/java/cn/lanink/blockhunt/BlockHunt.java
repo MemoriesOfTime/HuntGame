@@ -17,6 +17,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import updata.AutoData;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -44,6 +45,8 @@ public class BlockHunt extends PluginBase {
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
     private final Skin defaultSkin = new Skin();
     private MetricsLite metricsLite;
+    private List<String> victoryCmd;
+    private List<String> defeatCmd;
 
     public static BlockHunt getInstance() {
         return BLOCK_HUNT;
@@ -54,6 +57,8 @@ public class BlockHunt extends PluginBase {
         BLOCK_HUNT = this;
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.victoryCmd = this.config.getStringList("victoryCmd");
+        this.defeatCmd = this.config.getStringList("defeatCmd");
         this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
         //语言文件
         saveResource("Language/zh_CN.yml", false);
@@ -83,6 +88,12 @@ public class BlockHunt extends PluginBase {
 
     @Override
     public void onEnable() {
+        if(getServer().getPluginManager().getPlugin("AutoUpData") != null) {
+            if(AutoData.defaultUpData(this, this.getFile(),"lt-name","BlockHunt")) {
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
         //加载计分板
@@ -118,6 +129,14 @@ public class BlockHunt extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public List<String> getVictoryCmd() {
+        return this.victoryCmd;
+    }
+
+    public List<String> getDefeatCmd() {
+        return this.defeatCmd;
     }
 
     /**
@@ -243,7 +262,7 @@ public class BlockHunt extends PluginBase {
             Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, RoomBase> entry = it.next();
-                entry.getValue().endGame();
+                entry.getValue().endGameEvent();
                 getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();
             }
