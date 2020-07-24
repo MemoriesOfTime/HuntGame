@@ -44,7 +44,7 @@ public class PlayerGameListener implements Listener {
         if (event.getDamager() instanceof Player) {
             Player damager = (Player) event.getDamager();
             RoomBase room = this.blockHunt.getRooms().getOrDefault(damager.getLevel().getName(), null);
-            if (room == null || !room.isPlaying(damager)) return;
+            if (room == null || !room.useDefaultListener() || !room.isPlaying(damager)) return;
             event.setCancelled(true);
             Entity entity = event.getEntity();
             Item item = damager.getInventory() != null ? damager.getInventory().getItemInHand() : null;
@@ -61,7 +61,7 @@ public class PlayerGameListener implements Listener {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-            if (room == null || !room.isPlaying(player)) return;
+            if (room == null || !room.useDefaultListener() || !room.isPlaying(player)) return;
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == 2) {
                     if (room.getPlayers(player) == 1) {
@@ -81,7 +81,7 @@ public class PlayerGameListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         RoomBase room = this.blockHunt.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room == null) return;
+        if (room == null || !room.useDefaultListener()) return;
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             player.setAllowModifyWorld(false);
         }
@@ -97,7 +97,7 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         RoomBase room = this.blockHunt.getRooms().getOrDefault(event.getTo().getLevel().getName(), null);
-        if (room == null || room.getStatus() != 2) return;
+        if (room == null || !room.useDefaultListener() || room.getStatus() != 2) return;
         Player player = event.getPlayer();
         if (room.getPlayers(player) == 1) {
             Level level = player.getLevel();
@@ -121,7 +121,7 @@ public class PlayerGameListener implements Listener {
             return;
         }
         RoomBase room = this.blockHunt.getRooms().getOrDefault(player.getLevel().getName(), null);
-        if (room == null || room.getStatus() != 2 || !room.isPlaying(player)) {
+        if (room == null || !room.useDefaultListener() || room.getStatus() != 2 || !room.isPlaying(player)) {
             return;
         }
         if (event.getSlot() >= event.getInventory().getSize() ||
@@ -135,7 +135,7 @@ public class PlayerGameListener implements Listener {
         Player player = event.getPlayer();
         if (player == null || event.getMessage() == null) return;
         RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.isPlaying(player)) return;
+        if (room == null || !room.useDefaultListener() || !room.isPlaying(player)) return;
         if (event.getMessage().startsWith(this.blockHunt.getCmdUser(), 1) ||
                 event.getMessage().startsWith(this.blockHunt.getCmdAdmin(), 1)) {
             return;
@@ -150,7 +150,7 @@ public class PlayerGameListener implements Listener {
         Player player = event.getPlayer();
         if (player == null || event.getMessage() == null) return;
         RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.isPlaying(player) || room.getStatus() != 2) return;
+        if (room == null || !room.useDefaultListener() || !room.isPlaying(player) || room.getStatus() != 2) return;
         String message = "§7[§a" + Tools.getStringIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
         event.setMessage("");
         event.setCancelled(true);

@@ -14,8 +14,19 @@ public class BlockHuntRoomEndEvent extends BlockHuntRoomEvent {
         return handlers;
     }
 
-    public BlockHuntRoomEndEvent(RoomBase room) {
+    private int victory;
+
+    public BlockHuntRoomEndEvent(RoomBase room, int victory) {
         this.room = room;
+        this.victory = victory;
+    }
+
+    public void setVictory(int victory) {
+        this.victory = victory;
+    }
+
+    public int getVictory() {
+        return this.victory;
     }
 
 }

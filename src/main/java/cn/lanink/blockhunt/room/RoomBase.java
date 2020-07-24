@@ -75,6 +75,15 @@ public abstract class RoomBase {
     }
 
     /**
+     * 是否使用默认监听器
+     * 如果重写此方法并返回false
+     * BlockHunt PlayerGameListener 将不会操作此房间类！
+     *
+     * @return 使用默认监听器
+     */
+    public abstract boolean useDefaultListener();
+
+    /**
      * 初始化时间参数
      */
     public void initTime() {
@@ -92,8 +101,6 @@ public abstract class RoomBase {
                     this.blockHunt, new WaitTask(this.blockHunt, this), 20);
         }
     }
-
-
 
     /**
      * @param status 房间状态
@@ -205,19 +212,6 @@ public abstract class RoomBase {
     }
 
     /**
-     * @deprecated
-     * @param player 玩家
-     * @return 玩家身份
-     */
-    public int getPlayerMode(Player player) {
-        if (isPlaying(player)) {
-            return this.players.get(player);
-        }else {
-            return 0;
-        }
-    }
-
-    /**
      * @return 出生点
      */
     public Position getWaitSpawn() {
@@ -265,8 +259,14 @@ public abstract class RoomBase {
     /**
      * 结束本局游戏
      */
-    public synchronized void endGame() {
-        this.endGame(true);
+    public synchronized void endGameEvent() {
+        this.endGameEvent(true, 0);
+    }
+
+    public final void endGameEvent(boolean normal, int victory) {
+        BlockHuntRoomEndEvent ev = new BlockHuntRoomEndEvent(this, victory);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        this.endGame(normal, ev.getVictory());
     }
 
     /**
@@ -274,7 +274,7 @@ public abstract class RoomBase {
      *
      * @param normal 正常关闭
      */
-    public abstract void endGame(boolean normal);
+    protected abstract void endGame(boolean normal, int victory);
 
     /**
      * 计时Task
@@ -307,7 +307,7 @@ public abstract class RoomBase {
      * @param damager 攻击者
      * @param player 被攻击者
      */
-    public abstract void playerDamage(Player damager, Player player);
+    protected abstract void playerDamage(Player damager, Player player);
 
     public final void playerDeathEvent(Player player) {
         BlockHuntPlayerDeathEvent ev = new BlockHuntPlayerDeathEvent(this, player);
@@ -322,7 +322,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public abstract void playerDeath(Player player);
+    protected abstract void playerDeath(Player player);
 
     public final void playerRespawnEvent(Player player) {
         BlockHuntPlayerRespawnEvent ev = new BlockHuntPlayerRespawnEvent(this, player);
@@ -337,7 +337,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public abstract void playerRespawn(Player player);
+    protected abstract void playerRespawn(Player player);
 
     public final void playerCorpseSpawnEvent(Player player) {
         BlockHuntPlayerCorpseSpawnEvent ev = new BlockHuntPlayerCorpseSpawnEvent(this, player);
@@ -352,7 +352,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public abstract void playerCorpseSpawn(Player player);
+    protected abstract void playerCorpseSpawn(Player player);
 
     /**
      * 胜利
@@ -365,7 +365,7 @@ public abstract class RoomBase {
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
                     new VictoryTask(this.blockHunt, this, victoryMode), 20);
         }else {
-            this.endGame();
+            this.endGameEvent();
         }
     }
 
@@ -374,13 +374,12 @@ public abstract class RoomBase {
         if (this == o) return true;
         if (!(o instanceof RoomBase)) return false;
         RoomBase roomBase = (RoomBase) o;
-        return gameMode.equals(roomBase.gameMode) &&
-                level.equals(roomBase.level);
+        return level.equals(roomBase.level);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameMode, level);
+        return Objects.hash(level);
     }
 
 }
