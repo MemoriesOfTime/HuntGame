@@ -17,7 +17,6 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import updata.AutoData;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -97,12 +96,6 @@ public class BlockHunt extends PluginBase {
             getServer().getLogger().error("This branch is only for Nukkit PetteriM1 Edition!");
             getServer().getPluginManager().disablePlugin(this);
             return;
-        }
-        if(getServer().getPluginManager().getPlugin("AutoUpData") != null) {
-            if(AutoData.defaultUpData(this, this.getFile(),"lt-name","BlockHunt")) {
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
         }
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
