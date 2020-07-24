@@ -17,7 +17,6 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import updata.AutoData;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -88,12 +87,6 @@ public class BlockHunt extends PluginBase {
 
     @Override
     public void onEnable() {
-        if(getServer().getPluginManager().getPlugin("AutoUpData") != null) {
-            if(AutoData.defaultUpData(this, this.getFile(),"lt-name","BlockHunt")) {
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
         //加载计分板
@@ -119,7 +112,7 @@ public class BlockHunt extends PluginBase {
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         this.loadRooms();
         try {
-            this.metricsLite = new MetricsLite(this, 8215);
+            this.metricsLite = new MetricsLite(this, 8298);
         } catch (Exception ignored) {
 
         }
