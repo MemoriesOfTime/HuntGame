@@ -390,20 +390,20 @@ public class RoomClassicMode extends RoomBase {
                         }
                     }
                 }
+                players.put(player, 12);
+                players.keySet().forEach(p -> p.showPlayer(player));
+                player.teleport(randomSpawn.get(
+                        new Random().nextInt(randomSpawn.size())));
+                Tools.rePlayerState(player, true);
+                Item[] armor = new Item[4];
+                armor[0] = Item.get(306);
+                armor[1] = Item.get(307);
+                armor[2] = Item.get(308);
+                armor[3] = Item.get(309);
+                player.getInventory().setArmorContents(armor);
+                player.getInventory().addItem(Item.get(276));
             }
         }, 1);
-        this.players.put(player, 2);
-        this.players.keySet().forEach(p -> p.showPlayer(player));
-        player.teleport(this.getRandomSpawn().get(
-                new Random().nextInt(this.getRandomSpawn().size())));
-        Tools.rePlayerState(player, true);
-        Item[] armor = new Item[4];
-        armor[0] = Item.get(306);
-        armor[1] = Item.get(307);
-        armor[2] = Item.get(308);
-        armor[3] = Item.get(309);
-        player.getInventory().setArmorContents(armor);
-        player.getInventory().addItem(Item.get(276));
     }
 
     /**

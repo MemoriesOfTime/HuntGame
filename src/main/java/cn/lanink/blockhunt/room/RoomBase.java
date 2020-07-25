@@ -31,7 +31,7 @@ public abstract class RoomBase {
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final Position waitSpawn;
     protected final Level level;
-    protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1猎物 2猎人
+    protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1猎物 2猎人 12猎物转化成的猎人
     protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
     protected final HashMap<Player, Integer[]> playerCamouflageBlock = new HashMap<>();
     protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlocks = new HashMap<>();

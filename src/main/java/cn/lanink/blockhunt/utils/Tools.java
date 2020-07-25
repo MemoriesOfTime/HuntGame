@@ -36,6 +36,7 @@ public class Tools {
             case 1:
                 return BlockHunt.getInstance().getLanguage(player).prey;
             case 2:
+            case 12:
                 return BlockHunt.getInstance().getLanguage(player).hunters;
             default:
                 return BlockHunt.getInstance().getLanguage(player).death;

@@ -103,11 +103,12 @@ public class Language {
     public String userMenuButton2 = "§e退出当前房间";
     public String userMenuButton3 = "§e查看房间列表";
     public String adminMenuSetLevel = "当前设置地图：%name%";
-    public String adminMenuButton1 = "§e设置默认出生点";
+    public String adminMenuButton1 = "§e设置等待出生点";
     public String adminMenuButton2 = "§e添加随机出生点";
     public String adminMenuButton3 = "§e设置时间参数";
-    public String adminMenuButton4 = "§e重载所有房间";
-    public String adminMenuButton5 = "§c卸载所有房间";
+    public String adminMenuButton4 = "§e设置房间模式";
+    public String adminMenuButton5 = "§e重载所有房间";
+    public String adminMenuButton6 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "等待时间（秒）";
     public String adminTimeMenuInputText2 = "游戏时间（秒）";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
@@ -198,6 +199,7 @@ public class Language {
         this.adminMenuButton3 = config.getString("adminMenuButton3", this.adminMenuButton3);
         this.adminMenuButton4 = config.getString("adminMenuButton4", this.adminMenuButton4);
         this.adminMenuButton5 = config.getString("adminMenuButton5", this.adminMenuButton5);
+        this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);

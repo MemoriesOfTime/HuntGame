@@ -7,6 +7,7 @@ import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.lanink.blockhunt.room.RoomClassicMode;
+import cn.lanink.blockhunt.ui.GuiListener;
 import cn.lanink.blockhunt.utils.Language;
 import cn.lanink.blockhunt.utils.MetricsLite;
 import cn.lanink.lib.scoreboard.IScoreboard;
@@ -120,9 +121,10 @@ public class BlockHunt extends PluginBase {
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
+        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadRooms();
         try {
-            this.metricsLite = new MetricsLite(this, 8215);
+            this.metricsLite = new MetricsLite(this, 8298);
         } catch (Exception ignored) {
 
         }

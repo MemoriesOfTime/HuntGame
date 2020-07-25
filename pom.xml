@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink.cn</groupId>
     <artifactId>BlockHunt</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <licenses>
         <license>
@@ -94,7 +94,7 @@
                                 <replacement>
                                     <token>VERSION = ".*"</token>
                                     <!--suppress UnresolvedMavenProperty -->
-                                    <value>VERSION = "${project.version} git-${git.commit.id.abbrev}"</value>
+                                    <value>VERSION = "${project.version}-PM1E git-${git.commit.id.abbrev}"</value>
                                 </replacement>
                                 <replacement>
                                     <token>version: ".*"</token>

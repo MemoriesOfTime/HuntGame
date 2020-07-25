@@ -2,6 +2,8 @@ package cn.lanink.blockhunt.command;
 
 import cn.lanink.blockhunt.command.adminsubcommand.*;
 import cn.lanink.blockhunt.command.base.BaseCommand;
+import cn.lanink.blockhunt.ui.GuiCreate;
+import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
 /**
@@ -34,9 +36,7 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendUI(CommandSender sender) {
-        this.sendHelp(sender);
-        //TODO GUI!
-        //GuiCreate.sendAdminMenu((Player) sender);
+        GuiCreate.sendAdminMenu((Player) sender);
     }
 
 }
