@@ -3,6 +3,8 @@ package cn.lanink.blockhunt.command;
 import cn.lanink.blockhunt.command.base.BaseCommand;
 import cn.lanink.blockhunt.command.usersubcommand.JoinRoom;
 import cn.lanink.blockhunt.command.usersubcommand.QuitRoom;
+import cn.lanink.blockhunt.ui.GuiCreate;
+import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
 /**
@@ -27,9 +29,7 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendUI(CommandSender sender) {
-        this.sendHelp(sender);
-        //TODO GUI!
-        //GuiCreate.sendUserMenu((Player) sender);
+        GuiCreate.sendUserMenu((Player) sender);
     }
 
 }

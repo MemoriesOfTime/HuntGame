@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.listener;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.ui.GuiCreate;
 import cn.lanink.blockhunt.utils.SavePlayerInventory;
 import cn.lanink.blockhunt.utils.Tips;
 import cn.lanink.blockhunt.utils.Tools;
@@ -34,7 +35,7 @@ public class PlayerJoinAndQuit implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (player != null && BlockHunt.getInstance().getRooms().containsKey(player.getLevel().getName())) {
-            BlockHunt.getInstance().getServer().getScheduler().scheduleDelayedTask(new Task() {
+            BlockHunt.getInstance().getServer().getScheduler().scheduleDelayedTask(BlockHunt.getInstance(), new Task() {
                 @Override
                 public void onRun(int i) {
                     if (player.isOnline()) {
@@ -62,6 +63,7 @@ public class PlayerJoinAndQuit implements Listener {
             }
         }
         BlockHunt.getInstance().getPlayerLanguageHashMap().remove(player);
+        GuiCreate.UI_CACHE.remove(player);
     }
 
     @EventHandler
