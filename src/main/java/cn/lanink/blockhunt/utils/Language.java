@@ -58,7 +58,9 @@ public class Language {
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
     public String adminSetGameMode = "§a房间游戏模式已设置为: %mode%";
     public String adminSetGameModeNotFound = "§c房间游戏模式: %mode% 不存在！";
-    public String adminStartNoPlayer = "§a房间人数不足三人,无法开始游戏！";
+    public String adminStartRoom = "§a已强制开启游戏！";
+    public String adminStartRoomNoPlayer = "§a房间人数不足两人,无法开始游戏！";
+    public String adminStartRoomIsPlaying = "§c房间已经开始了！";
     public String adminStopRoom = "§a已强制结束房间！";
     public String adminLevelNoRoom = "§a当前地图不是游戏房间！";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
@@ -72,7 +74,7 @@ public class Language {
     public String itemQuitRoom = "§c退出房间";
     public String itemQuitRoomLore = "手持点击,即可退出房间";
     //房间模式
-    public String Classic = "经典";
+    public String classic = "经典";
     //身份
     public String prey = "猎物";
     public String hunters = "猎人";
@@ -155,7 +157,9 @@ public class Language {
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
         this.adminSetGameModeNotFound = config.getString("adminSetGameModeNotFound", this.adminSetGameModeNotFound);
-        this.adminStartNoPlayer = config.getString("adminStartNoPlayer", this.adminStartNoPlayer);
+        this.adminStartRoom = config.getString("adminStartRoom", this.adminStartRoom);
+        this.adminStartRoomNoPlayer = config.getString("adminStartRoomNoPlayer", this.adminStartRoomNoPlayer);
+        this.adminStartRoomIsPlaying = config.getString("adminStartRoomIsPlaying", this.adminStartRoomIsPlaying);
         this.adminStopRoom = config.getString("adminStopRoom", this.adminStopRoom);
         this.adminLevelNoRoom = config.getString("adminLevelNoRoom", this.adminLevelNoRoom);
         this.adminReload = config.getString("adminReload", this.adminReload);
@@ -167,7 +171,7 @@ public class Language {
         this.tpQuitRoomLevel = config.getString("tpQuitRoomLevel", this.tpQuitRoomLevel);
         this.itemQuitRoom = config.getString("itemQuitRoom", this.itemQuitRoom);
         this.itemQuitRoomLore = config.getString("itemQuitRoomLore", this.itemQuitRoomLore);
-        this.Classic = config.getString("Classic", this.Classic);
+        this.classic = config.getString("classic", this.classic);
         this.prey = config.getString("prey", this.prey);
         this.hunters = config.getString("hunters", this.hunters);
         this.death = config.getString("death", this.death);

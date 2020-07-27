@@ -4,6 +4,8 @@ languageMap:
   zh_HK: "zh_CN"
   zh_TW: "zh_CN"
   zh_SG: "zh_CN"
+  en: "en_US"
+  en-GB: "en_US"
 cmdUser: "blockhunt"
 cmdAdmin: "blockhuntadmin"
 victoryCmd:

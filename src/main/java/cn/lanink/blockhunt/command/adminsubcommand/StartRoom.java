@@ -33,9 +33,14 @@ public class StartRoom extends BaseSubCommand {
         RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
         if (room != null) {
             if (room.getPlayers().size() >= 2) {
-                room.gameStartEvent();
+                if (room.getStatus() == 1) {
+                    room.gameStartEvent();
+                    sender.sendMessage(this.blockHunt.getLanguage(sender).adminStartRoom);
+                }else {
+                    sender.sendMessage(this.blockHunt.getLanguage(sender).adminStartRoomIsPlaying);
+                }
             }else {
-                sender.sendMessage(this.blockHunt.getLanguage(sender).adminStartNoPlayer);
+                sender.sendMessage(this.blockHunt.getLanguage(sender).adminStartRoomNoPlayer);
             }
         }else {
             sender.sendMessage(this.blockHunt.getLanguage(sender).adminLevelNoRoom);

@@ -67,6 +67,7 @@ public class BlockHunt extends PluginBase {
         this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
         //语言文件
         saveResource("Language/zh_CN.yml", false);
+        saveResource("Language/en_US.yml", false);
         File[] files = new File(getDataFolder() + "/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
