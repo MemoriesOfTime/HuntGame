@@ -73,7 +73,9 @@ public class BlockHunt extends PluginBase {
         }
         //默认皮肤
         this.defaultSkin.setTrusted(true);
-        this.defaultSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
+        if (this.defaultSkin.getSkinResourcePatch().trim().equals("")) {
+            this.defaultSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
+        }
         BufferedImage skinData = null;
         try {
             skinData = ImageIO.read(this.getResource("skin.png"));

@@ -117,10 +117,10 @@ public class RoomClassicMode extends RoomBase {
         int x=0;
         for (Player player : this.getPlayers().keySet()) {
             if (this.getPlayers(player) == 2) continue;
+            x++;
             if (x >= this.getRandomSpawn().size()) {
                 x = 0;
             }
-            x++;
             player.teleport(this.getRandomSpawn().get(x));
             player.setScale(0.5F);
             String[] s = this.camouflageBlocks.get(new Random().nextInt(this.camouflageBlocks.size())).split(":");
