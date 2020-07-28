@@ -66,7 +66,7 @@ public class RoomClassicMode extends RoomBase {
                 player.sendMessage(this.blockHunt.getLanguage(player).joinRoom
                         .replace("%name%", this.level.getName()));
             }else {
-                this.quitRoom(player, true);
+                this.quitRoom(player);
             }
         }
     }
@@ -78,30 +78,18 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public synchronized void quitRoom(Player player) {
-        this.quitRoom(player, true);
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     * @param online 是否在线
-     */
-    @Override
-    public synchronized void quitRoom(Player player, boolean online) {
         if (this.isPlaying(player)) {
             this.players.remove(player);
         }
         if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
-        if (online) {
-            this.players.keySet().forEach(player::showPlayer);
-            this.blockHunt.getScoreboard().closeScoreboard(player);
-            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-            Tools.rePlayerState(player, false);
-            SavePlayerInventory.restore(player);
-        }
+        this.players.keySet().forEach(player::showPlayer);
+        this.players.keySet().forEach(p -> p.showPlayer(player));
+        this.blockHunt.getScoreboard().closeScoreboard(player);
+        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        Tools.rePlayerState(player, false);
+        SavePlayerInventory.restore(player);
         this.players.keySet().forEach(p -> p.showPlayer(player));
     }
 
@@ -114,14 +102,14 @@ public class RoomClassicMode extends RoomBase {
         this.setStatus(2);
         Tools.cleanEntity(this.getLevel(), true);
         this.assignIdentity();
-        int x=0;
+        int x = 0;
         for (Player player : this.getPlayers().keySet()) {
             if (this.getPlayers(player) == 2) continue;
-            x++;
             if (x >= this.getRandomSpawn().size()) {
                 x = 0;
             }
             player.teleport(this.getRandomSpawn().get(x));
+            x++;
             player.setScale(0.5F);
             String[] s = this.camouflageBlocks.get(new Random().nextInt(this.camouflageBlocks.size())).split(":");
             Integer[] integers = new Integer[2];

@@ -89,7 +89,7 @@ public class PlayerGameListener implements Listener {
         if (room.getStatus() == 1) {
             CompoundTag tag = event.getItem() != null ? event.getItem().getNamedTag() : null;
             if (tag != null && tag.getBoolean("isBlockHuntItem") && tag.getInt("BlockHuntType") == 10) {
-                room.quitRoom(player, true);
+                room.quitRoom(player);
                 event.setCancelled(true);
             }
         }

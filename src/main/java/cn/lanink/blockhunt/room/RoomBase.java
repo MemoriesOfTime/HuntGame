@@ -128,17 +128,7 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public void quitRoom(Player player) {
-        this.quitRoom(player, true);
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     * @param online 是否在线
-     */
-    public abstract void quitRoom(Player player, boolean online);
+    public abstract void quitRoom(Player player);
 
     /**
      * 记录在游戏内的玩家
