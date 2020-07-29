@@ -112,7 +112,7 @@ public class BlockHunt extends PluginBase {
         getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadRooms();
