@@ -61,10 +61,10 @@ public class VictoryTask extends PluginTask<BlockHunt> {
             this.victoryTime--;
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                 if (entry.getValue() != 0) {
-                    if (this.victory == 1 && entry.getValue() == 3) {
-                        continue;
+                    if (this.victory == 1 && entry.getValue() == 1 ||
+                            this.victory == 2 && (entry.getValue() == 2 || entry.getValue() == 12)) {
+                        Tools.spawnFirework(entry.getKey());
                     }
-                    Tools.spawnFirework(entry.getKey());
                 }
             }
         }
