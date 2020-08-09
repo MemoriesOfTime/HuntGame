@@ -47,6 +47,7 @@ public class BlockHunt extends PluginBase {
     private MetricsLite metricsLite;
     private List<String> victoryCmd;
     private List<String> defeatCmd;
+    private boolean hasTips = false;
 
     public static BlockHunt getInstance() {
         return BLOCK_HUNT;
@@ -78,7 +79,9 @@ public class BlockHunt extends PluginBase {
         }
         //默认皮肤
         this.defaultSkin.setTrusted(true);
-        this.defaultSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
+        if ("".equals(this.defaultSkin.getSkinResourcePatch().trim())) {
+            this.defaultSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
+        }
         BufferedImage skinData = null;
         try {
             skinData = ImageIO.read(this.getResource("skin.png"));
@@ -104,23 +107,39 @@ public class BlockHunt extends PluginBase {
         //加载计分板
         try {
             Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
+            if (getServer().getPluginManager().getPlugin("ScoreboardPlugin").isDisabled()) {
+                throw new Exception("Not Loaded");
+            }
             this.scoreboard = new ScoreboardDe();
-        } catch (ClassNotFoundException e1) {
+        } catch (Exception e1) {
             try {
                 Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
+                if (getServer().getPluginManager().getPlugin("ScoreboardAPI").isDisabled()) {
+                    throw new Exception("Not Loaded");
+                }
                 this.scoreboard = new ScoreboardGt();
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 getLogger().error(this.getLanguage(null).scoreboardAPINotFound);
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
+        }
+        //检查Tips
+        try {
+            Class.forName("tip.Main");
+            if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
+                throw new Exception("Not Loaded");
+            }
+            this.hasTips = true;
+        } catch (Exception ignored) {
+
         }
         this.cmdUser = this.config.getString("cmdUser", "blockhunt");
         this.cmdAdmin = this.config.getString("cmdAdmin", "blockhuntadmin");
         getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadRooms();
@@ -135,6 +154,10 @@ public class BlockHunt extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public boolean isHasTips() {
+        return this.hasTips;
     }
 
     public List<String> getVictoryCmd() {
@@ -229,10 +252,10 @@ public class BlockHunt extends PluginBase {
                     Config config = getRoomConfig(fileName[0]);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
-                            config.getString("waitSpawn", "").trim().equals("") ||
+                            "".equals(config.getString("waitSpawn", "").trim()) ||
                             config.getStringList("randomSpawn").size() == 0 ||
                             config.getStringList("blocks").size() == 0 ||
-                            config.getString("world", "").trim().equals("")) {
+                            "".equals(config.getString("world", "").trim())) {
                         getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", fileName[0]));
                         continue;
                     }

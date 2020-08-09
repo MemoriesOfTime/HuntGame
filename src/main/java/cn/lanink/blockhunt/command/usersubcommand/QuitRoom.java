@@ -27,7 +27,7 @@ public class QuitRoom extends BaseSubCommand {
         Player player = (Player) sender;
         for (RoomBase room : this.blockHunt.getRooms().values()) {
             if (room.isPlaying(player)) {
-                room.quitRoom(player, true);
+                room.quitRoom(player);
                 sender.sendMessage(this.blockHunt.getLanguage(sender).quitRoom);
                 return true;
             }

@@ -1,12 +1,17 @@
 name: BlockHunt
 main: cn.lanink.blockhunt.BlockHunt
-version: "0.0.3"
+version: "0.0.4"
 api: ["1.0.9"]
 load: POSTWORLD
 author: "LT_Name"
+softdepend:
+  - "ScoreboardPlugin"
+  - "ScoreboardAPI"
+  - "Tips"
 loadbefore:
   - "ScoreboardPlugin"
   - "ScoreboardAPI"
+  - "Tips"
 
 permissions:
   blockhunt.command.user:

@@ -25,6 +25,12 @@ import java.util.LinkedHashMap;
  */
 public class PlayerJoinAndQuit implements Listener {
 
+    private final BlockHunt blockHunt;
+
+    public PlayerJoinAndQuit(BlockHunt blockHunt) {
+        this.blockHunt = blockHunt;
+    }
+
     @EventHandler
     public void onPlayerLogin(PlayerPreLoginEvent e) {
         String lang = e.getPlayer().getLoginChainData().getLanguageCode();
@@ -34,20 +40,20 @@ public class PlayerJoinAndQuit implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player != null && BlockHunt.getInstance().getRooms().containsKey(player.getLevel().getName())) {
-            BlockHunt.getInstance().getServer().getScheduler().scheduleDelayedTask(BlockHunt.getInstance(), new Task() {
+        if (player != null && this.blockHunt.getRooms().containsKey(player.getLevel().getName())) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
                 @Override
                 public void onRun(int i) {
                     if (player.isOnline()) {
                         Tools.rePlayerState(player ,false);
-                        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+                        if (blockHunt.isHasTips()) {
                             Tips.removeTipsConfig(player.getLevel().getName(), player);
                         }
                         SavePlayerInventory.restore(player);
                         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }
-            }, 10);
+            }, 1);
         }
     }
 
@@ -59,10 +65,11 @@ public class PlayerJoinAndQuit implements Listener {
         }
         for (RoomBase room : BlockHunt.getInstance().getRooms().values()) {
             if (room.isPlaying(player)) {
-                room.quitRoom(player, false);
+                room.quitRoom(player);
+                break;
             }
         }
-        BlockHunt.getInstance().getPlayerLanguageHashMap().remove(player);
+        this.blockHunt.getPlayerLanguageHashMap().remove(player);
         GuiCreate.UI_CACHE.remove(player);
     }
 
@@ -73,14 +80,14 @@ public class PlayerJoinAndQuit implements Listener {
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, RoomBase> room =  BlockHunt.getInstance().getRooms();
+            LinkedHashMap<String, RoomBase> room =  this.blockHunt.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(BlockHunt.getInstance().getLanguage(player).tpQuitRoomLevel);
+                player.sendMessage(this.blockHunt.getLanguage(player).tpQuitRoomLevel);
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(BlockHunt.getInstance().getLanguage(player).tpJoinRoomLevel);
+                player.sendMessage(this.blockHunt.getLanguage(player).tpJoinRoomLevel);
             }
         }
     }

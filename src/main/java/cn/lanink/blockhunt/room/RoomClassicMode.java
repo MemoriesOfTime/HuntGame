@@ -60,13 +60,13 @@ public class RoomClassicMode extends RoomBase {
             SavePlayerInventory.save(player);
             player.getInventory().setItem(8, Tools.getBlockHuntItem(10, player));
             if (player.teleport(this.getWaitSpawn())) {
-                if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+                if (this.blockHunt.isHasTips()) {
                     Tips.closeTipsShow(this.level.getName(), player);
                 }
                 player.sendMessage(this.blockHunt.getLanguage(player).joinRoom
                         .replace("%name%", this.level.getName()));
             }else {
-                this.quitRoom(player, true);
+                this.quitRoom(player);
             }
         }
     }
@@ -78,30 +78,18 @@ public class RoomClassicMode extends RoomBase {
      */
     @Override
     public synchronized void quitRoom(Player player) {
-        this.quitRoom(player, true);
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     * @param online 是否在线
-     */
-    @Override
-    public synchronized void quitRoom(Player player, boolean online) {
         if (this.isPlaying(player)) {
             this.players.remove(player);
         }
-        if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+        if (this.blockHunt.isHasTips()) {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
-        if (online) {
-            this.players.keySet().forEach(player::showPlayer);
-            this.blockHunt.getScoreboard().closeScoreboard(player);
-            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-            Tools.rePlayerState(player, false);
-            SavePlayerInventory.restore(player);
-        }
+        this.players.keySet().forEach(player::showPlayer);
+        this.players.keySet().forEach(p -> p.showPlayer(player));
+        this.blockHunt.getScoreboard().closeScoreboard(player);
+        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        Tools.rePlayerState(player, false);
+        SavePlayerInventory.restore(player);
         this.players.keySet().forEach(p -> p.showPlayer(player));
     }
 
@@ -114,14 +102,14 @@ public class RoomClassicMode extends RoomBase {
         this.setStatus(2);
         Tools.cleanEntity(this.getLevel(), true);
         this.assignIdentity();
-        int x=0;
+        int x = 0;
         for (Player player : this.getPlayers().keySet()) {
             if (this.getPlayers(player) == 2) continue;
             if (x >= this.getRandomSpawn().size()) {
                 x = 0;
             }
-            x++;
             player.teleport(this.getRandomSpawn().get(x));
+            x++;
             player.setScale(0.5F);
             String[] s = this.camouflageBlocks.get(new Random().nextInt(this.camouflageBlocks.size())).split(":");
             Integer[] integers = new Integer[2];
@@ -259,6 +247,7 @@ public class RoomClassicMode extends RoomBase {
                         x++;
                         break;
                     case 2:
+                    case 12:
                         hunters = true;
                         break;
                 }
@@ -423,7 +412,7 @@ public class RoomClassicMode extends RoomBase {
             default:
                 skin = this.blockHunt.getDefaultSkin();
         }
-        if (skin.getSkinResourcePatch().trim().equals("")) {
+        if ("".equals(skin.getSkinResourcePatch().trim())) {
             skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         }
         CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
