@@ -247,6 +247,7 @@ public class RoomClassicMode extends RoomBase {
                         x++;
                         break;
                     case 2:
+                    case 12:
                         hunters = true;
                         break;
                 }
@@ -411,7 +412,7 @@ public class RoomClassicMode extends RoomBase {
             default:
                 skin = this.blockHunt.getDefaultSkin();
         }
-        if (skin.getSkinResourcePatch().trim().equals("")) {
+        if ("".equals(skin.getSkinResourcePatch().trim())) {
             skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         }
         CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);

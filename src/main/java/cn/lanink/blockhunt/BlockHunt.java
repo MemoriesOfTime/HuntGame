@@ -73,7 +73,7 @@ public class BlockHunt extends PluginBase {
         }
         //默认皮肤
         this.defaultSkin.setTrusted(true);
-        if (this.defaultSkin.getSkinResourcePatch().trim().equals("")) {
+        if ("".equals(this.defaultSkin.getSkinResourcePatch().trim())) {
             this.defaultSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         }
         BufferedImage skinData = null;
@@ -221,10 +221,10 @@ public class BlockHunt extends PluginBase {
                     Config config = getRoomConfig(fileName[0]);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
-                            config.getString("waitSpawn", "").trim().equals("") ||
+                            "".equals(config.getString("waitSpawn", "").trim()) ||
                             config.getStringList("randomSpawn").size() == 0 ||
                             config.getStringList("blocks").size() == 0 ||
-                            config.getString("world", "").trim().equals("")) {
+                            "".equals(config.getString("world", "").trim())) {
                         getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", fileName[0]));
                         continue;
                     }
