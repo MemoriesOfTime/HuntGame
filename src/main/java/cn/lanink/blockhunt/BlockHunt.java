@@ -47,6 +47,7 @@ public class BlockHunt extends PluginBase {
     private MetricsLite metricsLite;
     private List<String> victoryCmd;
     private List<String> defeatCmd;
+    private boolean hasTips = false;
 
     public static BlockHunt getInstance() {
         return BLOCK_HUNT;
@@ -96,16 +97,32 @@ public class BlockHunt extends PluginBase {
         //加载计分板
         try {
             Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
+            if (getServer().getPluginManager().getPlugin("ScoreboardPlugin").isDisabled()) {
+                throw new Exception("Not Loaded");
+            }
             this.scoreboard = new ScoreboardDe();
-        } catch (ClassNotFoundException e1) {
+        } catch (Exception e1) {
             try {
                 Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
+                if (getServer().getPluginManager().getPlugin("ScoreboardAPI").isDisabled()) {
+                    throw new Exception("Not Loaded");
+                }
                 this.scoreboard = new ScoreboardGt();
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 getLogger().error(this.getLanguage(null).scoreboardAPINotFound);
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
+        }
+        //检查Tips
+        try {
+            Class.forName("tip.Main");
+            if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
+                throw new Exception("Not Loaded");
+            }
+            this.hasTips = true;
+        } catch (Exception ignored) {
+
         }
         this.cmdUser = this.config.getString("cmdUser", "blockhunt");
         this.cmdAdmin = this.config.getString("cmdAdmin", "blockhuntadmin");
@@ -127,6 +144,10 @@ public class BlockHunt extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public boolean isHasTips() {
+        return this.hasTips;
     }
 
     public List<String> getVictoryCmd() {

@@ -46,7 +46,7 @@ public class PlayerJoinAndQuit implements Listener {
                 public void onRun(int i) {
                     if (player.isOnline()) {
                         Tools.rePlayerState(player ,false);
-                        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+                        if (blockHunt.isHasTips()) {
                             Tips.removeTipsConfig(player.getLevel().getName(), player);
                         }
                         SavePlayerInventory.restore(player);

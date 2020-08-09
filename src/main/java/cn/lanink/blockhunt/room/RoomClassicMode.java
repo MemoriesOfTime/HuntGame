@@ -60,7 +60,7 @@ public class RoomClassicMode extends RoomBase {
             SavePlayerInventory.save(player);
             player.getInventory().setItem(8, Tools.getBlockHuntItem(10, player));
             if (player.teleport(this.getWaitSpawn())) {
-                if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+                if (this.blockHunt.isHasTips()) {
                     Tips.closeTipsShow(this.level.getName(), player);
                 }
                 player.sendMessage(this.blockHunt.getLanguage(player).joinRoom
@@ -81,7 +81,7 @@ public class RoomClassicMode extends RoomBase {
         if (this.isPlaying(player)) {
             this.players.remove(player);
         }
-        if (Server.getInstance().getPluginManager().getPlugins().containsKey("Tips")) {
+        if (this.blockHunt.isHasTips()) {
             Tips.removeTipsConfig(this.level.getName(), player);
         }
         this.players.keySet().forEach(player::showPlayer);
