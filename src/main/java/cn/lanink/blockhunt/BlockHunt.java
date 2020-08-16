@@ -64,6 +64,7 @@ public class BlockHunt extends PluginBase {
         //语言文件
         saveResource("Language/zh_CN.yml", false);
         saveResource("Language/en_US.yml", false);
+        saveResource("Language/de_DE.yml", false);
         File[] files = new File(getDataFolder() + "/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {

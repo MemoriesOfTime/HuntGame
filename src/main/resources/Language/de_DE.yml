@@ -1,0 +1,112 @@
+scoreboardAPINotFound: "§cScoreboard instalieren！"
+defaultSkinFailure: "§c Skin ladefehler！Bitte konfig prüfen！"
+startLoadingRoom: "§eRaum wird geladen..."
+roomLoadedSuccess: "§aRaum：%name% Geladen！"
+roomLoadedFailureByConfig: "§cRaum：%name% Konfiguration nicht abgeschlossen！"
+roomLoadedFailureByLevel: "§cRaum：%name% Kartenfehler！"
+roomLoadedAllSuccess: "§eRäume geladen！Räume %number% geladen！"
+roomUnloadSuccess: "§cRaum：%name% Entladen！"
+roomUnloadFailure: "§cRaum：%name% unnormal beendet！"
+pluginEnable: "§ePlugin geladen！"
+pluginDisable: "§cPlugin Deinstaliert！"
+useCmdInRoom: "§e >> §cIm Spiel kannst du keine Befehle nutzen!"
+cmdHelp: "§aHilfe：/%cmdName% help"
+userHelp: |-
+    §eBlockHunt--Befehlshilfe
+    §a/%cmdName% §eBenutzeroberfläche
+    §a/%cmdName% join <Raum> §eNimm am spiel Teil
+    §a/%cmdName% quit §eBeendet das Spiel
+noPermission: "§cDu hast keine Rechte！"
+joinRoom: "§aDu bist im Raum: %name%"
+joinRoomOnRoom: "§cDu befindest dich schon in eienm Raum!"
+joinRoomOnRiding: "§aDu kannst nicht beitreten da du reitest！"
+joinRandomRoom: "§aDu bist einem Zufälligen Raum beigetreten！"
+joinRoomIsPlaying: "§aDas Spiel läuft schon, bitte warten..."
+joinRoomIsFull: "§aDer Raum ist voll, bitte warte..."
+joinRoomIsNotFound: "§aDer Raum existiert nicht！"
+joinRoomNotAvailable: "§aRaum ist nicht verfügbar！"
+quitRoom: "§aDu hast den Raum verlassen"
+quitRoomNotInRoom: "§aDu bist in keinem Raum！"
+listRoom: "§eRaumliste： §a %list%"
+useCmdInCon: "Bitte treten sie einem Spiel bei！"
+adminHelp: |-
+    §eBlockHunt--Hilfe
+    §a/%cmdName% §eGui öffnen
+    §a/%cmdName% setwaitspawn §eWartespawn hinzufügen
+    §a/%cmdName% addrandomspawn  §eSpielspawn hinzufügen
+    §a/%cmdName% addblock §eTarnblock hinzufügen
+    §a/%cmdName% setwaittime <Zeit> §eWartezeit einstellen
+    §a/%cmdName% setgametime <Zeit> §eSpielzeit einstellen
+    §a/%cmdName% setgamemode <Modus> §eRaummodus einstellen
+    §a/%cmdName% startroom §eSpielstart
+    §a/%cmdName% stoproom §eSpielabbruch
+    §a/%cmdName% reloadroom §eLädt alle Räume
+    §a/%cmdName% unloadroom §eEntlädt alle Räume
+adminSetSpawn: "§aWartespawn hinzugefügt！"
+adminAddRandomSpawn: "§aRandomspawn hinzugefügt！"
+adminAddBlock: "§aDer Block%id%wurde hinzugefügt！"
+adminAddBlockFailure: "§cItem:%id%Kann nicht als Block verwendet werden！"
+adminNotNumber: "§aParameter ist keine Zahl！"
+adminSetWaitTime: "§aWartezeit ist eingestellt auf：%time%"
+adminSetGameTime: "§aSpielzeit ist eingestellt auf：%time%"
+adminSetGameTimeShort: "§aMinimale Spielzeit 1 Minute！"
+adminSetGameMode: "§aRaummodus wurde eingestellt auf: %mode%"
+adminSetGameModeNotFound: "§cRaummodus: %mode% ist nicht vorhanden！"
+adminStartNoPlayer: "§aZu wenig Spieler um zu Starten！"
+adminStopRoom: "§aDas Spiel wurde beendet！"
+adminLevelNoRoom: "§aDu bist in keinem Raum！"
+adminReload: "§aKonfiguration ist neu geladen！Bitte überprüfen！"
+adminUnload: "§aAlle Räume sind entladen！Bitte Überprüfen！"
+roomSafeKick: "\n§cSpiel abgebrochen!\nBitte Rejoine！"
+preyChat: "§a[Blöcke] %player% + §b >>> %message%"
+huntersChat: "§a[Sucher] %player% + §b >>> %message%"
+tpJoinRoomLevel: "§e >> §cBitte Betrete er ein Raum！"
+tpQuitRoomLevel: "§e >> §cBitte benutzen sie den Befehl um den Raum zu verlassen！"
+itemQuitRoom: "§cRaum Verlassen"
+itemQuitRoomLore: "Placen um den Raum zu verlassen"
+Classic: "Classic"
+prey: "Block"
+hunters: "Sucher"
+death: "Tod"
+titlePreyTitle: "§aBlock"
+titlePreySubtitle: "Zum gewinnen darfst du nicht gefunden werden!"
+titleHuntersTitle: "§eSucher"
+titleHuntersSubtitle: "Der Sucher muss sie alle finden!"
+titleVictoryHuntersTitle: "§aDer Sucher hat gewonnen"
+titleVictoryPreySubtitle: "§aDie Blöcke haben gewonnen!"
+victoryHuntersBottom: "§eGlückwunsch!"
+victoryHuntersScoreBoard: "§eGlückwunsch an die Sucher! "
+victoryPreyBottom: "§eGlückwunsch！"
+victoryPreyScoreBoard: "§eGlückwunsch an die Blöcke！"
+scoreBoardTitle: "§eHide and Seek"
+waitTimeScoreBoard: |-
+    Spieleranzahl: §a %playerNumber%/16
+    §aSpielstart in： §l§e %time%
+waitScoreBoard: |-
+    Spieleranzahl: §a %playerNumber%/16
+    Mindestanzahl 3 Spieler
+    Warte auf weitere Spieler
+waitTimeBottom: "§aDas Spiel beginnt in: §e%time% §aSek.!"
+waitBottom: "§cBitte auf weiter Spieler warten"
+gameTimeScoreBoard: |-
+    §l§aRolle:§e %mode%
+    §l§aAnzahl der Versteckten:§e %playerNumber%
+    §l§aRestzeit:§e %time% §aSekunden
+huntersDispatchedTimeBottom: "§aDer Sucher Startet in §e%time%§aSek."
+respawnTimeBottom: "§aWird in %time%Sek. alls Sucher wiederbelebt！"
+huntersKillPrey: "§a %damagePlayer% §rhat§c %player% §rgefunden"
+userMenuButton1: "§eZufälligen Raum beitreten"
+userMenuButton2: "§eRaum verlassen"
+userMenuButton3: "§eVerfügbare Räume anzeigen"
+adminMenuSetLevel: "Raum：%name%"
+adminMenuButton1: "§eSet default spawnpoint"
+adminMenuButton2: "§eAdd random spawnpoint"
+adminMenuButton3: "§eSet time parameters"
+adminMenuButton4: "§eSet room mode"
+adminMenuButton5: "§eReload all the rooms"
+adminMenuButton6: "§cUninstall all the rooms"
+adminTimeMenuInputText1: "Wartezeit（Sekunden）"
+adminTimeMenuInputText2: "Spielzeit（Sekunden）"
+joinRoomOK: "§l§aBestätige mit Okay um der folgenden Raum beitzutreten: %name% §l§a"
+buttonOK: "§aOkay"
+buttonReturn: "§cZurück"
