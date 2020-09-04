@@ -44,7 +44,6 @@ public class BlockHunt extends PluginBase {
     private HashMap<String, String> languageMappingTable;
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
     private final Skin defaultSkin = new Skin();
-    private MetricsLite metricsLite;
     private List<String> victoryCmd;
     private List<String> defeatCmd;
     private boolean hasTips = false;
@@ -135,7 +134,7 @@ public class BlockHunt extends PluginBase {
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadRooms();
         try {
-            this.metricsLite = new MetricsLite(this, 8298);
+            new MetricsLite(this, 8298);
         } catch (Exception ignored) {
 
         }
