@@ -7,12 +7,11 @@ import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.lanink.blockhunt.room.RoomClassicMode;
+import cn.lanink.blockhunt.scoreboard.ScoreboardUtil;
+import cn.lanink.blockhunt.scoreboard.base.IScoreboard;
 import cn.lanink.blockhunt.ui.GuiListener;
 import cn.lanink.blockhunt.utils.Language;
 import cn.lanink.blockhunt.utils.MetricsLite;
-import cn.lanink.lib.scoreboard.IScoreboard;
-import cn.lanink.lib.scoreboard.ScoreboardDe;
-import cn.lanink.lib.scoreboard.ScoreboardGt;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -94,26 +93,9 @@ public class BlockHunt extends PluginBase {
     public void onEnable() {
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
+
         //加载计分板
-        try {
-            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
-            if (getServer().getPluginManager().getPlugin("ScoreboardPlugin").isDisabled()) {
-                throw new Exception("Not Loaded");
-            }
-            this.scoreboard = new ScoreboardDe();
-        } catch (Exception e1) {
-            try {
-                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
-                if (getServer().getPluginManager().getPlugin("ScoreboardAPI").isDisabled()) {
-                    throw new Exception("Not Loaded");
-                }
-                this.scoreboard = new ScoreboardGt();
-            } catch (Exception e) {
-                getLogger().error(this.getLanguage(null).scoreboardAPINotFound);
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
+        this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
             Class.forName("tip.Main");

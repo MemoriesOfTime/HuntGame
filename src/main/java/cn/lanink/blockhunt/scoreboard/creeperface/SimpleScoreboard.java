@@ -1,22 +1,27 @@
-package cn.lanink.lib.scoreboard;
+package cn.lanink.blockhunt.scoreboard.creeperface;
 
+import cn.lanink.blockhunt.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 import gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI;
-import gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lt_name
  */
-public class ScoreboardGt implements IScoreboard {
+public class SimpleScoreboard implements IScoreboard {
 
-    private final HashMap<Player, SimpleScoreboard> scoreboards = new HashMap<>();
+    private final ConcurrentHashMap<Player, gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard> scoreboards = new ConcurrentHashMap<>();
 
     @Override
-    public void showScoreboard(Player player, String title, LinkedList<String> message) {
-        SimpleScoreboard simpleScoreboard;
+    public String getScoreboardName() {
+        return "Creeperface01(gt.creeperface.nukkit.scoreboardapi)";
+    }
+
+    @Override
+    public void showScoreboard(Player player, String title, List<String> message) {
+        gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard simpleScoreboard;
         if (!this.scoreboards.containsKey(player)) {
             simpleScoreboard = ScoreboardAPI.builder().build();
         }else {
@@ -36,16 +41,11 @@ public class ScoreboardGt implements IScoreboard {
     @Override
     public void closeScoreboard(Player player) {
         if (this.scoreboards.containsKey(player)) {
-            SimpleScoreboard simpleScoreboard = this.scoreboards.get(player);
+            gt.creeperface.nukkit.scoreboardapi.scoreboard.SimpleScoreboard simpleScoreboard = this.scoreboards.get(player);
             simpleScoreboard.removePlayer(player);
             simpleScoreboard.update();
+            this.scoreboards.remove(player);
         }
-    }
-
-    @Override
-    public void delCache(Player player) {
-        this.closeScoreboard(player);
-        this.scoreboards.remove(player);
     }
 
 }
