@@ -33,7 +33,6 @@ public class BlockHunt extends PluginBase {
     public static final String VERSION = "?";
     private static BlockHunt BLOCK_HUNT;
     private IScoreboard scoreboard;
-    public final LinkedList<Integer> taskList = new LinkedList<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
@@ -270,10 +269,6 @@ public class BlockHunt extends PluginBase {
             this.rooms.clear();
         }
         this.roomConfigs.clear();
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
-        }
-        this.taskList.clear();
     }
 
     /**
