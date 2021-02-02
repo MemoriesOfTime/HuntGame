@@ -15,7 +15,6 @@ public class WaitTask extends PluginTask<BlockHunt> {
 
     public WaitTask(BlockHunt owner, RoomBase room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
     }
 
@@ -66,14 +65,6 @@ public class WaitTask extends PluginTask<BlockHunt> {
             this.room.endGameEvent();
             this.cancel();
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

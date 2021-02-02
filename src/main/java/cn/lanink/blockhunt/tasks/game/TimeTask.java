@@ -13,7 +13,6 @@ public class TimeTask extends PluginTask<BlockHunt> {
 
     public TimeTask(BlockHunt owner, RoomBase room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
     }
 
@@ -23,14 +22,6 @@ public class TimeTask extends PluginTask<BlockHunt> {
             return;
         }
         this.room.asyncTimeTask();
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

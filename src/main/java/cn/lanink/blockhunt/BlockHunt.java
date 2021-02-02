@@ -7,12 +7,11 @@ import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.lanink.blockhunt.room.RoomClassicMode;
+import cn.lanink.blockhunt.scoreboard.ScoreboardUtil;
+import cn.lanink.blockhunt.scoreboard.base.IScoreboard;
 import cn.lanink.blockhunt.ui.GuiListener;
 import cn.lanink.blockhunt.utils.Language;
 import cn.lanink.blockhunt.utils.MetricsLite;
-import cn.lanink.lib.scoreboard.IScoreboard;
-import cn.lanink.lib.scoreboard.ScoreboardDe;
-import cn.lanink.lib.scoreboard.ScoreboardGt;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -34,7 +33,6 @@ public class BlockHunt extends PluginBase {
     public static final String VERSION = "?";
     private static BlockHunt BLOCK_HUNT;
     private IScoreboard scoreboard;
-    public final LinkedList<Integer> taskList = new LinkedList<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOM_CLASS = new LinkedHashMap<>();
     private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
@@ -44,7 +42,6 @@ public class BlockHunt extends PluginBase {
     private HashMap<String, String> languageMappingTable;
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
     private final Skin defaultSkin = new Skin();
-    private MetricsLite metricsLite;
     private List<String> victoryCmd;
     private List<String> defeatCmd;
     private boolean hasTips = false;
@@ -69,6 +66,7 @@ public class BlockHunt extends PluginBase {
         //语言文件
         saveResource("Language/zh_CN.yml", false);
         saveResource("Language/en_US.yml", false);
+        saveResource("Language/de_DE.yml", false);
         File[] files = new File(getDataFolder() + "/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
@@ -104,26 +102,9 @@ public class BlockHunt extends PluginBase {
         }
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         getLogger().info("§l§eVersion: " + VERSION);
+
         //加载计分板
-        try {
-            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
-            if (getServer().getPluginManager().getPlugin("ScoreboardPlugin").isDisabled()) {
-                throw new Exception("Not Loaded");
-            }
-            this.scoreboard = new ScoreboardDe();
-        } catch (Exception e1) {
-            try {
-                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
-                if (getServer().getPluginManager().getPlugin("ScoreboardAPI").isDisabled()) {
-                    throw new Exception("Not Loaded");
-                }
-                this.scoreboard = new ScoreboardGt();
-            } catch (Exception e) {
-                getLogger().error(this.getLanguage(null).scoreboardAPINotFound);
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
+        this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
             Class.forName("tip.Main");
@@ -144,7 +125,7 @@ public class BlockHunt extends PluginBase {
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadRooms();
         try {
-            this.metricsLite = new MetricsLite(this, 8298);
+            new MetricsLite(this, 8298);
         } catch (Exception ignored) {
 
         }
@@ -298,10 +279,6 @@ public class BlockHunt extends PluginBase {
             this.rooms.clear();
         }
         this.roomConfigs.clear();
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
-        }
-        this.taskList.clear();
     }
 
     /**

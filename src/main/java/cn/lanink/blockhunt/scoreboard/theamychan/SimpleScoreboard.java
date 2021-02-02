@@ -1,24 +1,30 @@
-package cn.lanink.lib.scoreboard;
+package cn.lanink.blockhunt.scoreboard.theamychan;
 
+import cn.lanink.blockhunt.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 import de.theamychan.scoreboard.api.ScoreboardAPI;
 import de.theamychan.scoreboard.network.DisplaySlot;
 import de.theamychan.scoreboard.network.Scoreboard;
 import de.theamychan.scoreboard.network.ScoreboardDisplay;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lt_name
  */
-public class ScoreboardDe implements IScoreboard {
+public class SimpleScoreboard implements IScoreboard {
 
-    private final HashMap<Player, Scoreboard> scoreboards = new HashMap<>();
+    private final ConcurrentHashMap<Player, Scoreboard> scoreboards = new ConcurrentHashMap<>();
 
     @Override
-    public void showScoreboard(Player player, String title, LinkedList<String> message) {
-        Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
+    public String getScoreboardName() {
+        return "LucGamesYT(de.theamychan.scoreboard.api)";
+    }
+
+    @Override
+    public void showScoreboard(Player player, String title, List<String> message) {
+        de.theamychan.scoreboard.network.Scoreboard scoreboard = ScoreboardAPI.createScoreboard();
         ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR, title, title);
         if (this.scoreboards.containsKey(player)) {
             this.scoreboards.get(player).hideFor(player);
@@ -35,13 +41,8 @@ public class ScoreboardDe implements IScoreboard {
         if (this.scoreboards.containsKey(player)) {
             Scoreboard scoreboard = this.scoreboards.get(player);
             scoreboard.hideFor(player);
+            this.scoreboards.remove(player);
         }
-    }
-
-    @Override
-    public void delCache(Player player) {
-        this.closeScoreboard(player);
-        this.scoreboards.remove(player);
     }
 
 }

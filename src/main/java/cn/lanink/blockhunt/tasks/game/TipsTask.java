@@ -19,7 +19,6 @@ public class TipsTask extends PluginTask<BlockHunt> {
 
     public TipsTask(BlockHunt owner, RoomClassicMode room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
     }
 
@@ -41,14 +40,6 @@ public class TipsTask extends PluginTask<BlockHunt> {
                 owner.getScoreboard().showScoreboard(entry.getKey(), owner.getLanguage(entry.getKey()).scoreBoardTitle, ms);
             }
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

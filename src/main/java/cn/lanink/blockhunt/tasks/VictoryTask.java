@@ -22,7 +22,6 @@ public class VictoryTask extends PluginTask<BlockHunt> {
 
     public VictoryTask(BlockHunt owner, RoomBase room, int victory) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
         this.victoryTime = 10;
         this.victory = victory;
@@ -68,14 +67,6 @@ public class VictoryTask extends PluginTask<BlockHunt> {
                 }
             }
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }
