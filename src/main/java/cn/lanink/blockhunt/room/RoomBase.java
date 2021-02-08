@@ -26,8 +26,10 @@ public abstract class RoomBase {
     protected BlockHunt blockHunt = BlockHunt.getInstance();
 
     protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
-    protected final int setWaitTime, setGameTime;
-    public int waitTime, gameTime; //秒
+    protected final int setWaitTime;
+    protected final int setGameTime;
+    public int waitTime;
+    public int gameTime;
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final Position waitSpawn;
     protected final Level level;

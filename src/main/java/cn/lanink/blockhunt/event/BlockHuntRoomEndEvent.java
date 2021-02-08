@@ -8,13 +8,13 @@ import cn.nukkit.event.HandlerList;
  */
 public class BlockHuntRoomEndEvent extends BlockHuntRoomEvent {
 
+    private int victory;
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {
         return handlers;
     }
-
-    private int victory;
 
     public BlockHuntRoomEndEvent(RoomBase room, int victory) {
         this.room = room;

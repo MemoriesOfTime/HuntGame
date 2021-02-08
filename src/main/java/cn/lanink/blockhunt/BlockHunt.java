@@ -31,19 +31,30 @@ import java.util.*;
 public class BlockHunt extends PluginBase {
 
     public static final String VERSION = "?";
+
     private static BlockHunt BLOCK_HUNT;
+
     private IScoreboard scoreboard;
-    private final HashMap<String, Config> roomConfigs = new HashMap<>();
+
     private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOM_CLASS = new LinkedHashMap<>();
+
+    private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
+
     private Config config;
-    private String cmdUser, cmdAdmin;
+
+    private String cmdUser;
+    private String cmdAdmin;
+
     private final HashMap<String, Language> languageHashMap = new HashMap<>();
     private HashMap<String, String> languageMappingTable;
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
+
     private final Skin defaultSkin = new Skin();
+
     private List<String> victoryCmd;
     private List<String> defeatCmd;
+
     private boolean hasTips = false;
 
     public static BlockHunt getInstance() {
