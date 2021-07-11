@@ -11,7 +11,6 @@ import cn.lanink.blockhunt.scoreboard.ScoreboardUtil;
 import cn.lanink.blockhunt.scoreboard.base.IScoreboard;
 import cn.lanink.blockhunt.ui.GuiListener;
 import cn.lanink.blockhunt.utils.Language;
-import cn.lanink.blockhunt.utils.MetricsLite;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -64,15 +63,17 @@ public class BlockHunt extends PluginBase {
     @Override
     public void onLoad() {
         BLOCK_HUNT = this;
-        saveDefaultConfig();
+
+        this.saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         this.victoryCmd = this.config.getStringList("victoryCmd");
         this.defeatCmd = this.config.getStringList("defeatCmd");
         this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
+
         //语言文件
-        saveResource("Language/zh_CN.yml", false);
-        saveResource("Language/en_US.yml", false);
-        saveResource("Language/de_DE.yml", false);
+        this.saveResource("Language/zh_CN.yml", false);
+        this.saveResource("Language/en_US.yml", false);
+        this.saveResource("Language/de_DE.yml", false);
         File[] files = new File(getDataFolder() + "/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
@@ -81,6 +82,7 @@ public class BlockHunt extends PluginBase {
                 getLogger().info("§aLanguage: " + name + " loaded !");
             }
         }
+
         //默认皮肤
         this.defaultSkin.setTrusted(true);
         if ("".equals(this.defaultSkin.getSkinResourcePatch().trim())) {
@@ -94,15 +96,16 @@ public class BlockHunt extends PluginBase {
             this.defaultSkin.setSkinData(skinData);
             this.defaultSkin.setSkinId("default");
         }else {
-            getLogger().error(this.getLanguage(null).defaultSkinFailure);
+            this.getLogger().error(this.getLanguage(null).defaultSkinFailure);
         }
+
         registerRoom("classic", RoomClassicMode.class);
     }
 
     @Override
     public void onEnable() {
-        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        getLogger().info("§l§eVersion: " + VERSION);
+        this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        this.getLogger().info("§l§eVersion: " + VERSION);
 
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
@@ -118,18 +121,21 @@ public class BlockHunt extends PluginBase {
         }
         this.cmdUser = this.config.getString("cmdUser", "blockhunt");
         this.cmdAdmin = this.config.getString("cmdAdmin", "blockhuntadmin");
-        getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
-        getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
-        getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
-        getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
-        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+
+        this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
+        this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
+
+        this.getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
+        this.getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
+        this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+
         this.loadRooms();
-        try {
+/*        try {
             new MetricsLite(this, 8298);
         } catch (Exception ignored) {
 
-        }
+        }*/
         getLogger().info(this.getLanguage(null).pluginEnable);
     }
 

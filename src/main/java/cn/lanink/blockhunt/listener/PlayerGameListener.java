@@ -20,6 +20,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -105,13 +106,13 @@ public class PlayerGameListener implements Listener {
             Set<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.remove(player);
             Integer[] integers = room.getPlayerCamouflageBlock(player);
-            Block block = Block.get(integers[0], integers[1], event.getTo().floor());
-            Vector3 vector3 = event.getTo().floor();
-            vector3.x += 0.5;
-            vector3.z += 0.5;
-            room.getEntityCamouflageBlocks(player).setPosition(vector3);
+            Position newPos = event.getTo().add(0, 0.5, 0).floor();
+            Block block = Block.get(integers[0], integers[1], newPos);
+            newPos.x += 0.5;
+            newPos.z += 0.5;
+            room.getEntityCamouflageBlocks(player).setPosition(newPos);
             level.sendBlocks(players.toArray(new Player[0]), new Vector3[] {
-                    event.getFrom().floor(), block });
+                    event.getFrom().add(0, 0.5, 0).floor(), block });
         }
     }
 
