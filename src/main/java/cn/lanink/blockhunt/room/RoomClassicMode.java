@@ -4,9 +4,9 @@ import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
 import cn.lanink.blockhunt.tasks.game.TimeTask;
 import cn.lanink.blockhunt.tasks.game.TipsTask;
-import cn.lanink.blockhunt.utils.SavePlayerInventory;
 import cn.lanink.blockhunt.utils.Tips;
 import cn.lanink.blockhunt.utils.Tools;
+import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -57,7 +57,7 @@ public class RoomClassicMode extends RoomBase {
             }
             this.addPlaying(player);
             Tools.rePlayerState(player, true);
-            SavePlayerInventory.save(player);
+            SavePlayerInventory.save(this.blockHunt, player);
             player.getInventory().setItem(8, Tools.getBlockHuntItem(10, player));
             if (player.teleport(this.getWaitSpawn())) {
                 if (this.blockHunt.isHasTips()) {
@@ -89,7 +89,7 @@ public class RoomClassicMode extends RoomBase {
         this.blockHunt.getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(player);
+        SavePlayerInventory.restore(this.blockHunt, player);
         this.players.keySet().forEach(p -> p.showPlayer(player));
     }
 

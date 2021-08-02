@@ -3,9 +3,9 @@ package cn.lanink.blockhunt.listener;
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.lanink.blockhunt.ui.GuiCreate;
-import cn.lanink.blockhunt.utils.SavePlayerInventory;
 import cn.lanink.blockhunt.utils.Tips;
 import cn.lanink.blockhunt.utils.Tools;
+import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
@@ -49,7 +49,7 @@ public class PlayerJoinAndQuit implements Listener {
                         if (blockHunt.isHasTips()) {
                             Tips.removeTipsConfig(player.getLevel().getName(), player);
                         }
-                        SavePlayerInventory.restore(player);
+                        SavePlayerInventory.restore(BlockHunt.getInstance(), player);
                         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }

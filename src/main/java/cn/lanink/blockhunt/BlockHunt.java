@@ -7,20 +7,18 @@ import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.lanink.blockhunt.room.RoomClassicMode;
-import cn.lanink.blockhunt.scoreboard.ScoreboardUtil;
-import cn.lanink.blockhunt.scoreboard.base.IScoreboard;
 import cn.lanink.blockhunt.ui.GuiListener;
 import cn.lanink.blockhunt.utils.Language;
+import cn.lanink.gamecore.GameCore;
+import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
+import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
@@ -48,8 +46,6 @@ public class BlockHunt extends PluginBase {
     private final HashMap<String, Language> languageHashMap = new HashMap<>();
     private HashMap<String, String> languageMappingTable;
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
-
-    private final Skin defaultSkin = new Skin();
 
     private List<String> victoryCmd;
     private List<String> defeatCmd;
@@ -83,22 +79,6 @@ public class BlockHunt extends PluginBase {
             }
         }
 
-        //默认皮肤
-        this.defaultSkin.setTrusted(true);
-        if ("".equals(this.defaultSkin.getSkinResourcePatch().trim())) {
-            this.defaultSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
-        }
-        BufferedImage skinData = null;
-        try {
-            skinData = ImageIO.read(this.getResource("skin.png"));
-        } catch (IOException ignored) { }
-        if (skinData != null) {
-            this.defaultSkin.setSkinData(skinData);
-            this.defaultSkin.setSkinId("default");
-        }else {
-            this.getLogger().error(this.getLanguage(null).defaultSkinFailure);
-        }
-
         registerRoom("classic", RoomClassicMode.class);
     }
 
@@ -109,16 +89,15 @@ public class BlockHunt extends PluginBase {
 
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
+
         //检查Tips
         try {
             Class.forName("tip.Main");
-            if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
-                throw new Exception("Not Loaded");
-            }
             this.hasTips = true;
         } catch (Exception ignored) {
 
         }
+
         this.cmdUser = this.config.getString("cmdUser", "blockhunt");
         this.cmdAdmin = this.config.getString("cmdAdmin", "blockhuntadmin");
 
@@ -131,12 +110,14 @@ public class BlockHunt extends PluginBase {
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
 
         this.loadRooms();
+
 /*        try {
             new MetricsLite(this, 8298);
         } catch (Exception ignored) {
 
         }*/
-        getLogger().info(this.getLanguage(null).pluginEnable);
+
+        this.getLogger().info(this.getLanguage(null).pluginEnable);
     }
 
     @Override
@@ -207,7 +188,7 @@ public class BlockHunt extends PluginBase {
     }
 
     public Skin getDefaultSkin() {
-        return this.defaultSkin;
+        return GameCore.DEFAULT_SKIN;
     }
 
     public LinkedHashMap<String, RoomBase> getRooms() {
@@ -231,7 +212,7 @@ public class BlockHunt extends PluginBase {
      * 加载所有房间
      */
     private void loadRooms() {
-        getLogger().info(this.getLanguage(null).startLoadingRoom);
+        this.getLogger().info(this.getLanguage(null).startLoadingRoom);
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null && s.length > 0) {
             for (File file1 : s) {
@@ -244,12 +225,12 @@ public class BlockHunt extends PluginBase {
                             config.getStringList("randomSpawn").size() == 0 ||
                             config.getStringList("blocks").size() == 0 ||
                             "".equals(config.getString("world", "").trim())) {
-                        getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", fileName[0]));
+                        this.getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", fileName[0]));
                         continue;
                     }
                     String levelName = config.getString("world");
-                    if (getServer().getLevelByName(levelName) == null && !getServer().loadLevel(levelName)) {
-                        getLogger().warning(this.getLanguage(null).roomLoadedFailureByLevel.replace("%name%", fileName[0]));
+                    if (this.getServer().getLevelByName(levelName) == null && !getServer().loadLevel(levelName)) {
+                        this.getLogger().warning(this.getLanguage(null).roomLoadedFailureByLevel.replace("%name%", fileName[0]));
                         continue;
                     }
                     try {
@@ -261,26 +242,26 @@ public class BlockHunt extends PluginBase {
                         RoomBase roomBase = constructor.newInstance(config);
                         roomBase.setGameName(gameMode);
                         this.rooms.put(fileName[0], roomBase);
-                        getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", fileName[0]));
+                        this.getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", fileName[0]));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-        getLogger().info(this.getLanguage(null).roomLoadedAllSuccess.replace(" %number%", this.rooms.size() + ""));
+        this.getLogger().info(this.getLanguage(null).roomLoadedAllSuccess.replace(" %number%", this.rooms.size() + ""));
     }
 
     /**
      * 卸载所有房间
      */
     public void unloadRooms() {
-        if (this.rooms.values().size() > 0) {
+        if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, RoomBase> entry = it.next();
                 entry.getValue().endGameEvent();
-                getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
+                this.getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();
             }
             this.rooms.clear();
