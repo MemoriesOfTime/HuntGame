@@ -27,7 +27,7 @@ import java.util.*;
  */
 public class BlockHunt extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "0.0.4 git-4a63424";
 
     private static BlockHunt BLOCK_HUNT;
 
