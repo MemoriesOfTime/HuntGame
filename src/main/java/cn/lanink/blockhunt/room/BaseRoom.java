@@ -13,6 +13,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
 import java.util.*;
@@ -312,7 +313,46 @@ public abstract class BaseRoom implements IRoom {
      *
      * @param normal 正常关闭
      */
-    protected abstract void endGame(boolean normal, int victory);
+    protected synchronized void endGame(boolean normal, int victory) {
+        this.status = 0;
+        HashSet<Player> victoryPlayers = new HashSet<>();
+        HashSet<Player> defeatPlayers = new HashSet<>();
+        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+            players.keySet().forEach(player -> entry.getKey().showPlayer(player));
+            switch (victory) {
+                case 1:
+                    if (entry.getValue() == 1) {
+                        victoryPlayers.add(entry.getKey());
+                    }else {
+                        defeatPlayers.add(entry.getKey());
+                    }
+                    break;
+                case 2:
+                    if (entry.getValue() == 2) {
+                        victoryPlayers.add(entry.getKey());
+                    }else {
+                        defeatPlayers.add(entry.getKey());
+                    }
+                    break;
+            }
+        }
+        for (Player player : new ArrayList<>(players.keySet())) {
+            this.quitRoom(player);
+        }
+        this.initTime();
+        this.playerCamouflageBlock.clear();
+        this.playerRespawnTime.clear();
+        this.entityCamouflageBlocks.clear();
+        Tools.cleanEntity(getLevel(), true);
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
+            @Override
+            public void onRun(int i) {
+                //所有玩家退出房间后再给奖励，防止物品被清
+                victoryPlayers.forEach(player -> Tools.cmd(player, blockHunt.getVictoryCmd()));
+                defeatPlayers.forEach(player -> Tools.cmd(player, blockHunt.getDefeatCmd()));
+            }
+        }, 1);
+    }
 
     /**
      * 计时Task

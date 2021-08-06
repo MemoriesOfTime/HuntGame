@@ -36,11 +36,7 @@ import java.util.Set;
  */
 public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> implements Listener {
 
-    private final BlockHunt blockHunt;
-
-    public ClassicGameListener(BlockHunt blockHunt) {
-        this.blockHunt = blockHunt;
-    }
+    private final BlockHunt blockHunt = BlockHunt.getInstance();
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {

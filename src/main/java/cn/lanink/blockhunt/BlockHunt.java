@@ -5,6 +5,7 @@ import cn.lanink.blockhunt.command.UserCommand;
 import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
 import cn.lanink.blockhunt.listener.classic.ClassicGameListener;
+import cn.lanink.blockhunt.room.AnimalModeRoom;
 import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.room.ClassicModeRoom;
 import cn.lanink.blockhunt.ui.GuiListener;
@@ -90,6 +91,9 @@ public class BlockHunt extends PluginBase {
         registerListeners("ClassicGameListener", ClassicGameListener.class);
 
         registerRoom("classic", ClassicModeRoom.class);
+        if (BlockHunt.debug) {
+            registerRoom("animal", AnimalModeRoom.class);
+        }
     }
 
     @Override
@@ -114,7 +118,6 @@ public class BlockHunt extends PluginBase {
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
 
-        this.getServer().getPluginManager().registerEvents(new ClassicGameListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
@@ -124,7 +127,7 @@ public class BlockHunt extends PluginBase {
         this.loadRooms();
 
 /*        try {
-            new MetricsLite(this, 8298);
+            new MetricsLite(this, ？？？);
         } catch (Exception ignored) {
 
         }*/

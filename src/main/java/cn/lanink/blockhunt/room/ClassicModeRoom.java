@@ -86,60 +86,6 @@ public class ClassicModeRoom extends BaseRoom {
     }
 
     /**
-     * 结束本局游戏
-     * @param normal 正常关闭
-     */
-    @Override
-    protected synchronized void endGame(boolean normal, int victory) {
-        this.status = 0;
-        HashSet<Player> victoryPlayers = new HashSet<>();
-        HashSet<Player> defeatPlayers = new HashSet<>();
-        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-            players.keySet().forEach(player -> entry.getKey().showPlayer(player));
-            switch (victory) {
-                case 1:
-                    if (entry.getValue() == 1) {
-                        victoryPlayers.add(entry.getKey());
-                    }else {
-                        defeatPlayers.add(entry.getKey());
-                    }
-                    break;
-                case 2:
-                    if (entry.getValue() == 2) {
-                        victoryPlayers.add(entry.getKey());
-                    }else {
-                        defeatPlayers.add(entry.getKey());
-                    }
-                    break;
-            }
-        }
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
-            @Override
-            public void onRun(int i) {
-                if (normal) {
-                    Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
-                    while(it.hasNext()) {
-                        Map.Entry<Player, Integer> entry = it.next();
-                        it.remove();
-                        quitRoom(entry.getKey());
-                    }
-                }else {
-                    getLevel().getPlayers().values().forEach(
-                            player -> player.kick(blockHunt.getLanguage(player).roomSafeKick));
-                }
-                initTime();
-                playerCamouflageBlock.clear();
-                playerRespawnTime.clear();
-                entityCamouflageBlocks.clear();
-                Tools.cleanEntity(getLevel(), true);
-                //所有玩家退出房间后再给奖励，防止物品被清
-                victoryPlayers.forEach(player -> Tools.cmd(player, blockHunt.getVictoryCmd()));
-                defeatPlayers.forEach(player -> Tools.cmd(player, blockHunt.getDefeatCmd()));
-            }
-        }, 1);
-    }
-
-    /**
      * 计时Task
      */
     @Override
