@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.ui;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -89,7 +89,7 @@ public class GuiCreate {
     public static void sendRoomListMenu(Player player) {
         Language language = BlockHunt.getInstance().getLanguage(player);
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        for (Map.Entry<String, RoomBase> entry : BlockHunt.getInstance().getRooms().entrySet()) {
+        for (Map.Entry<String, BaseRoom> entry : BlockHunt.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
                     "\n§r§eMode: " + entry.getValue().getGameMode() +
                     " Player: " + entry.getValue().getPlayers().size() + "/16",
@@ -106,7 +106,7 @@ public class GuiCreate {
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         Language language = BlockHunt.getInstance().getLanguage(player);
         FormWindowModal modal;
-        RoomBase room = BlockHunt.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
+        BaseRoom room = BlockHunt.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
         if (room != null) {
             if (room.getStatus() == 2 || room.getStatus() == 3) {
                 modal = new FormWindowModal(

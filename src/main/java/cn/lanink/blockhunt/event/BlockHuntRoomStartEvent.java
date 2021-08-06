@@ -1,6 +1,6 @@
 package cn.lanink.blockhunt.event;
 
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.event.HandlerList;
 
 /**
@@ -14,7 +14,7 @@ public class BlockHuntRoomStartEvent extends BlockHuntRoomEvent {
         return handlers;
     }
 
-    public BlockHuntRoomStartEvent(RoomBase room) {
+    public BlockHuntRoomStartEvent(BaseRoom room) {
         this.room = room;
     }
 

@@ -1,9 +1,11 @@
-package cn.lanink.blockhunt.listener;
+package cn.lanink.blockhunt.listener.classic;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.ClassicModeRoom;
 import cn.lanink.blockhunt.utils.Tools;
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -32,11 +34,11 @@ import java.util.Set;
 /**
  * @author lt_name
  */
-public class PlayerGameListener implements Listener {
+public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> implements Listener {
 
     private final BlockHunt blockHunt;
 
-    public PlayerGameListener(BlockHunt blockHunt) {
+    public ClassicGameListener(BlockHunt blockHunt) {
         this.blockHunt = blockHunt;
     }
 
@@ -44,8 +46,8 @@ public class PlayerGameListener implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player) {
             Player damager = (Player) event.getDamager();
-            RoomBase room = this.blockHunt.getRooms().get(damager.getLevel().getName());
-            if (room == null || !room.useDefaultListener() || !room.isPlaying(damager)) return;
+            BaseRoom room = this.getListenerRoom(damager.getLevel());
+            if (room == null || !room.isPlaying(damager)) return;
             event.setCancelled(true);
             Entity entity = event.getEntity();
             Item item = damager.getInventory() != null ? damager.getInventory().getItemInHand() : null;
@@ -62,8 +64,8 @@ public class PlayerGameListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-            if (room == null || !room.useDefaultListener() || !room.isPlaying(player)) return;
+            BaseRoom room = this.getListenerRoom(player.getLevel());
+            if (room == null || !room.isPlaying(player)) return;
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == 2) {
                     if (room.getPlayers(player) == 1) {
@@ -82,8 +84,10 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.useDefaultListener()) return;
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null) {
+            return;
+        }
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             player.setAllowModifyWorld(false);
         }
@@ -98,8 +102,10 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        RoomBase room = this.blockHunt.getRooms().get(event.getTo().getLevel().getName());
-        if (room == null || !room.useDefaultListener() || room.getStatus() != 2) return;
+        BaseRoom room = this.getListenerRoom(event.getTo().getLevel());
+        if (room == null || room.getStatus() != 2) {
+            return;
+        }
         Player player = event.getPlayer();
         if (room.getPlayers(player) == 1) {
             Level level = player.getLevel();
@@ -122,8 +128,8 @@ public class PlayerGameListener implements Listener {
         if (player == null || event.getInventory() == null) {
             return;
         }
-        RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.useDefaultListener() || room.getStatus() != 2 || !room.isPlaying(player)) {
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || room.getStatus() != 2 || !room.isPlaying(player)) {
             return;
         }
         if (event.getSlot() >= event.getInventory().getSize() ||
@@ -135,9 +141,13 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getMessage() == null) return;
-        RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.useDefaultListener() || !room.isPlaying(player)) return;
+        if (player == null || event.getMessage() == null) {
+            return;
+        }
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
         if (event.getMessage().startsWith(this.blockHunt.getCmdUser(), 1) ||
                 event.getMessage().startsWith(this.blockHunt.getCmdAdmin(), 1)) {
             return;
@@ -150,9 +160,11 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getMessage() == null) return;
-        RoomBase room = this.blockHunt.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.useDefaultListener() || !room.isPlaying(player) || room.getStatus() != 2) return;
+        if (player == null || event.getMessage() == null) {
+            return;
+        }
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || !room.isPlaying(player) || room.getStatus() != 2) return;
         String message = "§7[§a" + Tools.getStringIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
         event.setMessage("");
         event.setCancelled(true);

@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.tasks.game;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
@@ -9,9 +9,9 @@ import cn.nukkit.scheduler.PluginTask;
  */
 public class TimeTask extends PluginTask<BlockHunt> {
 
-    private final RoomBase room;
+    private final BaseRoom room;
 
-    public TimeTask(BlockHunt owner, RoomBase room) {
+    public TimeTask(BlockHunt owner, BaseRoom room) {
         super(owner);
         this.room = room;
     }

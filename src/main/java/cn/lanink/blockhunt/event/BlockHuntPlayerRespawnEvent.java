@@ -1,6 +1,6 @@
 package cn.lanink.blockhunt.event;
 
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -16,7 +16,7 @@ public class BlockHuntPlayerRespawnEvent extends BlockHuntRoomPlayerEvent implem
         return handlers;
     }
 
-    public BlockHuntPlayerRespawnEvent(RoomBase room, Player player) {
+    public BlockHuntPlayerRespawnEvent(BaseRoom room, Player player) {
         this.room = room;
         this.player = player;
     }

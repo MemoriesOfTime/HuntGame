@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.listener;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.ui.GuiCreate;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
@@ -63,7 +63,7 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
-        for (RoomBase room : BlockHunt.getInstance().getRooms().values()) {
+        for (BaseRoom room : BlockHunt.getInstance().getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);
                 break;
@@ -80,7 +80,7 @@ public class PlayerJoinAndQuit implements Listener {
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, RoomBase> room =  this.blockHunt.getRooms();
+            LinkedHashMap<String, BaseRoom> room =  this.blockHunt.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
                 player.sendMessage(this.blockHunt.getLanguage(player).tpQuitRoomLevel);

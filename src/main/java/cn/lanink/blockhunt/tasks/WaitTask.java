@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.tasks;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
@@ -11,9 +11,9 @@ import java.util.LinkedList;
 
 public class WaitTask extends PluginTask<BlockHunt> {
 
-    private final RoomBase room;
+    private final BaseRoom room;
 
-    public WaitTask(BlockHunt owner, RoomBase room) {
+    public WaitTask(BlockHunt owner, BaseRoom room) {
         super(owner);
         this.room = room;
     }

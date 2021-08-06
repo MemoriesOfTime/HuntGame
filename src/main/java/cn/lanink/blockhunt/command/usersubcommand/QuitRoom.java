@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.command.usersubcommand;
 
 import cn.lanink.blockhunt.command.base.BaseSubCommand;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -25,7 +25,7 @@ public class QuitRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        for (RoomBase room : this.blockHunt.getRooms().values()) {
+        for (BaseRoom room : this.blockHunt.getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);
                 sender.sendMessage(this.blockHunt.getLanguage(sender).quitRoom);

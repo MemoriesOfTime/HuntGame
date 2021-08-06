@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.tasks;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
@@ -16,11 +16,11 @@ import java.util.Map;
  */
 public class VictoryTask extends PluginTask<BlockHunt> {
 
-    private final RoomBase room;
+    private final BaseRoom room;
     private int victoryTime;
     private final int victory;
 
-    public VictoryTask(BlockHunt owner, RoomBase room, int victory) {
+    public VictoryTask(BlockHunt owner, BaseRoom room, int victory) {
         super(owner);
         this.room = room;
         this.victoryTime = 10;

@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.utils;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class Tools {
 
-    public static String getStringIdentity(RoomBase room, Player player) {
+    public static String getStringIdentity(BaseRoom room, Player player) {
         switch (room.getPlayers(player)) {
             case 1:
                 return BlockHunt.getInstance().getLanguage(player).prey;
@@ -147,7 +147,7 @@ public class Tools {
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(RoomBase room, Sound sound) {
+    public static void addSound(BaseRoom room, Sound sound) {
         for (Player player : room.getPlayers().keySet()) {
             addSound(player, sound);
         }

@@ -5,6 +5,10 @@ import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.event.*;
 import cn.lanink.blockhunt.tasks.VictoryTask;
 import cn.lanink.blockhunt.tasks.WaitTask;
+import cn.lanink.blockhunt.utils.Tools;
+import cn.lanink.gamecore.room.IRoom;
+import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.Tips;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
@@ -20,7 +24,7 @@ import java.util.*;
  * @author lt_name
  */
 
-public abstract class RoomBase {
+public abstract class BaseRoom implements IRoom {
 
     protected String gameMode = null;
     protected BlockHunt blockHunt = BlockHunt.getInstance();
@@ -44,7 +48,7 @@ public abstract class RoomBase {
      *
      * @param config 配置文件
      */
-    public RoomBase(Config config) {
+    public BaseRoom(Config config) {
         this.level = Server.getInstance().getLevelByName(config.getString("world"));
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
@@ -64,6 +68,14 @@ public abstract class RoomBase {
         this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
         this.status = 0;
         this.initTime();
+
+        for (String listenerName : this.getListeners()) {
+            try {
+                this.blockHunt.getBlockHuntListeners().get(listenerName).addListenerRoom(this);
+            } catch (Exception e) {
+                this.blockHunt.getLogger().error("监听器添加房间时错误", e);
+            }
+        }
     }
 
     public final void setGameName(String gameMode) {
@@ -76,14 +88,9 @@ public abstract class RoomBase {
         return this.gameMode;
     }
 
-    /**
-     * 是否使用默认监听器
-     * 如果重写此方法并返回false
-     * BlockHunt PlayerGameListener 将不会操作此房间类！
-     *
-     * @return 使用默认监听器
-     */
-    public abstract boolean useDefaultListener();
+    public List<String> getListeners() {
+        return new ArrayList<>();
+    }
 
     /**
      * 初始化时间参数
@@ -123,14 +130,47 @@ public abstract class RoomBase {
      *
      * @param player 玩家
      */
-    public abstract void joinRoom(Player player);
+    public synchronized void joinRoom(Player player) {
+        if (this.players.values().size() < 16) {
+            if (this.status == 0) {
+                this.initTask();
+            }
+            this.addPlaying(player);
+            Tools.rePlayerState(player, true);
+            SavePlayerInventory.save(this.blockHunt, player);
+            player.getInventory().setItem(8, Tools.getBlockHuntItem(10, player));
+            if (player.teleport(this.getWaitSpawn())) {
+                if (this.blockHunt.isHasTips()) {
+                    Tips.closeTipsShow(this.level.getName(), player);
+                }
+                player.sendMessage(this.blockHunt.getLanguage(player).joinRoom
+                        .replace("%name%", this.level.getName()));
+            }else {
+                this.quitRoom(player);
+            }
+        }
+    }
 
     /**
      * 退出房间
      *
      * @param player 玩家
      */
-    public abstract void quitRoom(Player player);
+    public synchronized void quitRoom(Player player) {
+        if (this.isPlaying(player)) {
+            this.players.remove(player);
+        }
+        if (this.blockHunt.isHasTips()) {
+            Tips.removeTipsConfig(this.level.getName(), player);
+        }
+        this.players.keySet().forEach(player::showPlayer);
+        this.players.keySet().forEach(p -> p.showPlayer(player));
+        this.blockHunt.getScoreboard().closeScoreboard(player);
+        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        Tools.rePlayerState(player, false);
+        SavePlayerInventory.restore(this.blockHunt, player);
+        this.players.keySet().forEach(p -> p.showPlayer(player));
+    }
 
     /**
      * 记录在游戏内的玩家
@@ -234,8 +274,14 @@ public abstract class RoomBase {
     /**
      * @return 游戏世界
      */
+    @Override
     public Level getLevel() {
         return this.level;
+    }
+
+    @Override
+    public String getLevelName() {
+        return this.getLevel().getName();
     }
 
     public final void gameStartEvent() {
@@ -364,9 +410,9 @@ public abstract class RoomBase {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RoomBase)) return false;
-        RoomBase roomBase = (RoomBase) o;
-        return level.equals(roomBase.level);
+        if (!(o instanceof BaseRoom)) return false;
+        BaseRoom baseRoom = (BaseRoom) o;
+        return level.equals(baseRoom.level);
     }
 
     @Override

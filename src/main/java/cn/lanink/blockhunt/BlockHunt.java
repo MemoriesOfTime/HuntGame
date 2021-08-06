@@ -2,14 +2,15 @@ package cn.lanink.blockhunt;
 
 import cn.lanink.blockhunt.command.AdminCommand;
 import cn.lanink.blockhunt.command.UserCommand;
-import cn.lanink.blockhunt.listener.PlayerGameListener;
 import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
-import cn.lanink.blockhunt.room.RoomBase;
-import cn.lanink.blockhunt.room.RoomClassicMode;
+import cn.lanink.blockhunt.listener.classic.ClassicGameListener;
+import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.ClassicModeRoom;
 import cn.lanink.blockhunt.ui.GuiListener;
 import cn.lanink.blockhunt.utils.Language;
 import cn.lanink.gamecore.GameCore;
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.nukkit.Player;
@@ -28,16 +29,22 @@ import java.util.*;
 public class BlockHunt extends PluginBase {
 
     public static final String VERSION = "?";
+    public static boolean debug = false;
     public static final Random RANDOM = new Random();
 
     private static BlockHunt BLOCK_HUNT;
 
     private IScoreboard scoreboard;
 
-    private static final LinkedHashMap<String, Class<? extends RoomBase>> ROOM_CLASS = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
+
+    @SuppressWarnings("rawtypes")
+    private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
+    @SuppressWarnings("rawtypes")
+    private final HashMap<String, BaseGameListener> blockHuntListeners = new HashMap<>();
 
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
-    private final LinkedHashMap<String, RoomBase> rooms = new LinkedHashMap<>();
+    private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
 
     private Config config;
 
@@ -80,7 +87,9 @@ public class BlockHunt extends PluginBase {
             }
         }
 
-        registerRoom("classic", RoomClassicMode.class);
+        registerListeners("ClassicGameListener", ClassicGameListener.class);
+
+        registerRoom("classic", ClassicModeRoom.class);
     }
 
     @Override
@@ -105,10 +114,12 @@ public class BlockHunt extends PluginBase {
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
 
-        this.getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new ClassicGameListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+
+        this.loadAllListener();
 
         this.loadRooms();
 
@@ -119,6 +130,63 @@ public class BlockHunt extends PluginBase {
         }*/
 
         this.getLogger().info(this.getLanguage(null).pluginEnable);
+    }
+
+    /**
+     * 注册监听器类
+     *
+     * @param name 名称
+     * @param listenerClass 监听器类
+     */
+    @SuppressWarnings("rawtypes")
+    public static void registerListeners(String name, Class<? extends BaseGameListener> listenerClass) {
+        LISTENER_CLASS.put(name, listenerClass);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void loadAllListener() {
+        for (Map.Entry<String, Class<? extends BaseGameListener>> entry : LISTENER_CLASS.entrySet()) {
+            try {
+                BaseGameListener listener = entry.getValue().newInstance();
+                listener.init(entry.getKey());
+                this.loadListener(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void loadListener(BaseGameListener baseGameListener) {
+        this.blockHuntListeners.put(baseGameListener.getListenerName(), baseGameListener);
+        this.getServer().getPluginManager().registerEvents(baseGameListener, this);
+        if (BlockHunt.debug) {
+            this.getLogger().info("[debug] registerListener: " + baseGameListener.getListenerName());
+        }
+    }
+
+
+    @SuppressWarnings("rawtypes")
+    public HashMap<String, BaseGameListener> getBlockHuntListeners() {
+        return this.blockHuntListeners;
+    }
+
+    public static boolean hasRoomClass(String name) {
+        return ROOM_CLASS.containsKey(name);
+    }
+
+    /**
+     * 注册房间类
+     *
+     * @param name 名称
+     * @param roomClass 房间类
+     */
+    public static void registerRoom(String name, Class<? extends BaseRoom> roomClass) {
+        ROOM_CLASS.put(name, roomClass);
+    }
+
+    public static LinkedHashMap<String, Class<? extends BaseRoom>> getRoomClass() {
+        return ROOM_CLASS;
     }
 
     @Override
@@ -136,20 +204,6 @@ public class BlockHunt extends PluginBase {
 
     public List<String> getDefeatCmd() {
         return this.defeatCmd;
-    }
-
-    /**
-     * 注册房间类
-     *
-     * @param name 名称
-     * @param roomClass 房间类
-     */
-    public static void registerRoom(String name, Class<? extends RoomBase> roomClass) {
-        ROOM_CLASS.put(name, roomClass);
-    }
-
-    public static LinkedHashMap<String, Class<? extends RoomBase>> getRoomClass() {
-        return ROOM_CLASS;
     }
 
     public String getCmdUser() {
@@ -192,7 +246,7 @@ public class BlockHunt extends PluginBase {
         return GameCore.DEFAULT_SKIN;
     }
 
-    public LinkedHashMap<String, RoomBase> getRooms() {
+    public LinkedHashMap<String, BaseRoom> getRooms() {
         return this.rooms;
     }
 
@@ -239,10 +293,10 @@ public class BlockHunt extends PluginBase {
                         if (!ROOM_CLASS.containsKey(gameMode)) {
                             gameMode = "classic";
                         }
-                        Constructor<? extends RoomBase> constructor = ROOM_CLASS.get(gameMode).getConstructor(Config.class);
-                        RoomBase roomBase = constructor.newInstance(config);
-                        roomBase.setGameName(gameMode);
-                        this.rooms.put(fileName[0], roomBase);
+                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Config.class);
+                        BaseRoom baseRoom = constructor.newInstance(config);
+                        baseRoom.setGameName(gameMode);
+                        this.rooms.put(fileName[0], baseRoom);
                         this.getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", fileName[0]));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -258,9 +312,9 @@ public class BlockHunt extends PluginBase {
      */
     public void unloadRooms() {
         if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, RoomBase>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, RoomBase> entry = it.next();
+                Map.Entry<String, BaseRoom> entry = it.next();
                 entry.getValue().endGameEvent();
                 this.getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();

@@ -5,8 +5,6 @@ import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
 import cn.lanink.blockhunt.tasks.game.TimeTask;
 import cn.lanink.blockhunt.tasks.game.TipsTask;
 import cn.lanink.blockhunt.utils.Tools;
-import cn.lanink.gamecore.utils.SavePlayerInventory;
-import cn.lanink.gamecore.utils.Tips;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -28,69 +26,21 @@ import java.util.*;
  *
  * @author lt_name
  */
-public class RoomClassicMode extends RoomBase {
+public class ClassicModeRoom extends BaseRoom {
 
     /**
      * 初始化
      *
      * @param config 配置文件
      */
-    public RoomClassicMode(Config config) {
+    public ClassicModeRoom(Config config) {
         super(config);
     }
 
-    @Override
-    public boolean useDefaultListener() {
-        return true;
-    }
-
-    /**
-     * 加入房间
-     *
-     * @param player 玩家
-     */
-    @Override
-    public synchronized void joinRoom(Player player) {
-        if (this.players.values().size() < 16) {
-            if (this.status == 0) {
-                this.initTask();
-            }
-            this.addPlaying(player);
-            Tools.rePlayerState(player, true);
-            SavePlayerInventory.save(this.blockHunt, player);
-            player.getInventory().setItem(8, Tools.getBlockHuntItem(10, player));
-            if (player.teleport(this.getWaitSpawn())) {
-                if (this.blockHunt.isHasTips()) {
-                    Tips.closeTipsShow(this.level.getName(), player);
-                }
-                player.sendMessage(this.blockHunt.getLanguage(player).joinRoom
-                        .replace("%name%", this.level.getName()));
-            }else {
-                this.quitRoom(player);
-            }
-        }
-    }
-
-    /**
-     * 退出房间
-     *
-     * @param player 玩家
-     */
-    @Override
-    public synchronized void quitRoom(Player player) {
-        if (this.isPlaying(player)) {
-            this.players.remove(player);
-        }
-        if (this.blockHunt.isHasTips()) {
-            Tips.removeTipsConfig(this.level.getName(), player);
-        }
-        this.players.keySet().forEach(player::showPlayer);
-        this.players.keySet().forEach(p -> p.showPlayer(player));
-        this.blockHunt.getScoreboard().closeScoreboard(player);
-        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-        Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(this.blockHunt, player);
-        this.players.keySet().forEach(p -> p.showPlayer(player));
+    public List<String> getListeners() {
+        List<String> list = super.getListeners();
+        list.add("ClassicGameListener");
+        return list;
     }
 
     /**

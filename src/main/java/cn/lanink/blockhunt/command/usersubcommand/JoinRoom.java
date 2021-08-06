@@ -2,7 +2,7 @@ package cn.lanink.blockhunt.command.usersubcommand;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.command.base.BaseSubCommand;
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -33,7 +33,7 @@ public class JoinRoom extends BaseSubCommand {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (this.blockHunt.getRooms().size() > 0) {
             Player player = (Player) sender;
-            for (RoomBase room : this.blockHunt.getRooms().values()) {
+            for (BaseRoom room : this.blockHunt.getRooms().values()) {
                 if (room.isPlaying(player)) {
                     sender.sendMessage(this.blockHunt.getLanguage(sender).joinRoomOnRoom);
                     return true;
@@ -44,8 +44,8 @@ public class JoinRoom extends BaseSubCommand {
                 return true;
             }
             if (args.length < 2) {
-                LinkedList<RoomBase> rooms = new LinkedList<>();
-                for (RoomBase room : this.blockHunt.getRooms().values()) {
+                LinkedList<BaseRoom> rooms = new LinkedList<>();
+                for (BaseRoom room : this.blockHunt.getRooms().values()) {
                     if ((room.getStatus() == 0 || room.getStatus() == 1) && room.getPlayers().size() < 16) {
                         if (room.getPlayers().size() > 0) {
                             room.joinRoom(player);
@@ -56,13 +56,13 @@ public class JoinRoom extends BaseSubCommand {
                     }
                 }
                 if (rooms.size() > 0) {
-                    RoomBase room = rooms.get(BlockHunt.RANDOM.nextInt(rooms.size()));
+                    BaseRoom room = rooms.get(BlockHunt.RANDOM.nextInt(rooms.size()));
                     room.joinRoom(player);
                     sender.sendMessage(this.blockHunt.getLanguage(sender).joinRandomRoom);
                     return true;
                 }
             }else if (this.blockHunt.getRooms().containsKey(args[1])) {
-                RoomBase room = this.blockHunt.getRooms().get(args[1]);
+                BaseRoom room = this.blockHunt.getRooms().get(args[1]);
                 if (room.getStatus() == 2 || room.getStatus() == 3) {
                     sender.sendMessage(this.blockHunt.getLanguage(sender).joinRoomIsPlaying);
                 }else if (room.getPlayers().values().size() >= 16) {

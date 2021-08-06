@@ -1,7 +1,7 @@
 package cn.lanink.blockhunt.tasks.game;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.room.RoomClassicMode;
+import cn.lanink.blockhunt.room.ClassicModeRoom;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public class TipsTask extends PluginTask<BlockHunt> {
 
-    private final RoomClassicMode room;
+    private final ClassicModeRoom room;
 
-    public TipsTask(BlockHunt owner, RoomClassicMode room) {
+    public TipsTask(BlockHunt owner, ClassicModeRoom room) {
         super(owner);
         this.room = room;
     }

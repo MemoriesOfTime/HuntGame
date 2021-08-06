@@ -1,6 +1,6 @@
 package cn.lanink.blockhunt.event;
 
-import cn.lanink.blockhunt.room.RoomBase;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.event.Event;
 
 /**
@@ -8,9 +8,9 @@ import cn.nukkit.event.Event;
  */
 public abstract class BlockHuntRoomEvent extends Event {
 
-    protected RoomBase room;
+    protected BaseRoom room;
 
-    public RoomBase getRoom() {
+    public BaseRoom getRoom() {
         return this.room;
     }
 
