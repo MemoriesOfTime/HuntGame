@@ -28,6 +28,7 @@ import java.util.*;
 public class BlockHunt extends PluginBase {
 
     public static final String VERSION = "?";
+    public static final Random RANDOM = new Random();
 
     private static BlockHunt BLOCK_HUNT;
 

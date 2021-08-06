@@ -1,11 +1,14 @@
 package cn.lanink.blockhunt.command.usersubcommand;
 
+import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.command.base.BaseSubCommand;
 import cn.lanink.blockhunt.room.RoomBase;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+
+import java.util.LinkedList;
 
 /**
  * @author lt_name
@@ -41,12 +44,22 @@ public class JoinRoom extends BaseSubCommand {
                 return true;
             }
             if (args.length < 2) {
+                LinkedList<RoomBase> rooms = new LinkedList<>();
                 for (RoomBase room : this.blockHunt.getRooms().values()) {
                     if ((room.getStatus() == 0 || room.getStatus() == 1) && room.getPlayers().size() < 16) {
-                        room.joinRoom(player);
-                        sender.sendMessage(this.blockHunt.getLanguage(sender).joinRandomRoom);
-                        return true;
+                        if (room.getPlayers().size() > 0) {
+                            room.joinRoom(player);
+                            sender.sendMessage(this.blockHunt.getLanguage(sender).joinRandomRoom);
+                            return true;
+                        }
+                        rooms.add(room);
                     }
+                }
+                if (rooms.size() > 0) {
+                    RoomBase room = rooms.get(BlockHunt.RANDOM.nextInt(rooms.size()));
+                    room.joinRoom(player);
+                    sender.sendMessage(this.blockHunt.getLanguage(sender).joinRandomRoom);
+                    return true;
                 }
             }else if (this.blockHunt.getRooms().containsKey(args[1])) {
                 RoomBase room = this.blockHunt.getRooms().get(args[1]);
