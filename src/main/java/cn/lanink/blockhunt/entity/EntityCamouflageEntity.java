@@ -11,6 +11,8 @@ import lombok.Setter;
 import java.util.HashSet;
 
 /**
+ * 玩家伪装的动物实体
+ *
  * @author LT_Name
  */
 public class EntityCamouflageEntity extends EntityLiving {
@@ -33,6 +35,10 @@ public class EntityCamouflageEntity extends EntityLiving {
     public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, int networkID) {
         super(chunk, nbt);
         this.networkID = networkID;
+        this.setNameTag("");
+        this.setNameTagVisible(false);
+        this.setNameTagAlwaysVisible(false);
+        this.namedTag.putBoolean("isBlockHuntEntity", true);
     }
 
     @Override
@@ -82,15 +88,31 @@ public class EntityCamouflageEntity extends EntityLiving {
         }
     }
 
+    /**
+     * 玩家是否可以看到本实体
+     *
+     * @param player 玩家
+     * @return 玩家是否可以看到本实体
+     */
     public boolean canSee(Player player) {
         return !this.hiddenPlayers.contains(player);
     }
 
+    /**
+     * 隐藏实体
+     *
+     * @param player 目标玩家
+     */
     public void hidePlayer(Player player) {
         this.hiddenPlayers.add(player);
         this.despawnFrom(player);
     }
 
+    /**
+     * 显示实体
+     *
+     * @param player 目标玩家
+     */
     public void showPlayer(Player player) {
         this.hiddenPlayers.remove(player);
         if (player.isOnline()) {

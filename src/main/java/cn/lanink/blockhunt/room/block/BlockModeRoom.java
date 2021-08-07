@@ -65,6 +65,7 @@ public class BlockModeRoom extends BaseRoom {
      */
     @Override
     public synchronized void gameStart() {
+        super.gameStart();
         int x = 0;
         for (Player player : this.getPlayers().keySet()) {
             if (this.getPlayers(player) == 2) continue;
@@ -80,16 +81,17 @@ public class BlockModeRoom extends BaseRoom {
             integers[1] = Integer.parseInt(s[1]);
             this.playerCamouflageBlock.put(player, integers);
             player.getInventory().setItem(8, Item.get(integers[0], integers[1]));
+
             CompoundTag tag = Entity.getDefaultNBT(player);
             tag.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", this.blockHunt.getDefaultSkin().getSkinData().data)
-                    .putString("ModelId", this.blockHunt.getDefaultSkin().getSkinId()));
+                    .putByteArray("Data", EntityCamouflageBlock.EMPTY_SKIN.getSkinData().data)
+                    .putString("ModelId", EntityCamouflageBlock.EMPTY_SKIN.getSkinId()));
             tag.putFloat("Scale", 1.0F);
             tag.putString("playerName", player.getName());
             EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag);
-            entity.setSkin(this.blockHunt.getDefaultSkin());
             entity.spawnToAll();
             this.entityCamouflageBlocks.put(player, entity);
+
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
     }
