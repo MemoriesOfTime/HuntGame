@@ -14,7 +14,6 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
@@ -28,7 +27,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -57,27 +55,6 @@ public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> imple
     }
 
     @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            BaseRoom room = this.getListenerRoom(player.getLevel());
-            if (room == null || !room.isPlaying(player)) return;
-            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getStatus() == 2) {
-                    if (room.getPlayers(player) == 1) {
-                        room.playerDeathEvent(player);
-                    }else {
-                        player.teleport(room.getRandomSpawn().get(new Random().nextInt(room.getRandomSpawn().size())));
-                    }
-                }else {
-                    player.teleport(room.getWaitSpawn());
-                }
-            }
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         BaseRoom room = this.getListenerRoom(player.getLevel());
@@ -98,7 +75,7 @@ public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> imple
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        BaseRoom room = this.getListenerRoom(event.getTo().getLevel());
+        ClassicModeRoom room = this.getListenerRoom(event.getTo().getLevel());
         if (room == null || room.getStatus() != 2) {
             return;
         }

@@ -4,7 +4,9 @@ import cn.lanink.blockhunt.command.AdminCommand;
 import cn.lanink.blockhunt.command.UserCommand;
 import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
+import cn.lanink.blockhunt.listener.animal.AnimalGameListener;
 import cn.lanink.blockhunt.listener.classic.ClassicGameListener;
+import cn.lanink.blockhunt.listener.defaults.DefaultGameListener;
 import cn.lanink.blockhunt.room.AnimalModeRoom;
 import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.room.ClassicModeRoom;
@@ -30,7 +32,7 @@ import java.util.*;
 public class BlockHunt extends PluginBase {
 
     public static final String VERSION = "?";
-    public static boolean debug = false;
+    public static boolean debug = true; //TODO close
     public static final Random RANDOM = new Random();
 
     private static BlockHunt BLOCK_HUNT;
@@ -88,7 +90,9 @@ public class BlockHunt extends PluginBase {
             }
         }
 
+        registerListeners("DefaultGameListener", DefaultGameListener.class);
         registerListeners("ClassicGameListener", ClassicGameListener.class);
+        registerListeners("AnimalGameListener", AnimalGameListener.class);
 
         registerRoom("classic", ClassicModeRoom.class);
         if (BlockHunt.debug) {

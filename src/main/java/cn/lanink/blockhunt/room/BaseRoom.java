@@ -1,10 +1,10 @@
 package cn.lanink.blockhunt.room;
 
 import cn.lanink.blockhunt.BlockHunt;
-import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.event.*;
 import cn.lanink.blockhunt.tasks.VictoryTask;
 import cn.lanink.blockhunt.tasks.WaitTask;
+import cn.lanink.blockhunt.tasks.game.TimeTask;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
@@ -40,9 +40,7 @@ public abstract class BaseRoom implements IRoom {
     protected final Level level;
     protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1猎物 2猎人 12猎物转化成的猎人
     protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
-    protected final HashMap<Player, Integer[]> playerCamouflageBlock = new HashMap<>();
-    protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlocks = new HashMap<>();
-    protected final ArrayList<String> camouflageBlocks;
+
 
     /**
      * 初始化
@@ -66,9 +64,9 @@ public abstract class BaseRoom implements IRoom {
                     Integer.parseInt(s[2]),
                     this.level));
         }
-        this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
+
         this.status = 0;
-        this.initTime();
+        this.initData();
 
         for (String listenerName : this.getListeners()) {
             try {
@@ -90,15 +88,18 @@ public abstract class BaseRoom implements IRoom {
     }
 
     public List<String> getListeners() {
-        return new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("DefaultGameListener");
+        return list;
     }
 
     /**
      * 初始化时间参数
      */
-    public void initTime() {
+    public void initData() {
         this.waitTime = this.setWaitTime;
         this.gameTime = this.setGameTime;
+        this.playerRespawnTime.clear();
     }
 
     /**
@@ -223,27 +224,6 @@ public abstract class BaseRoom implements IRoom {
         }
     }
 
-    public HashMap<Player, Integer[]> getPlayerCamouflageBlock() {
-        return this.playerCamouflageBlock;
-    }
-
-    /**
-     * 获取玩家伪装的方块
-     * @param player 玩家
-     * @return 方块id
-     */
-    public Integer[] getPlayerCamouflageBlock(Player player) {
-        return this.playerCamouflageBlock.get(player);
-    }
-
-    public HashMap<Player, EntityCamouflageBlock> getEntityCamouflageBlocks() {
-        return this.entityCamouflageBlocks;
-    }
-
-    public EntityCamouflageBlock getEntityCamouflageBlocks(Player player) {
-        return this.entityCamouflageBlocks.get(player);
-    }
-
     /**
      * @return 出生点
      */
@@ -293,7 +273,15 @@ public abstract class BaseRoom implements IRoom {
     /**
      * 房间开始游戏
      */
-    public abstract void gameStart();
+    public synchronized void gameStart() {
+        if (this.status == 2) return;
+        this.setStatus(2);
+        Tools.cleanEntity(this.getLevel(), true);
+        this.assignIdentity();
+
+        Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
+                new TimeTask(this.blockHunt, this), 20);
+    }
 
     /**
      * 结束本局游戏
@@ -308,11 +296,6 @@ public abstract class BaseRoom implements IRoom {
         this.endGame(normal, ev.getVictory());
     }
 
-    /**
-     * 结束本局游戏
-     *
-     * @param normal 正常关闭
-     */
     protected synchronized void endGame(boolean normal, int victory) {
         this.status = 0;
         HashSet<Player> victoryPlayers = new HashSet<>();
@@ -339,10 +322,7 @@ public abstract class BaseRoom implements IRoom {
         for (Player player : new ArrayList<>(players.keySet())) {
             this.quitRoom(player);
         }
-        this.initTime();
-        this.playerCamouflageBlock.clear();
-        this.playerRespawnTime.clear();
-        this.entityCamouflageBlocks.clear();
+        this.initData();
         Tools.cleanEntity(getLevel(), true);
         Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
             @Override
@@ -362,7 +342,25 @@ public abstract class BaseRoom implements IRoom {
     /**
      * 分配玩家身份
      */
-    public abstract void assignIdentity();
+    public void assignIdentity() {
+        LinkedHashMap<Player, Integer> players = this.getPlayers();
+        int random = BlockHunt.RANDOM.nextInt(players.size()) + 1;
+        int x = 0;
+        for (Player player : players.keySet()) {
+            player.getInventory().clearAll();
+            player.getUIInventory().clearAll();
+            x++;
+            if (x == random) {
+                this.players.put(player, 2);
+                player.sendTitle(this.blockHunt.getLanguage(player).titleHuntersTitle,
+                        this.blockHunt.getLanguage(player).titleHuntersSubtitle, 10, 40, 10);
+                continue;
+            }
+            this.players.put(player, 1);
+            player.sendTitle(this.blockHunt.getLanguage(player).titlePreyTitle,
+                    this.blockHunt.getLanguage(player).titlePreySubtitle, 10, 40, 10);
+        }
+    }
 
     /**
      * 获取存活玩家数

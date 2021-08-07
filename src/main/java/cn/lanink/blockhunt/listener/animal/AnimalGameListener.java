@@ -8,4 +8,6 @@ import cn.lanink.gamecore.listener.BaseGameListener;
  */
 public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
 
+
+
 }

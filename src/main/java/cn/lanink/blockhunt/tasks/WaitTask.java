@@ -24,7 +24,7 @@ public class WaitTask extends PluginTask<BlockHunt> {
             this.cancel();
             return;
         }
-        if (this.room.getPlayers().size() >= 3) {
+        if (this.room.getPlayers().size() >= 2) {
             if (this.room.getPlayers().size() == 16 && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }

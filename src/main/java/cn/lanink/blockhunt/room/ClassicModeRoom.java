@@ -1,9 +1,8 @@
 package cn.lanink.blockhunt.room;
 
+import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
-import cn.lanink.blockhunt.tasks.game.TimeTask;
-import cn.lanink.blockhunt.tasks.game.TipsTask;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -28,6 +27,11 @@ import java.util.*;
  */
 public class ClassicModeRoom extends BaseRoom {
 
+    protected final ArrayList<String> camouflageBlocks;
+
+    protected final HashMap<Player, Integer[]> playerCamouflageBlock = new HashMap<>();
+    protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlocks = new HashMap<>();
+
     /**
      * 初始化
      *
@@ -35,6 +39,7 @@ public class ClassicModeRoom extends BaseRoom {
      */
     public ClassicModeRoom(Config config) {
         super(config);
+        this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
     }
 
     public List<String> getListeners() {
@@ -43,15 +48,22 @@ public class ClassicModeRoom extends BaseRoom {
         return list;
     }
 
+    @Override
+    public void initData() {
+        super.initData();
+        if (this.playerCamouflageBlock != null) {
+            this.playerCamouflageBlock.clear();
+        }
+        if (this.entityCamouflageBlocks != null) {
+            this.entityCamouflageBlocks.clear();
+        }
+    }
+
     /**
      * 房间开始游戏
      */
     @Override
     public synchronized void gameStart() {
-        if (this.status == 2) return;
-        this.setStatus(2);
-        Tools.cleanEntity(this.getLevel(), true);
-        this.assignIdentity();
         int x = 0;
         for (Player player : this.getPlayers().keySet()) {
             if (this.getPlayers(player) == 2) continue;
@@ -79,10 +91,6 @@ public class ClassicModeRoom extends BaseRoom {
             this.entityCamouflageBlocks.put(player, entity);
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.blockHunt, new TimeTask(this.blockHunt, this), 20,true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.blockHunt, new TipsTask(this.blockHunt, this), 18, true);
     }
 
     /**
@@ -111,25 +119,19 @@ public class ClassicModeRoom extends BaseRoom {
                 Tools.addSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
-                    @Override
-                    public void onRun(int i) {
-                        for (Map.Entry<Player, Integer> entry : players.entrySet()) {
-                            entry.getKey().removeAllEffects();
-                            if (entry.getValue() == 2) {
-                                entry.getKey().teleport(randomSpawn.get(
-                                        new Random().nextInt(randomSpawn.size())));
-                                Item[] armor = new Item[4];
-                                armor[0] = Item.get(306);
-                                armor[1] = Item.get(307);
-                                armor[2] = Item.get(308);
-                                armor[3] = Item.get(309);
-                                entry.getKey().getInventory().setArmorContents(armor);
-                                entry.getKey().getInventory().setItem(0, Item.get(276));
-                            }
-                        }
+                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+                    entry.getKey().removeAllEffects();
+                    if (entry.getValue() == 2) {
+                        entry.getKey().teleport(randomSpawn.get(BlockHunt.RANDOM.nextInt(randomSpawn.size())));
+                        Item[] armor = new Item[4];
+                        armor[0] = Item.get(306);
+                        armor[1] = Item.get(307);
+                        armor[2] = Item.get(308);
+                        armor[3] = Item.get(309);
+                        entry.getKey().getInventory().setArmorContents(armor);
+                        entry.getKey().getInventory().setItem(0, Item.get(276));
                     }
-                }, 1);
+                }
             }
         }
         //计时与胜利判断
@@ -168,43 +170,25 @@ public class ClassicModeRoom extends BaseRoom {
             }
         }
         if (this.gameTime%5 == 0) {
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
-                @Override
-                public void onRun(int i) {
-                    for (Map.Entry<Player, Integer> entry : players.entrySet()) {
-                        if (entry.getValue() != 1) continue;
-                        Set<Player> p = new HashSet<>(players.keySet());
-                        p.remove(entry.getKey());
-                        Integer[] integers = getPlayerCamouflageBlock(entry.getKey());
-                        Block block = Block.get(integers[0], integers[1], entry.getKey().floor());
-                        entry.getKey().getLevel().sendBlocks(p.toArray(new Player[0]), new Vector3[] { block });
-                    }
-                }
-            }, 1);
-        }
-    }
-
-    /**
-     * 分配玩家身份
-     */
-    @Override
-    public void assignIdentity() {
-        LinkedHashMap<Player, Integer> players = this.getPlayers();
-        int random = new Random().nextInt(players.size()) + 1;
-        int x = 0;
-        for (Player player : players.keySet()) {
-            player.getInventory().clearAll();
-            player.getUIInventory().clearAll();
-            x++;
-            if (x == random) {
-                this.players.put(player, 2);
-                player.sendTitle(this.blockHunt.getLanguage(player).titleHuntersTitle,
-                        this.blockHunt.getLanguage(player).titleHuntersSubtitle, 10, 40, 10);
-                continue;
+            for (Map.Entry<Player, Integer> entry : players.entrySet()) {
+                if (entry.getValue() != 1) continue;
+                Set<Player> p = new HashSet<>(players.keySet());
+                p.remove(entry.getKey());
+                Integer[] integers = getPlayerCamouflageBlock(entry.getKey());
+                Block block = Block.get(integers[0], integers[1], entry.getKey().floor());
+                entry.getKey().getLevel().sendBlocks(p.toArray(new Player[0]), new Vector3[] { block });
             }
-            this.players.put(player, 1);
-            player.sendTitle(this.blockHunt.getLanguage(player).titlePreyTitle,
-                    this.blockHunt.getLanguage(player).titlePreySubtitle, 10, 40, 10);
+        }
+
+        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            entry.getKey().setNameTag("");
+            LinkedList<String> ms = new LinkedList<>();
+            for (String string : this.blockHunt.getLanguage(entry.getKey()).gameTimeScoreBoard.split("\n")) {
+                ms.add(string.replace("%mode%", Tools.getStringIdentity(this, entry.getKey()))
+                        .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
+                        .replace("%time%", this.gameTime + ""));
+            }
+            this.blockHunt.getScoreboard().showScoreboard(entry.getKey(), this.blockHunt.getLanguage(entry.getKey()).scoreBoardTitle, ms);
         }
     }
 
@@ -324,6 +308,27 @@ public class ClassicModeRoom extends BaseRoom {
         corpse.setRotation(player.getYaw(), 0);
         corpse.spawnToAll();
         corpse.updateMovement();
+    }
+
+    public HashMap<Player, Integer[]> getPlayerCamouflageBlock() {
+        return this.playerCamouflageBlock;
+    }
+
+    /**
+     * 获取玩家伪装的方块
+     * @param player 玩家
+     * @return 方块id
+     */
+    public Integer[] getPlayerCamouflageBlock(Player player) {
+        return this.playerCamouflageBlock.get(player);
+    }
+
+    public HashMap<Player, EntityCamouflageBlock> getEntityCamouflageBlocks() {
+        return this.entityCamouflageBlocks;
+    }
+
+    public EntityCamouflageBlock getEntityCamouflageBlocks(Player player) {
+        return this.entityCamouflageBlocks.get(player);
     }
 
 }
