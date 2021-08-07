@@ -1,10 +1,10 @@
-package cn.lanink.blockhunt.listener.classic;
+package cn.lanink.blockhunt.listener.block;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.room.BaseRoom;
-import cn.lanink.blockhunt.room.ClassicModeRoom;
 import cn.lanink.blockhunt.room.RoomStatus;
+import cn.lanink.blockhunt.room.block.BlockModeRoom;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * @author lt_name
  */
-public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> implements Listener {
+public class BlockGameListener extends BaseGameListener<BlockModeRoom> implements Listener {
 
     private final BlockHunt blockHunt = BlockHunt.getInstance();
 
@@ -76,7 +76,7 @@ public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> imple
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        ClassicModeRoom room = this.getListenerRoom(event.getTo().getLevel());
+        BlockModeRoom room = this.getListenerRoom(event.getTo().getLevel());
         if (room == null || room.getStatus() != RoomStatus.GAME) {
             return;
         }

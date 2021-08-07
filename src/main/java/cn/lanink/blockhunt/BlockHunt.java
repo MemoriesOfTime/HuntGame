@@ -5,11 +5,11 @@ import cn.lanink.blockhunt.command.UserCommand;
 import cn.lanink.blockhunt.listener.PlayerJoinAndQuit;
 import cn.lanink.blockhunt.listener.RoomLevelProtection;
 import cn.lanink.blockhunt.listener.animal.AnimalGameListener;
-import cn.lanink.blockhunt.listener.classic.ClassicGameListener;
+import cn.lanink.blockhunt.listener.block.BlockGameListener;
 import cn.lanink.blockhunt.listener.defaults.DefaultGameListener;
-import cn.lanink.blockhunt.room.AnimalModeRoom;
 import cn.lanink.blockhunt.room.BaseRoom;
-import cn.lanink.blockhunt.room.ClassicModeRoom;
+import cn.lanink.blockhunt.room.animal.AnimalModeRoom;
+import cn.lanink.blockhunt.room.block.BlockModeRoom;
 import cn.lanink.blockhunt.ui.GuiListener;
 import cn.lanink.blockhunt.utils.Language;
 import cn.lanink.gamecore.GameCore;
@@ -91,10 +91,10 @@ public class BlockHunt extends PluginBase {
         }
 
         registerListeners("DefaultGameListener", DefaultGameListener.class);
-        registerListeners("ClassicGameListener", ClassicGameListener.class);
+        registerListeners("BlockGameListener", BlockGameListener.class);
         registerListeners("AnimalGameListener", AnimalGameListener.class);
 
-        registerRoom("classic", ClassicModeRoom.class);
+        registerRoom("block", BlockModeRoom.class);
         if (BlockHunt.debug) {
             registerRoom("animal", AnimalModeRoom.class);
         }
@@ -296,9 +296,9 @@ public class BlockHunt extends PluginBase {
                         continue;
                     }
                     try {
-                        String gameMode = config.getString("gameMode", "classic");
+                        String gameMode = config.getString("gameMode", "block");
                         if (!ROOM_CLASS.containsKey(gameMode)) {
-                            gameMode = "classic";
+                            gameMode = "block";
                         }
                         Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Config.class);
                         BaseRoom baseRoom = constructor.newInstance(config);

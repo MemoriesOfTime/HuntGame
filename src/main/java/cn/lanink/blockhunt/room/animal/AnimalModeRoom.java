@@ -1,6 +1,8 @@
-package cn.lanink.blockhunt.room;
+package cn.lanink.blockhunt.room.animal;
 
+import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageEntity;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.utils.Config;
@@ -47,12 +49,12 @@ public class AnimalModeRoom extends BaseRoom {
         int x = 0;
         for (Player player: this.players.keySet()) {
             if (this.getPlayers(player) != 1) {
-                //continue;
+                continue;
             }
             if (x >= this.getRandomSpawn().size()) {
                 x = 0;
             }
-            //player.teleport(this.getRandomSpawn().get(x));
+            player.teleport(this.getRandomSpawn().get(x));
             x++;
             EntityCamouflageEntity camouflageEntity =
                     new EntityCamouflageEntity(player.chunk, Entity.getDefaultNBT(player), 12);
@@ -61,7 +63,9 @@ public class AnimalModeRoom extends BaseRoom {
             camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
 
-            new EntityCamouflageEntity(player.chunk, Entity.getDefaultNBT(player), 12).spawnToAll();
+            if (BlockHunt.debug) {
+                new EntityCamouflageEntity(player.chunk, Entity.getDefaultNBT(player), 12).spawnToAll();
+            }
         }
     }
 

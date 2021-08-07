@@ -1,8 +1,9 @@
-package cn.lanink.blockhunt.room;
+package cn.lanink.blockhunt.room.block;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -25,7 +26,7 @@ import java.util.*;
  *
  * @author lt_name
  */
-public class ClassicModeRoom extends BaseRoom {
+public class BlockModeRoom extends BaseRoom {
 
     protected final ArrayList<String> camouflageBlocks;
 
@@ -37,14 +38,14 @@ public class ClassicModeRoom extends BaseRoom {
      *
      * @param config 配置文件
      */
-    public ClassicModeRoom(Config config) {
+    public BlockModeRoom(Config config) {
         super(config);
         this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
     }
 
     public List<String> getListeners() {
         List<String> list = super.getListeners();
-        list.add("ClassicGameListener");
+        list.add("BlockGameListener");
         return list;
     }
 
