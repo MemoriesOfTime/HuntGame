@@ -2,6 +2,8 @@ package cn.lanink.blockhunt.utils;
 
 import cn.nukkit.utils.Config;
 
+//TODO 更换成GameCore的Language工具
+@Deprecated
 public class Language {
 
     //控制台
