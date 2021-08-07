@@ -30,6 +30,13 @@ import java.util.List;
 
 public class Tools {
 
+    public static int rand(int min, int max) {
+        if (min == max) {
+            return max;
+        }
+        return BlockHunt.RANDOM.nextInt(max + 1 - min) + min;
+    }
+
     public static String getStringIdentity(BaseRoom room, Player player) {
         switch (room.getPlayers(player)) {
             case 1:

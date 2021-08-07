@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.entity;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.data.EntityData;
+import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
@@ -11,7 +12,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.Getter;
 import lombok.Setter;
-import nukkitcoders.mobplugin.utils.Utils;
 
 import java.util.HashSet;
 
@@ -94,8 +94,8 @@ public class EntityCamouflageEntity extends EntityLiving {
             //进行一些随机移动
             if (BlockHunt.RANDOM.nextInt(100) < 10) {
                 if (this.moveTime <= 0) {
-                    double targetX = Utils.random.nextDouble() * (Utils.random.nextBoolean() ? 1 : -1);
-                    double targetZ = Utils.random.nextDouble() * (Utils.random.nextBoolean() ? 1 : -1);
+                    double targetX = BlockHunt.RANDOM.nextDouble() * (BlockHunt.RANDOM.nextBoolean() ? 1 : -1);
+                    double targetZ = BlockHunt.RANDOM.nextDouble() * (BlockHunt.RANDOM.nextBoolean() ? 1 : -1);
                     Vector3 target = this.add(targetX, 0, targetZ);
 
                     double x = target.x - this.x;
@@ -104,7 +104,7 @@ public class EntityCamouflageEntity extends EntityLiving {
 
                     this.mx = 0.15 * (x / diff);
                     this.mz = 0.15 * (z / diff);
-                    this.moveTime = Utils.rand(40, 200);
+                    this.moveTime = Tools.rand(40, 200);
 
                     double dx = this.x - target.x;
                     double dz = this.z - target.z;
