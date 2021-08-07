@@ -5,10 +5,13 @@ import cn.lanink.blockhunt.entity.data.EntityData;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.Getter;
 import lombok.Setter;
+import nukkitcoders.mobplugin.utils.Utils;
 
 import java.util.HashSet;
 
@@ -24,6 +27,10 @@ public class EntityCamouflageEntity extends EntityLiving {
     private Player master;
 
     private final HashSet<Player> hiddenPlayers = new HashSet<>();
+
+    private double mx;
+    private double mz;
+    private int moveTime;
 
     public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, String entityName) {
         return create(chunk, nbt, EntityData.getEntityDataByName(entityName));
@@ -55,6 +62,7 @@ public class EntityCamouflageEntity extends EntityLiving {
         this.setNameTagAlwaysVisible(false);
         this.setHealth(20f);
         this.namedTag.putBoolean("isBlockHuntEntity", true);
+        this.pitch = 0;
     }
 
     @Deprecated
@@ -72,7 +80,6 @@ public class EntityCamouflageEntity extends EntityLiving {
     public boolean onUpdate(int currentTick) {
         if (this.getMaster() != null) {
             double dx = this.x - this.getMaster().getX();
-            double dy = this.y - this.getMaster().getY();
             double dz = this.z - this.getMaster().getZ();
             double yaw = Math.asin(dx / Math.sqrt(dx * dx + dz * dz)) / 3.14D * 180.0D;
             if (dz > 0.0D) {
@@ -86,11 +93,42 @@ public class EntityCamouflageEntity extends EntityLiving {
         }else if (currentTick%60 == 0) {
             //进行一些随机移动
             if (BlockHunt.RANDOM.nextInt(100) < 10) {
+                if (this.moveTime <= 0) {
+                    double targetX = Utils.random.nextDouble() * (Utils.random.nextBoolean() ? 1 : -1);
+                    double targetZ = Utils.random.nextDouble() * (Utils.random.nextBoolean() ? 1 : -1);
+                    Vector3 target = this.add(targetX, 0, targetZ);
 
-            }else if (BlockHunt.RANDOM.nextInt(100) < 30) {
+                    double x = target.x - this.x;
+                    double z = target.z - this.z;
+                    double diff = Math.abs(x) + Math.abs(z);
+
+                    this.mx = 0.15 * (x / diff);
+                    this.mz = 0.15 * (z / diff);
+                    this.moveTime = Utils.rand(40, 200);
+
+                    double dx = this.x - target.x;
+                    double dz = this.z - target.z;
+                    double yaw = Math.asin(dx / Math.sqrt(dx * dx + dz * dz)) / 3.14D * 180.0D;
+                    if (dz > 0.0D) {
+                        yaw = -yaw + 180.0D;
+                    }
+                    this.yaw = yaw;
+                }
+            }else if (BlockHunt.RANDOM.nextInt(100) < 10) {
                 this.yaw += BlockHunt.RANDOM.nextInt(180) - 60;
             }
         }
+
+        if (this.moveTime > 0) {
+            this.moveTime--;
+            //TODO 跳跃检查
+            Position target = this.add(this.mx, 2, this.mz);
+            while (target.getLevelBlock().canPassThrough()) {
+                target.y -= 1;
+            }
+            this.move(this.mx, target.y- this.y, this.mz);
+        }
+
         this.pitch = 0;
         return super.onUpdate(currentTick);
     }

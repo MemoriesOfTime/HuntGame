@@ -1,5 +1,6 @@
 package cn.lanink.blockhunt.command;
 
+import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.command.adminsubcommand.*;
 import cn.lanink.blockhunt.command.base.BaseCommand;
 import cn.lanink.blockhunt.ui.GuiCreate;
@@ -26,6 +27,9 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new StopRoom("stoproom"));
         this.addSubCommand(new ReloadRoom("reloadroom"));
         this.addSubCommand(new UnloadRoom("unloadroom"));
+        if (BlockHunt.debug) {
+            this.addSubCommand(new test("test"));
+        }
     }
 
     @Override
