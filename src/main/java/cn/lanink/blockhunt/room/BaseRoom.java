@@ -21,6 +21,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
@@ -337,7 +338,79 @@ public abstract class BaseRoom implements IRoom {
     /**
      * 计时Task
      */
-    public abstract void asyncTimeTask();
+    public void asyncTimeTask() {
+        int time = this.gameTime - (this.getSetGameTime() - 60);
+        if (time >= 0) {
+            this.players.keySet().forEach(player -> player.sendTip(this.blockHunt.getLanguage(player)
+                    .huntersDispatchedTimeBottom.replace("time%", time + "")));
+            if (time%10 == 0) {
+                Effect e1 = Effect.getEffect(15); //失明
+                e1.setDuration(400).setVisible(false);
+                Effect e2 = Effect.getEffect(1); //速度提升
+                e2.setDuration(400).setVisible(false);
+                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+                    if (entry.getValue() == 2) {
+                        entry.getKey().addEffect(e1);
+                    }else {
+                        entry.getKey().addEffect(e2);
+                    }
+                }
+            }
+            if (time <= 5) {
+                Tools.addSound(this, Sound.RANDOM_CLICK);
+            }
+            if (time == 0) {
+                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+                    entry.getKey().removeAllEffects();
+                    if (entry.getValue() == 2) {
+                        entry.getKey().teleport(randomSpawn.get(BlockHunt.RANDOM.nextInt(randomSpawn.size())));
+                        Item[] armor = new Item[4];
+                        armor[0] = Item.get(306);
+                        armor[1] = Item.get(307);
+                        armor[2] = Item.get(308);
+                        armor[3] = Item.get(309);
+                        entry.getKey().getInventory().setArmorContents(armor);
+                        entry.getKey().getInventory().setItem(0, Item.get(276));
+                    }
+                }
+            }
+        }
+        //计时与胜利判断
+        if (this.gameTime > 0) {
+            this.gameTime--;
+            int x = 0;
+            boolean hunters = false;
+            for (Integer integer : this.players.values()) {
+                switch (integer) {
+                    case 1:
+                        x++;
+                        break;
+                    case 2:
+                    case 12:
+                        hunters = true;
+                        break;
+                }
+            }
+            if (!hunters) {
+                this.victory(1);
+            }else if (x <= 0) {
+                this.victory(2);
+            }
+        }else {
+            this.victory(1);
+        }
+        //复活
+        for (Map.Entry<Player, Integer> entry : this.playerRespawnTime.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+                entry.getKey().sendTip(this.blockHunt.getLanguage(entry.getKey())
+                        .respawnTimeBottom.replace("%time%", entry.getValue() + ""));
+                if (entry.getValue() == 0) {
+                    this.playerRespawn(entry.getKey());
+                }
+            }
+        }
+    }
 
     /**
      * 分配玩家身份
@@ -367,14 +440,14 @@ public abstract class BaseRoom implements IRoom {
      *
      * @return 存活玩家数
      */
-    public abstract int getSurvivorPlayerNumber();
-
-    public final void playerDamageEvent(Player damager, Player player) {
-        BlockHuntPlayerDamageEvent ev = new BlockHuntPlayerDamageEvent(this, damager, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
-            this.playerDamage(damager, player);
+    public int getSurvivorPlayerNumber() {
+        int x = 0;
+        for (Integer integer : this.getPlayers().values()) {
+            if (integer == 1) {
+                x++;
+            }
         }
+        return x;
     }
 
     /**
@@ -383,7 +456,17 @@ public abstract class BaseRoom implements IRoom {
      * @param damager 攻击者
      * @param player 被攻击者
      */
-    protected abstract void playerDamage(Player damager, Player player);
+    public void playerDamage(Player damager, Player player) {
+        BlockHuntPlayerDamageEvent ev = new BlockHuntPlayerDamageEvent(this, damager, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+
+        if (this.getPlayers(player) == 1) {
+            this.playerDeath(player);
+        }
+    }
 
     /**
      * 玩家死亡

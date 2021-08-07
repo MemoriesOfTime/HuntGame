@@ -1,7 +1,9 @@
 package cn.lanink.blockhunt.entity;
 
 import cn.lanink.blockhunt.BlockHunt;
+import cn.lanink.blockhunt.entity.data.EntityData;
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -18,13 +20,42 @@ import java.util.HashSet;
 public class EntityCamouflageEntity extends EntityLiving {
 
     @Setter
-    private int networkID;
-
-    @Setter
     @Getter
     private Player master;
 
     private final HashSet<Player> hiddenPlayers = new HashSet<>();
+
+    public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, String entityName) {
+        return create(chunk, nbt, EntityData.getEntityDataByName(entityName));
+    }
+
+    public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, EntityData entityData) {
+        return new EntityCamouflageEntity(chunk, nbt, true) {
+            @Override
+            public int getNetworkId() {
+                return entityData.getNetworkID();
+            }
+
+            @Override
+            public float getWidth() {
+                return entityData.getWidth();
+            }
+
+            @Override
+            public float getHeight() {
+                return entityData.getHeight();
+            }
+        };
+    }
+
+    private EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, boolean i) {
+        super(chunk, nbt);
+        this.setNameTag("");
+        this.setNameTagVisible(false);
+        this.setNameTagAlwaysVisible(false);
+        this.setHealth(20f);
+        this.namedTag.putBoolean("isBlockHuntEntity", true);
+    }
 
     @Deprecated
     public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt) {
@@ -32,26 +63,9 @@ public class EntityCamouflageEntity extends EntityLiving {
         this.close();
     }
 
-    public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, int networkID) {
-        super(chunk, nbt);
-        this.networkID = networkID;
-        this.setNameTag("");
-        this.setNameTagVisible(false);
-        this.setNameTagAlwaysVisible(false);
-        this.namedTag.putBoolean("isBlockHuntEntity", true);
-    }
-
     @Override
     public int getNetworkId() {
-        return this.networkID;
-    }
-
-    public float getWidth() {
-        return 0.9F;
-    }
-
-    public float getHeight() {
-        return 0.9F;
+        return -1;
     }
 
     @Override
@@ -79,6 +93,23 @@ public class EntityCamouflageEntity extends EntityLiving {
         }
         this.pitch = 0;
         return super.onUpdate(currentTick);
+    }
+
+    @Override
+    public void setHealth(float health) {
+        super.setHealth(health);
+        if (this.getMaster() != null) {
+            this.getMaster().setHealth(Math.max(health, 1.5f));
+        }
+    }
+
+    @Override
+    public void knockBack(Entity attacker, double damage, double x, double z, double base) {
+        if (this.getMaster() != null) {
+            this.getMaster().knockBack(attacker, damage, x, z, base);
+        }else {
+            super.knockBack(attacker, damage, x, z, base);
+        }
     }
 
     @Override

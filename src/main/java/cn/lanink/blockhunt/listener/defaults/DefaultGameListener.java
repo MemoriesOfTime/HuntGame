@@ -8,7 +8,6 @@ import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
-import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
@@ -40,27 +39,6 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 room.quitRoom(player);
                 event.setCancelled(true);
             }
-        }
-    }
-
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            BaseRoom room = this.getListenerRoom(player.getLevel());
-            if (room == null || !room.isPlaying(player)) return;
-            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getStatus() == RoomStatus.GAME) {
-                    if (room.getPlayers(player) == 1) {
-                        room.playerDeath(player);
-                    }else {
-                        player.teleport(room.getRandomSpawn().get(BlockHunt.RANDOM.nextInt(room.getRandomSpawn().size())));
-                    }
-                }else {
-                    player.teleport(room.getWaitSpawn());
-                }
-            }
-            event.setCancelled(true);
         }
     }
 

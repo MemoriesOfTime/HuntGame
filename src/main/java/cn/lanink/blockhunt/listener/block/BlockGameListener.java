@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.listener.block;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
+import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.room.RoomStatus;
 import cn.lanink.blockhunt.room.block.BlockModeRoom;
 import cn.lanink.gamecore.listener.BaseGameListener;
@@ -12,6 +13,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -41,8 +43,41 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                     && item != null && item.getId() == 276 &&
                     entity instanceof EntityCamouflageBlock && entity.namedTag != null) {
                 Player player = Server.getInstance().getPlayer(entity.namedTag.getString("playerName"));
-                room.playerDamageEvent(damager, player);
+                room.playerDamage(damager, player);
+                for (Player p : room.getPlayers().keySet()) {
+                    p.sendMessage(this.blockHunt.getLanguage(p).huntersKillPrey
+                            .replace("%damagePlayer%", damager.getName())
+                            .replace("%player%", player.getName()));
+                }
             }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        BaseRoom room = this.getListenerRoom(event.getEntity().getLevel());
+        if (room == null) {
+            return;
+        }
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            if (!room.isPlaying(player)) {
+                return;
+            }
+            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                if (room.getStatus() == RoomStatus.GAME) {
+                    if (room.getPlayers(player) == 1) {
+                        room.playerDeath(player);
+                    }else {
+                        player.teleport(room.getRandomSpawn().get(BlockHunt.RANDOM.nextInt(room.getRandomSpawn().size())));
+                    }
+                }else {
+                    player.teleport(room.getWaitSpawn());
+                }
+            }
+            event.setCancelled(true);
+        }else {
+            event.setDamage(0);
         }
     }
 

@@ -5,7 +5,6 @@ import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.*;
-import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
@@ -162,18 +161,6 @@ public class RoomLevelProtection implements Listener {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
         if (level != null && BlockHunt.getInstance().getRooms().containsKey(level.getName())) {
             event.setCancelled();
-        }
-    }
-
-    /**
-     * 伤害事件
-     * @param event 事件
-     */
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && BlockHunt.getInstance().getRooms().containsKey(level.getName())) {
-            event.setDamage(0);
         }
     }
 
