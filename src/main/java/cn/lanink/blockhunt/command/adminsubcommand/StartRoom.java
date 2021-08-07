@@ -35,7 +35,7 @@ public class StartRoom extends BaseSubCommand {
         if (room != null) {
             if (room.getPlayers().size() >= 2) {
                 if (room.getStatus() == RoomStatus.WAIT) {
-                    room.gameStartEvent();
+                    room.gameStart();
                     sender.sendMessage(this.blockHunt.getLanguage(sender).adminStartRoom);
                 }else {
                     sender.sendMessage(this.blockHunt.getLanguage(sender).adminStartRoomIsPlaying);

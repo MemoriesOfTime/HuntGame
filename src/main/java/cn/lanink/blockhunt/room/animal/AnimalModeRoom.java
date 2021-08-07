@@ -70,11 +70,6 @@ public class AnimalModeRoom extends BaseRoom {
     }
 
     @Override
-    protected void endGame(boolean normal, int victory) {
-
-    }
-
-    @Override
     public void asyncTimeTask() {
 
     }
@@ -92,21 +87,6 @@ public class AnimalModeRoom extends BaseRoom {
 
     @Override
     protected void playerDamage(Player damager, Player player) {
-
-    }
-
-    @Override
-    protected void playerDeath(Player player) {
-
-    }
-
-    @Override
-    protected void playerRespawn(Player player) {
-
-    }
-
-    @Override
-    protected void playerCorpseSpawn(Player player) {
 
     }
 

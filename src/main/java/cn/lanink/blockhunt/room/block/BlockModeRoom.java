@@ -5,12 +5,10 @@ import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
 import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.utils.Tools;
-import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
@@ -57,6 +55,16 @@ public class BlockModeRoom extends BaseRoom {
         }
         if (this.entityCamouflageBlocks != null) {
             this.entityCamouflageBlocks.clear();
+        }
+    }
+
+    @Override
+    public synchronized void quitRoom(Player player) {
+        super.quitRoom(player);
+        this.playerCamouflageBlock.remove(player);
+        EntityCamouflageBlock camouflageBlock = this.entityCamouflageBlocks.remove(player);
+        if (camouflageBlock != null) {
+            camouflageBlock.close();
         }
     }
 
@@ -168,7 +176,7 @@ public class BlockModeRoom extends BaseRoom {
                 entry.getKey().sendTip(this.blockHunt.getLanguage(entry.getKey())
                         .respawnTimeBottom.replace("%time%", entry.getValue() + ""));
                 if (entry.getValue() == 0) {
-                    this.playerRespawnEvent(entry.getKey());
+                    this.playerRespawn(entry.getKey());
                 }
             }
         }
@@ -220,33 +228,13 @@ public class BlockModeRoom extends BaseRoom {
     @Override
     protected void playerDamage(Player damager, Player player) {
         if (this.getPlayers(player) == 1) {
-            this.playerDeathEvent(player);
+            this.playerDeath(player);
             for (Player p : this.players.keySet()) {
                 p.sendMessage(this.blockHunt.getLanguage(p).huntersKillPrey
                         .replace("%damagePlayer%", damager.getName())
                         .replace("%player%", player.getName()));
             }
         }
-    }
-
-    /**
-     * 玩家死亡
-     *
-     * @param player 玩家
-     */
-    @Override
-    protected void playerDeath(Player player) {
-        if (this.getPlayers(player) == 0) return;
-        this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
-        player.getInventory().clearAll();
-        player.getUIInventory().clearAll();
-        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
-        player.setGamemode(3);
-        this.players.put(player, 0);
-        Tools.setPlayerInvisible(player, true);
-        Tools.addSound(this, Sound.GAME_PLAYER_HURT);
-        this.playerCorpseSpawnEvent(player);
-        this.playerRespawnTime.put(player, 20);
     }
 
     @Override
@@ -276,41 +264,6 @@ public class BlockModeRoom extends BaseRoom {
                 player.getInventory().addItem(Item.get(276));
             }
         }, 1);
-    }
-
-    /**
-     * 尸体生成
-     *
-     * @param player 玩家
-     */
-    @Override
-    protected void playerCorpseSpawn(Player player) {
-        Skin skin = player.getSkin();
-        switch(skin.getSkinData().data.length) {
-            case 8192:
-            case 16384:
-            case 32768:
-            case 65536:
-                break;
-            default:
-                skin = this.blockHunt.getDefaultSkin();
-        }
-        if ("".equals(skin.getSkinResourcePatch().trim())) {
-            skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
-        }
-        CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
-        nbt.putCompound("Skin", new CompoundTag()
-                .putByteArray("Data", skin.getSkinData().data)
-                .putString("ModelId", skin.getSkinId()));
-        nbt.putFloat("Scale", -1.0F);
-        nbt.putString("playerName", player.getName());
-        EntityPlayerCorpse corpse = new EntityPlayerCorpse(player.getChunk(), nbt);
-        corpse.setSkin(skin);
-        corpse.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
-        corpse.setGliding(true);
-        corpse.setRotation(player.getYaw(), 0);
-        corpse.spawnToAll();
-        corpse.updateMovement();
     }
 
     public HashMap<Player, Integer[]> getPlayerCamouflageBlock() {

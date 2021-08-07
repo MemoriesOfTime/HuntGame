@@ -30,7 +30,7 @@ public class StopRoom extends BaseSubCommand {
         Player player = (Player) sender;
         BaseRoom room = this.blockHunt.getRooms().get(player.getLevel().getName());
         if (room != null) {
-            room.endGameEvent();
+            room.endGame();
             sender.sendMessage(this.blockHunt.getLanguage(player).adminStopRoom);
         }else {
             sender.sendMessage(this.blockHunt.getLanguage(player).adminLevelNoRoom);

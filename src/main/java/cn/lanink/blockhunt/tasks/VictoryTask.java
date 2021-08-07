@@ -55,7 +55,7 @@ public class VictoryTask extends PluginTask<BlockHunt> {
             return;
         }
         if (this.victoryTime < 1) {
-            this.room.endGameEvent(true, this.victory);
+            this.room.endGame(this.victory);
             this.cancel();
         }else {
             this.victoryTime--;

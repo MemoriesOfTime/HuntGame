@@ -16,7 +16,6 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.Map;
-import java.util.Random;
 
 /**
  * @author LT_Name
@@ -53,9 +52,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == RoomStatus.GAME) {
                     if (room.getPlayers(player) == 1) {
-                        room.playerDeathEvent(player);
+                        room.playerDeath(player);
                     }else {
-                        player.teleport(room.getRandomSpawn().get(new Random().nextInt(room.getRandomSpawn().size())));
+                        player.teleport(room.getRandomSpawn().get(BlockHunt.RANDOM.nextInt(room.getRandomSpawn().size())));
                     }
                 }else {
                     player.teleport(room.getWaitSpawn());

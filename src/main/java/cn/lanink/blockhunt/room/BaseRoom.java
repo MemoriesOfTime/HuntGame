@@ -1,6 +1,7 @@
 package cn.lanink.blockhunt.room;
 
 import cn.lanink.blockhunt.BlockHunt;
+import cn.lanink.blockhunt.entity.EntityPlayerCorpse;
 import cn.lanink.blockhunt.event.*;
 import cn.lanink.blockhunt.tasks.VictoryTask;
 import cn.lanink.blockhunt.tasks.WaitTask;
@@ -9,10 +10,17 @@ import cn.lanink.blockhunt.utils.Tools;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.Skin;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
@@ -255,18 +263,20 @@ public abstract class BaseRoom implements IRoom {
         return this.getLevel().getName();
     }
 
-    public final void gameStartEvent() {
-        Server.getInstance().getPluginManager().callEvent(new BlockHuntRoomStartEvent(this));
-        this.gameStart();
-    }
-
     /**
      * 房间开始游戏
      */
     public synchronized void gameStart() {
-        if (this.status == RoomStatus.GAME) return;
+        if (this.status == RoomStatus.GAME) {
+            return;
+        }
+
+        Server.getInstance().getPluginManager().callEvent(new BlockHuntRoomStartEvent(this));
+
         this.setStatus(RoomStatus.GAME);
+
         Tools.cleanEntity(this.getLevel(), true);
+
         this.assignIdentity();
 
         Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
@@ -276,22 +286,20 @@ public abstract class BaseRoom implements IRoom {
     /**
      * 结束本局游戏
      */
-    public synchronized void endGameEvent() {
-        this.endGameEvent(true, 0);
+    public synchronized void endGame() {
+        this.endGame(0);
     }
 
-    public final void endGameEvent(boolean normal, int victory) {
+    public synchronized void endGame(int victory) {
         BlockHuntRoomEndEvent ev = new BlockHuntRoomEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
-        this.endGame(normal, ev.getVictory());
-    }
 
-    protected synchronized void endGame(boolean normal, int victory) {
         this.status = RoomStatus.TASK_NEED_INITIALIZED;
+
         HashSet<Player> victoryPlayers = new HashSet<>();
         HashSet<Player> defeatPlayers = new HashSet<>();
         for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-            players.keySet().forEach(player -> entry.getKey().showPlayer(player));
+            this.players.keySet().forEach(player -> entry.getKey().showPlayer(player));
             switch (victory) {
                 case 1:
                     if (entry.getValue() == 1) {
@@ -309,11 +317,13 @@ public abstract class BaseRoom implements IRoom {
                     break;
             }
         }
-        for (Player player : new ArrayList<>(players.keySet())) {
+
+        for (Player player : new ArrayList<>(this.players.keySet())) {
             this.quitRoom(player);
         }
         this.initData();
         Tools.cleanEntity(getLevel(), true);
+
         Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
             @Override
             public void onRun(int i) {
@@ -375,27 +385,34 @@ public abstract class BaseRoom implements IRoom {
      */
     protected abstract void playerDamage(Player damager, Player player);
 
-    public final void playerDeathEvent(Player player) {
-        BlockHuntPlayerDeathEvent ev = new BlockHuntPlayerDeathEvent(this, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
-            this.playerDeath(player);
-        }
-    }
-
     /**
      * 玩家死亡
      *
      * @param player 玩家
      */
-    protected abstract void playerDeath(Player player);
-
-    public final void playerRespawnEvent(Player player) {
-        BlockHuntPlayerRespawnEvent ev = new BlockHuntPlayerRespawnEvent(this, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
-            this.playerRespawn(player);
+    public void playerDeath(Player player) {
+        if (this.getPlayers(player) == 0) {
+            return;
         }
+
+        BlockHuntPlayerDeathEvent ev = new BlockHuntPlayerDeathEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+
+        this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
+        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
+        player.setGamemode(Player.SPECTATOR);
+        this.players.put(player, 0);
+        Tools.setPlayerInvisible(player, true);
+        Tools.addSound(this, Sound.GAME_PLAYER_HURT);
+
+        this.playerRespawnTime.put(player, 20);
+
+        this.playerCorpseSpawn(player);
     }
 
     /**
@@ -403,14 +420,33 @@ public abstract class BaseRoom implements IRoom {
      *
      * @param player 玩家
      */
-    protected abstract void playerRespawn(Player player);
-
-    public final void playerCorpseSpawnEvent(Player player) {
-        BlockHuntPlayerCorpseSpawnEvent ev = new BlockHuntPlayerCorpseSpawnEvent(this, player);
+    protected void playerRespawn(Player player) {
+        BlockHuntPlayerRespawnEvent ev = new BlockHuntPlayerRespawnEvent(this, player);
         Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled()) {
-            this.playerCorpseSpawn(player);
+        if (ev.isCancelled()) {
+            return;
         }
+
+        for (Entity entity : this.level.getEntities()) {
+            if (entity instanceof EntityPlayerCorpse) {
+                if (entity.namedTag != null &&
+                        entity.namedTag.getString("playerName").equals(player.getName())) {
+                    entity.close();
+                }
+            }
+        }
+        this.players.put(player, 12);
+        this.players.keySet().forEach(p -> p.showPlayer(player));
+        player.teleport(this.randomSpawn.get(BlockHunt.RANDOM.nextInt(this.randomSpawn.size())));
+        Tools.rePlayerState(player, true);
+
+        Item[] armor = new Item[4];
+        armor[0] = Item.get(306);
+        armor[1] = Item.get(307);
+        armor[2] = Item.get(308);
+        armor[3] = Item.get(309);
+        player.getInventory().setArmorContents(armor);
+        player.getInventory().setItem(0, Item.get(276));
     }
 
     /**
@@ -418,7 +454,36 @@ public abstract class BaseRoom implements IRoom {
      *
      * @param player 玩家
      */
-    protected abstract void playerCorpseSpawn(Player player);
+    public void playerCorpseSpawn(Player player) {
+        BlockHuntPlayerCorpseSpawnEvent ev = new BlockHuntPlayerCorpseSpawnEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+
+        Skin skin = player.getSkin();
+        switch(skin.getSkinData().data.length) {
+            case 8192:
+            case 16384:
+            case 32768:
+            case 65536:
+                break;
+            default:
+                skin = this.blockHunt.getDefaultSkin();
+        }
+        CompoundTag nbt = Entity.getDefaultNBT(player);
+        nbt.putCompound("Skin", new CompoundTag()
+                .putByteArray("Data", skin.getSkinData().data)
+                .putString("ModelId", skin.getSkinId()));
+        nbt.putFloat("Scale", -1.0F);
+        nbt.putString("playerName", player.getName());
+        EntityPlayerCorpse corpse = new EntityPlayerCorpse(player.getChunk(), nbt);
+        corpse.setSkin(skin);
+        corpse.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
+        corpse.setGliding(true);
+        corpse.setRotation(player.getYaw(), 0);
+        corpse.spawnToAll();
+    }
 
     /**
      * 胜利
@@ -431,7 +496,7 @@ public abstract class BaseRoom implements IRoom {
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
                     new VictoryTask(this.blockHunt, this, victoryMode), 20);
         }else {
-            this.endGameEvent();
+            this.endGame();
         }
     }
 

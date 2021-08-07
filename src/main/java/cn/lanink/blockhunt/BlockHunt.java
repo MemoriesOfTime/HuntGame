@@ -322,7 +322,7 @@ public class BlockHunt extends PluginBase {
             Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, BaseRoom> entry = it.next();
-                entry.getValue().endGameEvent();
+                entry.getValue().endGame();
                 this.getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
                 it.remove();
             }

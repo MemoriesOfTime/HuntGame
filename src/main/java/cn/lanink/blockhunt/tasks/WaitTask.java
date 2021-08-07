@@ -46,7 +46,7 @@ public class WaitTask extends PluginTask<BlockHunt> {
                     owner.getScoreboard().showScoreboard(player,owner.getLanguage(player).scoreBoardTitle, ms);
                 }
             }else {
-                this.room.gameStartEvent();
+                this.room.gameStart();
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {
@@ -63,7 +63,7 @@ public class WaitTask extends PluginTask<BlockHunt> {
                 owner.getScoreboard().showScoreboard(player, owner.getLanguage(player).scoreBoardTitle,  ms);
             }
         }else {
-            this.room.endGameEvent();
+            this.room.endGame();
             this.cancel();
         }
     }
