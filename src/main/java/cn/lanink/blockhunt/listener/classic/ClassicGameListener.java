@@ -4,6 +4,7 @@ import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageBlock;
 import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.room.ClassicModeRoom;
+import cn.lanink.blockhunt.room.RoomStatus;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
@@ -64,7 +65,7 @@ public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> imple
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             player.setAllowModifyWorld(false);
         }
-        if (room.getStatus() == 1) {
+        if (room.getStatus() == RoomStatus.WAIT) {
             CompoundTag tag = event.getItem() != null ? event.getItem().getNamedTag() : null;
             if (tag != null && tag.getBoolean("isBlockHuntItem") && tag.getInt("BlockHuntType") == 10) {
                 room.quitRoom(player);
@@ -76,7 +77,7 @@ public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> imple
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         ClassicModeRoom room = this.getListenerRoom(event.getTo().getLevel());
-        if (room == null || room.getStatus() != 2) {
+        if (room == null || room.getStatus() != RoomStatus.GAME) {
             return;
         }
         Player player = event.getPlayer();
@@ -102,7 +103,7 @@ public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> imple
             return;
         }
         BaseRoom room = this.getListenerRoom(player.getLevel());
-        if (room == null || room.getStatus() != 2 || !room.isPlaying(player)) {
+        if (room == null || room.getStatus() != RoomStatus.GAME || !room.isPlaying(player)) {
             return;
         }
         if (event.getSlot() >= event.getInventory().getSize() ||
@@ -137,7 +138,7 @@ public class ClassicGameListener extends BaseGameListener<ClassicModeRoom> imple
             return;
         }
         BaseRoom room = this.getListenerRoom(player.getLevel());
-        if (room == null || !room.isPlaying(player) || room.getStatus() != 2) return;
+        if (room == null || !room.isPlaying(player) || room.getStatus() != RoomStatus.GAME) return;
         String message = "§7[§a" + Tools.getStringIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
         event.setMessage("");
         event.setCancelled(true);

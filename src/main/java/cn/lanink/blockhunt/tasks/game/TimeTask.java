@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.tasks.game;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.RoomStatus;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
@@ -17,7 +18,7 @@ public class TimeTask extends PluginTask<BlockHunt> {
     }
 
     public void onRun(int i) {
-        if (this.room.getStatus() != 2) {
+        if (this.room.getStatus() != RoomStatus.GAME) {
             this.cancel();
             return;
         }

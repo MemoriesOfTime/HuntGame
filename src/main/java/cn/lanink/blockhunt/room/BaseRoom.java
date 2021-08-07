@@ -15,6 +15,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -30,7 +32,9 @@ public abstract class BaseRoom implements IRoom {
     protected String gameMode = null;
     protected BlockHunt blockHunt = BlockHunt.getInstance();
 
-    protected int status; //0等待重置 1玩家等待中 2玩家游戏中 3胜利结算中
+    @Setter
+    @Getter
+    protected RoomStatus status;
     protected final int setWaitTime;
     protected final int setGameTime;
     public int waitTime;
@@ -65,7 +69,7 @@ public abstract class BaseRoom implements IRoom {
                     this.level));
         }
 
-        this.status = 0;
+        this.status = RoomStatus.TASK_NEED_INITIALIZED;
         this.initData();
 
         for (String listenerName : this.getListeners()) {
@@ -106,25 +110,11 @@ public abstract class BaseRoom implements IRoom {
      * 初始化Task
      */
     protected void initTask() {
-        if (this.status != 1) {
-            this.setStatus(1);
+        if (this.status != RoomStatus.WAIT) {
+            this.setStatus(RoomStatus.WAIT);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.blockHunt, new WaitTask(this.blockHunt, this), 20);
         }
-    }
-
-    /**
-     * @param status 房间状态
-     */
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    /**
-     * @return 房间状态
-     */
-    public int getStatus() {
-        return this.status;
     }
 
     /**
@@ -134,7 +124,7 @@ public abstract class BaseRoom implements IRoom {
      */
     public synchronized void joinRoom(Player player) {
         if (this.players.values().size() < 16) {
-            if (this.status == 0) {
+            if (this.status == RoomStatus.TASK_NEED_INITIALIZED) {
                 this.initTask();
             }
             this.addPlaying(player);
@@ -274,8 +264,8 @@ public abstract class BaseRoom implements IRoom {
      * 房间开始游戏
      */
     public synchronized void gameStart() {
-        if (this.status == 2) return;
-        this.setStatus(2);
+        if (this.status == RoomStatus.GAME) return;
+        this.setStatus(RoomStatus.GAME);
         Tools.cleanEntity(this.getLevel(), true);
         this.assignIdentity();
 
@@ -297,7 +287,7 @@ public abstract class BaseRoom implements IRoom {
     }
 
     protected synchronized void endGame(boolean normal, int victory) {
-        this.status = 0;
+        this.status = RoomStatus.TASK_NEED_INITIALIZED;
         HashSet<Player> victoryPlayers = new HashSet<>();
         HashSet<Player> defeatPlayers = new HashSet<>();
         for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
@@ -437,7 +427,7 @@ public abstract class BaseRoom implements IRoom {
      */
     protected synchronized void victory(int victoryMode) {
         if (this.getPlayers().size() > 0) {
-            this.setStatus(3);
+            this.setStatus(RoomStatus.VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.blockHunt,
                     new VictoryTask(this.blockHunt, this, victoryMode), 20);
         }else {

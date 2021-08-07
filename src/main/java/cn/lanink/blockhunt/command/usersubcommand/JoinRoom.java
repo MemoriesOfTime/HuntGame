@@ -3,6 +3,7 @@ package cn.lanink.blockhunt.command.usersubcommand;
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.command.base.BaseSubCommand;
 import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -46,7 +47,8 @@ public class JoinRoom extends BaseSubCommand {
             if (args.length < 2) {
                 LinkedList<BaseRoom> rooms = new LinkedList<>();
                 for (BaseRoom room : this.blockHunt.getRooms().values()) {
-                    if ((room.getStatus() == 0 || room.getStatus() == 1) && room.getPlayers().size() < 16) {
+                    if ((room.getStatus() == RoomStatus.TASK_NEED_INITIALIZED || room.getStatus() == RoomStatus.WAIT) &&
+                            room.getPlayers().size() < 16) {
                         if (room.getPlayers().size() > 0) {
                             room.joinRoom(player);
                             sender.sendMessage(this.blockHunt.getLanguage(sender).joinRandomRoom);
@@ -63,7 +65,7 @@ public class JoinRoom extends BaseSubCommand {
                 }
             }else if (this.blockHunt.getRooms().containsKey(args[1])) {
                 BaseRoom room = this.blockHunt.getRooms().get(args[1]);
-                if (room.getStatus() == 2 || room.getStatus() == 3) {
+                if (room.getStatus() == RoomStatus.GAME || room.getStatus() == RoomStatus.VICTORY) {
                     sender.sendMessage(this.blockHunt.getLanguage(sender).joinRoomIsPlaying);
                 }else if (room.getPlayers().values().size() >= 16) {
                     sender.sendMessage(this.blockHunt.getLanguage(sender).joinRoomIsFull);

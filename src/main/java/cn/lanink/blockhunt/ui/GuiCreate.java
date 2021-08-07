@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.ui;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.RoomStatus;
 import cn.lanink.blockhunt.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -108,7 +109,7 @@ public class GuiCreate {
         FormWindowModal modal;
         BaseRoom room = BlockHunt.getInstance().getRooms().get(roomName.replace("§e§l", "").trim());
         if (room != null) {
-            if (room.getStatus() == 2 || room.getStatus() == 3) {
+            if (room.getStatus() == RoomStatus.GAME || room.getStatus() == RoomStatus.VICTORY) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, language.joinRoomIsPlaying, language.buttonReturn, language.buttonReturn);
             }else if (room.getPlayers().size() >= 16) {

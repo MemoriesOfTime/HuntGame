@@ -1,6 +1,7 @@
 package cn.lanink.blockhunt.listener.defaults;
 
 import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.RoomStatus;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -20,7 +21,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             BaseRoom room = this.getListenerRoom(player.getLevel());
             if (room == null || !room.isPlaying(player)) return;
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getStatus() == 2) {
+                if (room.getStatus() == RoomStatus.GAME) {
                     if (room.getPlayers(player) == 1) {
                         room.playerDeathEvent(player);
                     }else {

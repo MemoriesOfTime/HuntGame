@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.command.adminsubcommand;
 
 import cn.lanink.blockhunt.command.base.BaseSubCommand;
 import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -33,7 +34,7 @@ public class StartRoom extends BaseSubCommand {
         BaseRoom room = this.blockHunt.getRooms().get(player.getLevel().getName());
         if (room != null) {
             if (room.getPlayers().size() >= 2) {
-                if (room.getStatus() == 1) {
+                if (room.getStatus() == RoomStatus.WAIT) {
                     room.gameStartEvent();
                     sender.sendMessage(this.blockHunt.getLanguage(sender).adminStartRoom);
                 }else {

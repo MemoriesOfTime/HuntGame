@@ -2,6 +2,7 @@ package cn.lanink.blockhunt.tasks;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.room.BaseRoom;
+import cn.lanink.blockhunt.room.RoomStatus;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
@@ -20,7 +21,7 @@ public class WaitTask extends PluginTask<BlockHunt> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != 1) {
+        if (this.room.getStatus() != RoomStatus.WAIT) {
             this.cancel();
             return;
         }
