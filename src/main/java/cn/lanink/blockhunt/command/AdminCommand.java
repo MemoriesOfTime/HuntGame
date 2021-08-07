@@ -26,7 +26,6 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new StopRoom("stoproom"));
         this.addSubCommand(new ReloadRoom("reloadroom"));
         this.addSubCommand(new UnloadRoom("unloadroom"));
-        this.loadCommandBase();
     }
 
     @Override

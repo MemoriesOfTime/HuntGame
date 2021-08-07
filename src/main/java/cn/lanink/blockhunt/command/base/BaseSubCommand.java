@@ -12,10 +12,10 @@ public abstract class BaseSubCommand {
 
     protected BlockHunt blockHunt = BlockHunt.getInstance();
 
-    private String name;
+    private final String name;
 
     protected BaseSubCommand(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     /**
@@ -23,10 +23,6 @@ public abstract class BaseSubCommand {
      * @return boolean
      */
     public abstract boolean canUser(CommandSender sender);
-
-    public String getDescription(){
-        return "";
-    }
 
     /**
      * 获取名称

@@ -19,7 +19,6 @@ public class UserCommand extends BaseCommand {
         this.setPermission("blockhunt.command.user");
         this.addSubCommand(new JoinRoom("join"));
         this.addSubCommand(new QuitRoom("quit"));
-        this.loadCommandBase();
     }
 
     @Override
