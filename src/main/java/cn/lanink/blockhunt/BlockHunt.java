@@ -32,7 +32,7 @@ import java.util.*;
 public class BlockHunt extends PluginBase {
 
     public static final String VERSION = "?";
-    public static boolean debug = true; //TODO close
+    public static boolean debug = false;
     public static final Random RANDOM = new Random();
 
     private static BlockHunt BLOCK_HUNT;
@@ -73,6 +73,20 @@ public class BlockHunt extends PluginBase {
 
         this.saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+
+        if (config.getBoolean("debug", false)) {
+            debug = true;
+            this.getLogger().warning("§c=========================================");
+            this.getLogger().warning("§c 警告：您开启了debug模式！");
+            this.getLogger().warning("§c Warning: You have turned on debug mode!");
+            this.getLogger().warning("§c=========================================");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+
         this.victoryCmd = this.config.getStringList("victoryCmd");
         this.defeatCmd = this.config.getStringList("defeatCmd");
         this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
