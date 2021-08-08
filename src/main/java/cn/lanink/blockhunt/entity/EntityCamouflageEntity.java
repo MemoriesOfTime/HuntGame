@@ -78,6 +78,10 @@ public class EntityCamouflageEntity extends EntityLiving {
 
     @Override
     public boolean onUpdate(int currentTick) {
+        if (this.closed) {
+            return false;
+        }
+
         if (this.getMaster() != null) {
             double dx = this.x - this.getMaster().getX();
             double dz = this.z - this.getMaster().getZ();
