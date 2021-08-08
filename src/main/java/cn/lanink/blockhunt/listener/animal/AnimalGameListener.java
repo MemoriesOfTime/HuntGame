@@ -57,7 +57,52 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     player.teleport(room.getWaitSpawn());
                 }
             }
-            event.setCancelled(true);
+            if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+                event.setCancelled(true);
+            }else if (event.getFinalDamage() + 1 > player.getHealth()) {
+                event.setDamage(0);
+                room.playerDeath(player);
+            }
+        }else if (event.getEntity() instanceof EntityCamouflageEntity) {
+            EntityCamouflageEntity entity = (EntityCamouflageEntity) event.getEntity();
+            if (entity.getMaster() == null) {
+                event.setDamage(0);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player) {
+            Player damager = (Player) event.getDamager();
+            AnimalModeRoom room = this.getListenerRoom(damager.getLevel());
+            if (room == null) {
+                return;
+            }
+            if (event.getEntity() instanceof EntityCamouflageEntity) {
+                EntityCamouflageEntity entity = (EntityCamouflageEntity) event.getEntity();
+                if (room.getPlayers(damager) == 2 || room.getPlayers(damager) == 12) {
+                    damager.attack(new EntityDamageEvent(damager, EntityDamageEvent.DamageCause.CUSTOM, 1));
+                }else {
+                    event.setCancelled(true);
+                    if (damager.getInventory().getItemInHand().getId() == 280) {
+                        if (room.getPlayerCamouflageEntity().get(damager).getEntityName().equals(entity.getEntityName())) {
+                            damager.sendTitle("", "你已经伪装成 " + entity.getEntityName() + " 了！不能重复伪装");
+                        }else {
+                            room.getPlayerCamouflageEntity().get(damager).close();
+
+                            EntityCamouflageEntity newEntity =
+                                    EntityCamouflageEntity.create(damager.chunk, Entity.getDefaultNBT(damager), entity.getEntityName());
+                            room.getPlayerCamouflageEntity().put(damager, newEntity);
+                            newEntity.setMaster(damager);
+                            newEntity.hidePlayer(damager);
+                            newEntity.spawnToAll();
+
+                            damager.sendTitle("", "你伪装成了 " + entity.getEntityName() + " ！");
+                        }
+                    }
+                }
+            }
         }
     }
 

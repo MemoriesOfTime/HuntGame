@@ -484,18 +484,18 @@ public abstract class BaseRoom implements IRoom {
             return;
         }
 
-        this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
+        if (this.getPlayers(player) == 1) {
+            this.playerRespawnTime.put(player, 20);
+            this.playerCorpseSpawn(player);
+
+            this.level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[] { player.floor() });
+        }
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(Player.SPECTATOR);
         this.players.put(player, 0);
-        Tools.setPlayerInvisible(player, true);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
-
-        this.playerRespawnTime.put(player, 20);
-
-        this.playerCorpseSpawn(player);
     }
 
     /**
@@ -522,6 +522,7 @@ public abstract class BaseRoom implements IRoom {
         this.players.keySet().forEach(p -> p.showPlayer(player));
         player.teleport(this.randomSpawn.get(BlockHunt.RANDOM.nextInt(this.randomSpawn.size())));
         Tools.rePlayerState(player, true);
+        Tools.setPlayerInvisible(player, false);
 
         Item[] armor = new Item[4];
         armor[0] = Item.get(306);

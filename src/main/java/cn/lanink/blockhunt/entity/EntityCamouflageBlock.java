@@ -30,11 +30,6 @@ public class EntityCamouflageBlock extends EntityHuman {
         this.namedTag.putBoolean("isBlockHuntEntity", true);
     }
 
-    /*@Override
-    public int getNetworkId() {
-        return 64;
-    }*/
-
     @Override
     protected void initEntity() {
         super.initEntity();

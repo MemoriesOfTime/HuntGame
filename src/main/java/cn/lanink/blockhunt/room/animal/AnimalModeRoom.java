@@ -68,14 +68,14 @@ public class AnimalModeRoom extends BaseRoom {
                     EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
             this.playerCamouflageEntity.put(player, camouflageEntity);
             camouflageEntity.setMaster(player);
-            //camouflageEntity.hidePlayer(player);
+            camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
 
             Item item = Item.get(280);
-            item.setCustomName("当前伪装生物：" + randomEntityName);
+            item.setCustomName("伪装道具\n更换伪装：点击要伪装的生物");
             player.getInventory().setItem(8, item);
 
-            player.setScale(0.01f);
+            player.setScale(1);
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }

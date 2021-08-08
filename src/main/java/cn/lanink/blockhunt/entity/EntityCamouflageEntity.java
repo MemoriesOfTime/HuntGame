@@ -22,6 +22,13 @@ import java.util.HashSet;
  */
 public class EntityCamouflageEntity extends EntityLiving {
 
+    static {
+        Entity.registerEntity("EntityCamouflageEntity", EntityCamouflageEntity.class);
+    }
+
+    @Getter
+    private final String entityName;
+
     @Setter
     @Getter
     private Player master;
@@ -33,11 +40,8 @@ public class EntityCamouflageEntity extends EntityLiving {
     private int moveTime;
 
     public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, String entityName) {
-        return create(chunk, nbt, EntityData.getEntityDataByName(entityName));
-    }
-
-    public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, EntityData entityData) {
-        return new EntityCamouflageEntity(chunk, nbt, true) {
+        EntityData entityData = EntityData.getEntityDataByName(entityName);
+        return new EntityCamouflageEntity(chunk, nbt, entityName) {
             @Override
             public int getNetworkId() {
                 return entityData.getNetworkID();
@@ -55,8 +59,9 @@ public class EntityCamouflageEntity extends EntityLiving {
         };
     }
 
-    private EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, boolean i) {
+    private EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, String entityName) {
         super(chunk, nbt);
+        this.entityName = entityName;
         this.setNameTag("");
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
@@ -68,6 +73,7 @@ public class EntityCamouflageEntity extends EntityLiving {
     @Deprecated
     public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+        this.entityName = "Pig";
         this.close();
     }
 
@@ -155,10 +161,26 @@ public class EntityCamouflageEntity extends EntityLiving {
     }
 
     @Override
+    public boolean setMotion(Vector3 motion) {
+        if (super.setMotion(motion)) {
+            this.addMotion(this.motionX, this.motionY, this.motionZ);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public void spawnTo(Player player) {
         if (this.canSee(player)) {
             super.spawnTo(player);
         }
+    }
+
+    @Override
+    public void close() {
+        this.setMaster(null);
+        super.close();
     }
 
     /**
