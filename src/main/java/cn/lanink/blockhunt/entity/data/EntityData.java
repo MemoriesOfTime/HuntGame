@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author LT_Name
@@ -22,6 +23,7 @@ public class EntityData {
                     "Pig",
                     "Sheep"
             );
+    private final static ConcurrentHashMap<String, EntityData> ENTITY_DATA_CACHE = new ConcurrentHashMap<>();
 
     private int networkID;
     private float width;
@@ -38,8 +40,12 @@ public class EntityData {
             }
             entityName = getRandomEntityName();
         }
-        Entity entity = Entity.createEntity(entityName, Server.getInstance().getDefaultLevel().getSafeSpawn());
-        return new EntityData(entity.getNetworkId(), entity.getWidth(), entity.getHeight());
+        if (!ENTITY_DATA_CACHE.containsKey(entityName)) {
+            Entity entity = Entity.createEntity(entityName, Server.getInstance().getDefaultLevel().getSafeSpawn());
+            ENTITY_DATA_CACHE.put(entityName, new EntityData(entity.getNetworkId(), entity.getWidth(), entity.getHeight()));
+            entity.close();
+        }
+        return ENTITY_DATA_CACHE.get(entityName);
     }
 
 }
