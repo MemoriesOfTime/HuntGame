@@ -139,6 +139,11 @@ public class BlockHunt extends PluginBase {
         this.getLogger().info(this.getLanguage(null).pluginEnable);
     }
 
+    @Override
+    public void onDisable() {
+        this.unloadRooms();
+    }
+
     /**
      * 注册监听器类
      *
