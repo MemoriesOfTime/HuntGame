@@ -83,9 +83,9 @@ public class AnimalModeRoom extends BaseRoom {
         //TODO 改为在地图上随机生成实体
         LinkedList<Position> positions = new LinkedList<>();
         for (Position position : this.getRandomSpawn()) {
-            int count = Tools.rand(5, 20);
+            int count = Tools.rand(15, 30);
             for (int c = 0; c < count; c++) {
-                positions.add(position.add(Tools.rand(-30, 30), position.getFloorY(), Tools.rand(-30, 30)));
+                positions.add(position.add(Tools.rand(-50, 50), position.getFloorY(), Tools.rand(-50, 50)));
             }
         }
         for (Position position : positions) {
