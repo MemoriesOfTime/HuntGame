@@ -95,9 +95,7 @@ public class BlockHunt extends PluginBase {
         registerListeners("AnimalGameListener", AnimalGameListener.class);
 
         registerRoom("block", BlockModeRoom.class);
-        if (BlockHunt.debug) {
-            registerRoom("animal", AnimalModeRoom.class);
-        }
+        registerRoom("animal", AnimalModeRoom.class);
     }
 
     @Override
