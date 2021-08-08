@@ -36,7 +36,7 @@ public class SetWaitSpawn extends BaseSubCommand {
         config.set("world", world);
         config.set("waitSpawn", spawn);
         config.save();
-        sender.sendMessage(this.huntGame.getLanguage(sender).adminSetSpawn);
+        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminSetSpawn"));
         return true;
     }
 

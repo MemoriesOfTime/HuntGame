@@ -80,7 +80,7 @@ victoryHuntersBottom: "§e恭喜猎人获得胜利"
 victoryHuntersScoreBoard: "§e恭喜猎人获得胜利! "
 victoryPreyBottom: "§e恭喜猎物获得胜利！"
 victoryPreyScoreBoard: "§e恭喜猎物获得胜利！"
-scoreBoardTitle: "§e方块躲猫猫"
+scoreBoardTitle: "§e躲猫猫"
 waitTimeScoreBoard: |-
     玩家: §a %playerNumber%/16
     §a开始倒计时： §l§e %time%

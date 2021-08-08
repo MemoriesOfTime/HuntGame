@@ -127,12 +127,12 @@ public class BlockModeRoom extends BaseRoom {
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
-            for (String string : this.huntGame.getLanguage(entry.getKey()).gameTimeScoreBoard.split("\n")) {
+            for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {
                 ms.add(string.replace("%mode%", Tools.getStringIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
                         .replace("%time%", this.gameTime + ""));
             }
-            this.huntGame.getScoreboard().showScoreboard(entry.getKey(), this.huntGame.getLanguage(entry.getKey()).scoreBoardTitle, ms);
+            this.huntGame.getScoreboard().showScoreboard(entry.getKey(), this.huntGame.getLanguage(entry.getKey()).translateString("scoreBoardTitle"), ms);
         }
     }
 

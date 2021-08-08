@@ -38,7 +38,7 @@ public class AddRandomSpawn extends BaseSubCommand {
         list.add(s);
         config.set("randomSpawn", list);
         config.save();
-        sender.sendMessage(this.huntGame.getLanguage(sender).adminAddRandomSpawn);
+        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminAddRandomSpawn"));
         return true;
     }
 

@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
  *
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class PlayerJoinAndQuit implements Listener {
 
     private final HuntGame huntGame;
@@ -83,11 +84,11 @@ public class PlayerJoinAndQuit implements Listener {
             LinkedHashMap<String, BaseRoom> room =  this.huntGame.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.huntGame.getLanguage(player).tpQuitRoomLevel);
+                player.sendMessage(this.huntGame.getLanguage(player).translateString("tpQuitRoomLevel"));
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.huntGame.getLanguage(player).tpJoinRoomLevel);
+                player.sendMessage(this.huntGame.getLanguage(player).translateString("tpJoinRoomLevel"));
             }
         }
     }

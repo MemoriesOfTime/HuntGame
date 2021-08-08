@@ -36,12 +36,14 @@ public class SetWaitTime extends BaseSubCommand {
                 Config config = this.huntGame.getRoomConfig(player.getLevel());
                 config.set("waitTime", Integer.parseInt(args[1]));
                 config.save();
-                sender.sendMessage(this.huntGame.getLanguage(sender).adminSetWaitTime.replace("%time%", args[1]));
+                sender.sendMessage(this.huntGame.getLanguage(sender)
+                        .translateString("adminSetWaitTime").replace("%time%", args[1]));
             }else {
-                sender.sendMessage(this.huntGame.getLanguage(sender).adminNotNumber);
+                sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminNotNumber"));
             }
         }else {
-            sender.sendMessage(this.huntGame.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
+            sender.sendMessage(this.huntGame.getLanguage(sender)
+                    .translateString("cmdHelp").replace("%cmdName%", this.getName()));
         }
         return true;
     }

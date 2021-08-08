@@ -42,10 +42,12 @@ public class AddBlock extends BaseSubCommand {
                 config.set("blocks", list);
                 config.save();
             }
-            sender.sendMessage(this.huntGame.getLanguage(player).adminAddBlock.replace("%id%", id));
+            sender.sendMessage(this.huntGame.getLanguage(player)
+                    .translateString("adminAddBlock").replace("%id%", id));
             return true;
         }
-        sender.sendMessage(this.huntGame.getLanguage(player).adminAddBlockFailure.replace("%id%", id));
+        sender.sendMessage(this.huntGame.getLanguage(player)
+                .translateString("adminAddBlockFailure").replace("%id%", id));
         return true;
     }
 

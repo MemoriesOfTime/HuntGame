@@ -8,8 +8,6 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
@@ -22,7 +20,6 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
-import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.List;
@@ -40,12 +37,12 @@ public class Tools {
     public static String getStringIdentity(BaseRoom room, Player player) {
         switch (room.getPlayers(player)) {
             case 1:
-                return HuntGame.getInstance().getLanguage(player).prey;
+                return HuntGame.getInstance().getLanguage(player).translateString("prey");
             case 2:
             case 12:
-                return HuntGame.getInstance().getLanguage(player).hunters;
+                return HuntGame.getInstance().getLanguage(player).translateString("hunters");
             default:
-                return HuntGame.getInstance().getLanguage(player).death;
+                return HuntGame.getInstance().getLanguage(player).translateString("death");
         }
     }
 
@@ -68,10 +65,6 @@ public class Tools {
         }
     }
 
-    public static Item getHuntGameItem(int tagNumber) {
-        return getHuntGameItem(tagNumber, null);
-    }
-
     /**
      * 根据编号获取物品
      * @param tagNumber 道具编号
@@ -92,26 +85,11 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 10));
-                item.setCustomName(HuntGame.getInstance().getLanguage(player).itemQuitRoom);
-                item.setLore(HuntGame.getInstance().getLanguage(player).itemQuitRoomLore.split("\n"));
+                item.setCustomName(HuntGame.getInstance().getLanguage(player).translateString("itemQuitRoom"));
+                item.setLore(HuntGame.getInstance().getLanguage(player).translateString("itemQuitRoomLore").split("\n"));
                 return item;
         }
         return null;
-    }
-
-    /**
-     * 设置Human实体皮肤
-     * @param human 实体
-     * @param skin 皮肤
-     */
-    public static void setHumanSkin(EntityHuman human, Skin skin) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
-        human.setSkin(skin);
-        human.getLevel().getPlayers().values().forEach(p -> p.dataPacket(packet));
     }
 
     /**

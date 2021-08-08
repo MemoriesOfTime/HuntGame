@@ -19,6 +19,7 @@ import java.util.Map;
 /**
  * @author LT_Name
  */
+@SuppressWarnings("unused")
 public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final HuntGame huntGame = HuntGame.getInstance();
@@ -78,7 +79,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
         event.setMessage("");
         event.setCancelled(true);
-        player.sendMessage(this.huntGame.getLanguage(player).useCmdInRoom);
+        player.sendMessage(this.huntGame.getLanguage(player).translateString("useCmdInRoom"));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

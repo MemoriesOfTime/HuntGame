@@ -27,6 +27,7 @@ import java.util.Set;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class BlockGameListener extends BaseGameListener<BlockModeRoom> implements Listener {
 
     private final HuntGame huntGame = HuntGame.getInstance();
@@ -81,7 +82,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                 if (room.getPlayers(player) == 1) {
                     room.playerDeath(player);
                     for (Player p : room.getPlayers().keySet()) {
-                        p.sendMessage(this.huntGame.getLanguage(p).huntersKillPrey
+                        p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
                                 .replace("%damagePlayer%", damager.getName())
                                 .replace("%player%", player.getName()));
                     }

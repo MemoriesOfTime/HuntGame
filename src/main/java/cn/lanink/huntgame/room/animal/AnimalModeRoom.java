@@ -130,13 +130,13 @@ public class AnimalModeRoom extends BaseRoom {
                     player.getUIInventory().clearAll();
                     if (player == ltname) {
                         this.players.put(player, 2);
-                        player.sendTitle(this.huntGame.getLanguage(player).titleHuntersTitle,
-                                this.huntGame.getLanguage(player).titleHuntersSubtitle, 10, 40, 10);
+                        player.sendTitle(this.huntGame.getLanguage(player).translateString("titleHuntersTitle"),
+                                this.huntGame.getLanguage(player).translateString("titleHuntersSubtitle"), 10, 40, 10);
                         continue;
                     }
                     this.players.put(player, 1);
-                    player.sendTitle(this.huntGame.getLanguage(player).titlePreyTitle,
-                            this.huntGame.getLanguage(player).titlePreySubtitle, 10, 40, 10);
+                    player.sendTitle(this.huntGame.getLanguage(player).translateString("titlePreyTitle"),
+                            this.huntGame.getLanguage(player).translateString("titlePreySubtitle"), 10, 40, 10);
                 }
                 return;
             }
@@ -152,12 +152,12 @@ public class AnimalModeRoom extends BaseRoom {
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
-            for (String string : this.huntGame.getLanguage(entry.getKey()).gameTimeScoreBoard.split("\n")) {
+            for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {
                 ms.add(string.replace("%mode%", Tools.getStringIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
                         .replace("%time%", this.gameTime + ""));
             }
-            this.huntGame.getScoreboard().showScoreboard(entry.getKey(), this.huntGame.getLanguage(entry.getKey()).scoreBoardTitle, ms);
+            this.huntGame.getScoreboard().showScoreboard(entry.getKey(), this.huntGame.getLanguage(entry.getKey()).translateString("scoreBoardTitle"), ms);
         }
     }
 

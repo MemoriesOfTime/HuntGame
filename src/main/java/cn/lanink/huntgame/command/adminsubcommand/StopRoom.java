@@ -31,9 +31,9 @@ public class StopRoom extends BaseSubCommand {
         BaseRoom room = this.huntGame.getRooms().get(player.getLevel().getName());
         if (room != null) {
             room.endGame();
-            sender.sendMessage(this.huntGame.getLanguage(player).adminStopRoom);
+            sender.sendMessage(this.huntGame.getLanguage(player).translateString("adminStopRoom"));
         }else {
-            sender.sendMessage(this.huntGame.getLanguage(player).adminLevelNoRoom);
+            sender.sendMessage(this.huntGame.getLanguage(player).translateString("adminLevelNoRoom"));
         }
         return true;
     }

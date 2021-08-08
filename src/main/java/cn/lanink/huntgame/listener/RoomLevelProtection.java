@@ -20,6 +20,7 @@ import cn.nukkit.level.Level;
  *
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class RoomLevelProtection implements Listener {
 
     /**

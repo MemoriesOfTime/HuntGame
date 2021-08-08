@@ -28,11 +28,11 @@ public class QuitRoom extends BaseSubCommand {
         for (BaseRoom room : this.huntGame.getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);
-                sender.sendMessage(this.huntGame.getLanguage(sender).quitRoom);
+                sender.sendMessage(this.huntGame.getLanguage(sender).translateString("quitRoom"));
                 return true;
             }
         }
-        sender.sendMessage(this.huntGame.getLanguage(sender).quitRoomNotInRoom);
+        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("quitRoomNotInRoom"));
         return true;
     }
 

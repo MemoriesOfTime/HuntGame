@@ -38,15 +38,17 @@ public class SetGameTime extends BaseSubCommand {
                     Config config = this.huntGame.getRoomConfig(player.getLevel());
                     config.set("gameTime", time);
                     config.save();
-                    sender.sendMessage(this.huntGame.getLanguage(sender).adminSetGameTime.replace("%time%", args[1]));
+                    sender.sendMessage(this.huntGame.getLanguage(sender)
+                            .translateString("adminSetGameTime").replace("%time%", args[1]));
                 } else {
-                    sender.sendMessage(this.huntGame.getLanguage(sender).adminSetGameTimeShort);
+                    sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminSetGameTimeShort"));
                 }
             }else {
-                sender.sendMessage(this.huntGame.getLanguage(sender).adminNotNumber);
+                sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminNotNumber"));
             }
         }else {
-            sender.sendMessage(this.huntGame.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
+            sender.sendMessage(this.huntGame.getLanguage(sender)
+                    .translateString("cmdHelp").replace("%cmdName%", this.getName()));
         }
         return true;
     }

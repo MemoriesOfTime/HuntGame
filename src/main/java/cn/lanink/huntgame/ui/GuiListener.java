@@ -1,7 +1,7 @@
 package cn.lanink.huntgame.ui;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
-import cn.lanink.huntgame.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
@@ -53,7 +53,7 @@ public class GuiListener implements Listener {
                     }
                     break;
                 case ROOM_LIST_MENU:
-                    if (simple.getResponse().getClickedButton().getText().equals(language.buttonReturn)) {
+                    if (simple.getResponse().getClickedButton().getText().equals(language.translateString("buttonReturn"))) {
                         GuiCreate.sendUserMenu(player);
                     }else {
                         GuiCreate.sendRoomJoinOkMenu(player,
@@ -98,7 +98,7 @@ public class GuiListener implements Listener {
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();
             if (cache == GuiType.ROOM_JOIN_OK) {
-                if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(language.buttonReturn)) {
+                if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(language.translateString("buttonReturn"))) {
                     String[] s = modal.getContent().split("\"");
                     Server.getInstance().dispatchCommand(
                             player, uName + " join " + s[1].replace("§e§l", "").trim());

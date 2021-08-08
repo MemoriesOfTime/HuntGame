@@ -4,6 +4,7 @@ import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.command.AdminCommand;
 import cn.lanink.huntgame.command.UserCommand;
 import cn.lanink.huntgame.listener.PlayerJoinAndQuit;
@@ -15,7 +16,6 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
 import cn.lanink.huntgame.ui.GuiListener;
-import cn.lanink.huntgame.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -148,7 +148,7 @@ public class HuntGame extends PluginBase {
 
         }*/
 
-        this.getLogger().info(this.getLanguage(null).pluginEnable);
+        this.getLogger().info(this.getLanguage().translateString("pluginEnable"));
     }
 
     @Override
@@ -242,13 +242,10 @@ public class HuntGame extends PluginBase {
         return this.scoreboard;
     }
 
-    /**
-     * 传入玩家将返回玩家所用语言
-     * 否则返回设置的默认语言
-     *
-     * @param object 参数
-     * @return 语言类
-     */
+    public Language getLanguage() {
+        return this.getLanguage(null);
+    }
+
     public Language getLanguage(Object object) {
         if (object instanceof Player) {
             Player player = (Player) object;
@@ -282,7 +279,7 @@ public class HuntGame extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
-        Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
+        Config config = new Config(this.getDataFolder() + "/Rooms/" + level + ".yml", 2);
         this.roomConfigs.put(level, config);
         return config;
     }
@@ -291,7 +288,7 @@ public class HuntGame extends PluginBase {
      * 加载所有房间
      */
     private void loadRooms() {
-        this.getLogger().info(this.getLanguage(null).startLoadingRoom);
+        this.getLogger().info(this.getLanguage().translateString("startLoadingRoom"));
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null && s.length > 0) {
             for (File file1 : s) {
@@ -304,16 +301,16 @@ public class HuntGame extends PluginBase {
                             config.getStringList("randomSpawn").size() == 0 ||
                             config.getStringList("blocks").size() == 0 ||
                             "".equals(config.getString("world", "").trim())) {
-                        this.getLogger().warning(this.getLanguage(null).roomLoadedFailureByConfig.replace("%name%", fileName[0]));
+                        this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByConfig").replace("%name%", fileName[0]));
                         continue;
                     }
                     String levelName = config.getString("world");
                     if (this.getServer().getLevelByName(levelName) == null && !getServer().loadLevel(levelName)) {
-                        this.getLogger().warning(this.getLanguage(null).roomLoadedFailureByLevel.replace("%name%", fileName[0]));
+                        this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByLevel").replace("%name%", fileName[0]));
                         continue;
                     }
                     try {
-                        String gameMode = config.getString("gameMode", "block");
+                        String gameMode = config.getString("gameMode");
                         if (!ROOM_CLASS.containsKey(gameMode)) {
                             gameMode = "block";
                         }
@@ -321,14 +318,14 @@ public class HuntGame extends PluginBase {
                         BaseRoom baseRoom = constructor.newInstance(config);
                         baseRoom.setGameName(gameMode);
                         this.rooms.put(fileName[0], baseRoom);
-                        this.getLogger().info(this.getLanguage(null).roomLoadedSuccess.replace("%name%", fileName[0]));
+                        this.getLogger().info(this.getLanguage().translateString("roomLoadedSuccess").replace("%name%", fileName[0]));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-        this.getLogger().info(this.getLanguage(null).roomLoadedAllSuccess.replace(" %number%", this.rooms.size() + ""));
+        this.getLogger().info(this.getLanguage().translateString("roomLoadedAllSuccess").replace(" %number%", this.rooms.size() + ""));
     }
 
     /**
@@ -340,7 +337,7 @@ public class HuntGame extends PluginBase {
             while(it.hasNext()){
                 Map.Entry<String, BaseRoom> entry = it.next();
                 entry.getValue().endGame();
-                this.getLogger().info(this.getLanguage(null).roomUnloadSuccess.replace("%name%", entry.getKey()));
+                this.getLogger().info(this.getLanguage().translateString("roomUnloadSuccess").replace("%name%", entry.getKey()));
                 it.remove();
             }
             this.rooms.clear();

@@ -28,7 +28,7 @@ public class UnloadRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         this.huntGame.unloadRooms();
-        sender.sendMessage(this.huntGame.getLanguage(sender).adminUnload);
+        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminUnload"));
         return true;
     }
 

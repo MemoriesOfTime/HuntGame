@@ -9,7 +9,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -31,19 +30,19 @@ public class VictoryTask extends PluginTask<HuntGame> {
             this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
                     new Vector3[] { entry.getKey().floor() });
             if (victory == 2) {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryHuntersTitle,
+                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).translateString("titleVictoryHuntersTitle"),
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).victoryHuntersBottom);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(owner.getLanguage(entry.getKey()).victoryHuntersScoreBoard.split("\n")));
+                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).translateString("victoryHuntersBottom"));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
-                        owner.getLanguage(entry.getKey()).scoreBoardTitle, ms);
+                        owner.getLanguage(entry.getKey()).translateString("scoreBoardTitle"),
+                        Arrays.asList(owner.getLanguage(entry.getKey()).translateString("victoryHuntersScoreBoard").split("\n")));
             }else {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).titleVictoryPreySubtitle,
+                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).translateString("titleVictoryPreySubtitle"),
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).victoryPreyBottom);
-                LinkedList<String> ms = new LinkedList<>(Arrays.asList(owner.getLanguage(entry.getKey()).victoryPreyScoreBoard.split("\n")));
+                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).translateString("victoryPreyBottom"));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
-                        owner.getLanguage(entry.getKey()).scoreBoardTitle, ms);
+                        owner.getLanguage(entry.getKey()).translateString("scoreBoardTitle"),
+                        Arrays.asList(owner.getLanguage(entry.getKey()).translateString("victoryPreyScoreBoard").split("\n")));
             }
         }
     }

@@ -34,7 +34,8 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage(this.huntGame.getLanguage(sender).adminHelp.replace("%cmdName%", this.getName()));
+        sender.sendMessage(this.huntGame.getLanguage(sender)
+                .translateString("adminHelp").replace("%cmdName%", this.getName()));
     }
 
     @Override

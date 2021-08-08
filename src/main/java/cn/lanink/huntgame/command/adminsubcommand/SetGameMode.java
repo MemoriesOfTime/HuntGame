@@ -35,12 +35,15 @@ public class SetGameMode extends BaseSubCommand {
                 Config config = this.huntGame.getRoomConfig(player.getLevel());
                 config.set("gameMode", args[1]);
                 config.save();
-                sender.sendMessage(this.huntGame.getLanguage(sender).adminSetGameMode.replace("%mode%", args[1]));
+                sender.sendMessage(this.huntGame.getLanguage(sender)
+                        .translateString("adminSetGameMode").replace("%mode%", args[1]));
             }else {
-                sender.sendMessage(this.huntGame.getLanguage(sender).adminSetGameModeNotFound.replace("%mode%", args[1]));
+                sender.sendMessage(this.huntGame.getLanguage(sender)
+                        .translateString("adminSetGameModeNotFound").replace("%mode%", args[1]));
             }
         }else {
-            sender.sendMessage(this.huntGame.getLanguage(sender).cmdHelp.replace("%cmdName%", this.getName()));
+            sender.sendMessage(this.huntGame.getLanguage(sender)
+                    .translateString("cmdHelp").replace("%cmdName%", this.getName()));
         }
         return true;
     }

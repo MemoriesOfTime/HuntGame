@@ -35,15 +35,15 @@ public class WaitTask extends PluginTask<HuntGame> {
                     Tools.addSound(this.room, Sound.RANDOM_CLICK);
                 }
                 for (Player player : this.room.getPlayers().keySet()) {
-                    player.sendActionBar(owner.getLanguage(player).waitTimeBottom
+                    player.sendActionBar(owner.getLanguage(player).translateString("waitTimeBottom")
                             .replace("%playerNumber%", room.getPlayers().size() + "")
                             .replace("%time%", room.waitTime + ""));
                     LinkedList<String> ms = new LinkedList<>();
-                    for (String string : owner.getLanguage(player).waitTimeScoreBoard.split("\n")) {
+                    for (String string : owner.getLanguage(player).translateString("waitTimeScoreBoard").split("\n")) {
                         ms.add(string.replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
-                    owner.getScoreboard().showScoreboard(player,owner.getLanguage(player).scoreBoardTitle, ms);
+                    owner.getScoreboard().showScoreboard(player,owner.getLanguage(player).translateString("scoreBoardTitle"), ms);
                 }
             }else {
                 this.room.gameStart();
@@ -54,13 +54,13 @@ public class WaitTask extends PluginTask<HuntGame> {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
             for (Player player : this.room.getPlayers().keySet()) {
-                player.sendActionBar(owner.getLanguage(player).waitBottom
+                player.sendActionBar(owner.getLanguage(player).translateString("waitBottom")
                         .replace("%playerNumber%", room.getPlayers().size() + ""));
                 LinkedList<String> ms = new LinkedList<>();
-                for (String string : owner.getLanguage(player).waitScoreBoard.split("\n")) {
+                for (String string : owner.getLanguage(player).translateString("waitScoreBoard").split("\n")) {
                     ms.add(string.replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                owner.getScoreboard().showScoreboard(player, owner.getLanguage(player).scoreBoardTitle,  ms);
+                owner.getScoreboard().showScoreboard(player, owner.getLanguage(player).translateString("scoreBoardTitle"),  ms);
             }
         }else {
             this.room.endGame();

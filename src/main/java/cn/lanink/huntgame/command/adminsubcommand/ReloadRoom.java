@@ -28,7 +28,7 @@ public class ReloadRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         this.huntGame.reLoadRooms();
-        sender.sendMessage(this.huntGame.getLanguage(sender).adminReload);
+        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminReload"));
         return true;
     }
 

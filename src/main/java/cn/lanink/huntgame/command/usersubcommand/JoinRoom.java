@@ -36,12 +36,12 @@ public class JoinRoom extends BaseSubCommand {
             Player player = (Player) sender;
             for (BaseRoom room : this.huntGame.getRooms().values()) {
                 if (room.isPlaying(player)) {
-                    sender.sendMessage(this.huntGame.getLanguage(sender).joinRoomOnRoom);
+                    sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomOnRoom"));
                     return true;
                 }
             }
             if (player.riding != null) {
-                sender.sendMessage(this.huntGame.getLanguage(sender).joinRoomOnRiding);
+                sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomOnRiding"));
                 return true;
             }
             if (args.length < 2) {
@@ -51,7 +51,7 @@ public class JoinRoom extends BaseSubCommand {
                             room.getPlayers().size() < 16) {
                         if (room.getPlayers().size() > 0) {
                             room.joinRoom(player);
-                            sender.sendMessage(this.huntGame.getLanguage(sender).joinRandomRoom);
+                            sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
                             return true;
                         }
                         rooms.add(room);
@@ -60,25 +60,25 @@ public class JoinRoom extends BaseSubCommand {
                 if (rooms.size() > 0) {
                     BaseRoom room = rooms.get(HuntGame.RANDOM.nextInt(rooms.size()));
                     room.joinRoom(player);
-                    sender.sendMessage(this.huntGame.getLanguage(sender).joinRandomRoom);
+                    sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
                     return true;
                 }
             }else if (this.huntGame.getRooms().containsKey(args[1])) {
                 BaseRoom room = this.huntGame.getRooms().get(args[1]);
                 if (room.getStatus() == RoomStatus.GAME || room.getStatus() == RoomStatus.VICTORY) {
-                    sender.sendMessage(this.huntGame.getLanguage(sender).joinRoomIsPlaying);
+                    sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomIsPlaying"));
                 }else if (room.getPlayers().values().size() >= 16) {
-                    sender.sendMessage(this.huntGame.getLanguage(sender).joinRoomIsFull);
+                    sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomIsFull"));
                 } else {
                     room.joinRoom(player);
                 }
                 return true;
             }else {
-                sender.sendMessage(this.huntGame.getLanguage(sender).joinRoomIsNotFound);
+                sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomIsNotFound"));
                 return true;
             }
         }
-        sender.sendMessage(this.huntGame.getLanguage(sender).joinRoomNotAvailable);
+        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomNotAvailable"));
         return true;
     }
 

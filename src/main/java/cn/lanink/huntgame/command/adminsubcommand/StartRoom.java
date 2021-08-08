@@ -36,15 +36,15 @@ public class StartRoom extends BaseSubCommand {
             if (room.getPlayers().size() >= 2) {
                 if (room.getStatus() == RoomStatus.WAIT) {
                     room.gameStart();
-                    sender.sendMessage(this.huntGame.getLanguage(sender).adminStartRoom);
+                    sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminStartRoom"));
                 }else {
-                    sender.sendMessage(this.huntGame.getLanguage(sender).adminStartRoomIsPlaying);
+                    sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminStartRoomIsPlaying"));
                 }
             }else {
-                sender.sendMessage(this.huntGame.getLanguage(sender).adminStartRoomNoPlayer);
+                sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminStartRoomNoPlayer"));
             }
         }else {
-            sender.sendMessage(this.huntGame.getLanguage(sender).adminLevelNoRoom);
+            sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminLevelNoRoom"));
         }
         return true;
     }

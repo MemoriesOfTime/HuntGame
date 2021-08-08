@@ -16,6 +16,7 @@ import cn.nukkit.event.entity.EntityRegainHealthEvent;
 /**
  * @author LT_Name
  */
+@SuppressWarnings("unused")
 public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
 
     private final HuntGame huntGame = HuntGame.getInstance();
@@ -123,7 +124,7 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     Entity damager = ((EntityDamageByEntityEvent) cause).getDamager();
                     if (damager instanceof Player) {
                         for (Player p : room.getPlayers().keySet()) {
-                            p.sendMessage(this.huntGame.getLanguage(p).huntersKillPrey
+                            p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
                                     .replace("%damagePlayer%", damager.getName())
                                     .replace("%player%", entity.getMaster().getName()));
                         }

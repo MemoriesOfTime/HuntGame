@@ -42,9 +42,9 @@ public abstract class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(this.huntGame.getLanguage(sender).noPermission);
+                        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("noPermission"));
                     }else {
-                        sender.sendMessage(this.huntGame.getLanguage(sender).useCmdInCon);
+                        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("useCmdInCon"));
                     }
                 }else {
                     this.sendHelp(sender);
@@ -58,7 +58,7 @@ public abstract class BaseCommand extends Command {
             }
             return true;
         }
-        sender.sendMessage(this.huntGame.getLanguage(sender).noPermission);
+        sender.sendMessage(this.huntGame.getLanguage(sender).translateString("noPermission"));
         return true;
     }
 

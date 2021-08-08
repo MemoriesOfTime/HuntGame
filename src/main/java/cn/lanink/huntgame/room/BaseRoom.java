@@ -144,7 +144,7 @@ public abstract class BaseRoom implements IRoom {
                 if (this.huntGame.isHasTips()) {
                     Tips.closeTipsShow(this.level.getName(), player);
                 }
-                player.sendMessage(this.huntGame.getLanguage(player).joinRoom
+                player.sendMessage(this.huntGame.getLanguage(player).translateString("joinRoom")
                         .replace("%name%", this.level.getName()));
             }else {
                 this.quitRoom(player);
@@ -342,7 +342,7 @@ public abstract class BaseRoom implements IRoom {
         int time = this.gameTime - (this.getSetGameTime() - 60);
         if (time >= 0) {
             this.players.keySet().forEach(player -> player.sendTip(this.huntGame.getLanguage(player)
-                    .huntersDispatchedTimeBottom.replace("time%", time + "")));
+                    .translateString("huntersDispatchedTimeBottom").replace("time%", time + "")));
             if (time%10 == 0) {
                 Effect e1 = Effect.getEffect(15); //失明
                 e1.setDuration(400).setVisible(false);
@@ -404,7 +404,7 @@ public abstract class BaseRoom implements IRoom {
             if (entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
                 entry.getKey().sendTip(this.huntGame.getLanguage(entry.getKey())
-                        .respawnTimeBottom.replace("%time%", entry.getValue() + ""));
+                        .translateString("respawnTimeBottom").replace("%time%", entry.getValue() + ""));
                 if (entry.getValue() == 0) {
                     this.playerRespawn(entry.getKey());
                 }
@@ -425,13 +425,13 @@ public abstract class BaseRoom implements IRoom {
             x++;
             if (x == random) {
                 this.players.put(player, 2);
-                player.sendTitle(this.huntGame.getLanguage(player).titleHuntersTitle,
-                        this.huntGame.getLanguage(player).titleHuntersSubtitle, 10, 40, 10);
+                player.sendTitle(this.huntGame.getLanguage(player).translateString("titleHuntersTitle"),
+                        this.huntGame.getLanguage(player).translateString("titleHuntersSubtitle"), 10, 40, 10);
                 continue;
             }
             this.players.put(player, 1);
-            player.sendTitle(this.huntGame.getLanguage(player).titlePreyTitle,
-                    this.huntGame.getLanguage(player).titlePreySubtitle, 10, 40, 10);
+            player.sendTitle(this.huntGame.getLanguage(player).translateString("titlePreyTitle"),
+                    this.huntGame.getLanguage(player).translateString("titlePreySubtitle"), 10, 40, 10);
         }
     }
 
