@@ -12,7 +12,7 @@ pluginDisable: "§cPlugin Deinstaliert！"
 useCmdInRoom: "§e >> §cIm Spiel kannst du keine Befehle nutzen!"
 cmdHelp: "§aHilfe：/%cmdName% help"
 userHelp: |-
-    §eBlockHunt--Befehlshilfe
+    §eHuntGame--Befehlshilfe
     §a/%cmdName% §eBenutzeroberfläche
     §a/%cmdName% join <Raum> §eNimm am spiel Teil
     §a/%cmdName% quit §eBeendet das Spiel
@@ -30,7 +30,7 @@ quitRoomNotInRoom: "§aDu bist in keinem Raum！"
 listRoom: "§eRaumliste： §a %list%"
 useCmdInCon: "Bitte treten sie einem Spiel bei！"
 adminHelp: |-
-    §eBlockHunt--Hilfe
+    §eHuntGame--Hilfe
     §a/%cmdName% §eGui öffnen
     §a/%cmdName% setwaitspawn §eWartespawn hinzufügen
     §a/%cmdName% addrandomspawn  §eSpielspawn hinzufügen

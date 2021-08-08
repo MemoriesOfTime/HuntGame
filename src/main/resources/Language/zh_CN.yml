@@ -12,7 +12,7 @@ pluginDisable: "§c插件卸载完成！"
 useCmdInRoom: "§e >> §c游戏中无法使用其他命令"
 cmdHelp: "§a查看帮助：/%cmdName% help"
 userHelp: |-
-    §eBlockHunt--命令帮助
+    §eHuntGame--命令帮助
     §a/%cmdName% §e打开ui
     §a/%cmdName% join <房间名称> §e加入游戏
     §a/%cmdName% quit §e退出游戏
@@ -30,7 +30,7 @@ quitRoomNotInRoom: "§a你本来就不在游戏房间！"
 listRoom: "§e房间列表： §a %list%"
 useCmdInCon: "请在游戏内输入！"
 adminHelp: |-
-    §eBlockHunt--命令帮助
+    §eHuntGame--命令帮助
     §a/%cmdName% §e打开ui
     §a/%cmdName% setwaitspawn §e设置当前位置为等待出生点
     §a/%cmdName% addrandomspawn  §e添加当前位置为随机出生点

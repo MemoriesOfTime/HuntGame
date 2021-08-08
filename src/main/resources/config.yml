@@ -6,8 +6,8 @@ languageMap:
   zh_SG: "zh_CN"
   en: "en_US"
   en_GB: "en_US"
-cmdUser: "blockhunt"
-cmdAdmin: "blockhuntadmin"
+cmdUser: "HuntGame"
+cmdAdmin: "HuntGameAdmin"
 victoryCmd:
   - me 我胜利了
   - tell "@p" 恭喜获得胜利！&con

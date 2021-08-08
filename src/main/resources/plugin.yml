@@ -1,6 +1,6 @@
-name: BlockHunt
-main: cn.lanink.blockhunt.BlockHunt
-version: "0.0.4"
+name: HuntGame
+main: cn.lanink.huntgame.HuntGame
+version: "1.0.0-SNAPSHOT"
 api: ["1.0.9"]
 load: POSTWORLD
 author: "LT_Name"
@@ -10,13 +10,9 @@ softdepend:
   - "ScoreboardPlugin"
   - "ScoreboardAPI"
   - "Tips"
-loadbefore:
-  - "ScoreboardPlugin"
-  - "ScoreboardAPI"
-  - "Tips"
 
 permissions:
-  blockhunt.command.user:
+  huntgame.command.user:
     default: true
-  blockhunt.command.admin:
+  huntgame.command.admin:
     default: op
