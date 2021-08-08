@@ -296,6 +296,7 @@ public abstract class BaseRoom implements IRoom {
         Server.getInstance().getPluginManager().callEvent(ev);
 
         this.status = RoomStatus.TASK_NEED_INITIALIZED;
+        Tools.cleanEntity(getLevel(), true);
 
         HashSet<Player> victoryPlayers = new HashSet<>();
         HashSet<Player> defeatPlayers = new HashSet<>();
@@ -323,7 +324,6 @@ public abstract class BaseRoom implements IRoom {
             this.quitRoom(player);
         }
         this.initData();
-        Tools.cleanEntity(getLevel(), true);
 
         Server.getInstance().getScheduler().scheduleDelayedTask(this.blockHunt, new Task() {
             @Override
@@ -338,7 +338,7 @@ public abstract class BaseRoom implements IRoom {
     /**
      * 计时Task
      */
-    public void asyncTimeTask() {
+    public void timeTask() {
         int time = this.gameTime - (this.getSetGameTime() - 60);
         if (time >= 0) {
             this.players.keySet().forEach(player -> player.sendTip(this.blockHunt.getLanguage(player)

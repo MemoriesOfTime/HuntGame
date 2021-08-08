@@ -22,7 +22,7 @@ public class TimeTask extends PluginTask<BlockHunt> {
             this.cancel();
             return;
         }
-        this.room.asyncTimeTask();
+        this.room.timeTask();
     }
 
 }

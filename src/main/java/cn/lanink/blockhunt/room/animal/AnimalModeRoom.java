@@ -2,10 +2,14 @@ package cn.lanink.blockhunt.room.animal;
 
 import cn.lanink.blockhunt.BlockHunt;
 import cn.lanink.blockhunt.entity.EntityCamouflageEntity;
+import cn.lanink.blockhunt.entity.data.EntityData;
 import cn.lanink.blockhunt.room.BaseRoom;
 import cn.lanink.blockhunt.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.item.Item;
+import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 
@@ -59,24 +63,90 @@ public class AnimalModeRoom extends BaseRoom {
             }
             player.teleport(this.getRandomSpawn().get(x));
             x++;
+            String randomEntityName = EntityData.getRandomEntityName();
             EntityCamouflageEntity camouflageEntity =
-                    EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), "Pig");
+                    EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
             this.playerCamouflageEntity.put(player, camouflageEntity);
             camouflageEntity.setMaster(player);
-            camouflageEntity.hidePlayer(player);
+            //camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
 
-            if (BlockHunt.debug) {
-                EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), "Pig").spawnToAll();
-            }
+            Item item = Item.get(280);
+            item.setCustomName("当前伪装生物：" + randomEntityName);
+            player.getInventory().setItem(8, item);
+
+            player.setScale(0.01f);
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
+        }
+
+        //TODO 改为在地图上随机生成实体
+        LinkedList<Position> positions = new LinkedList<>();
+        for (Position position : this.getRandomSpawn()) {
+            int count = Tools.rand(5, 20);
+            for (int c = 0; c < count; c++) {
+                positions.add(position.add(Tools.rand(-30, 30), position.getFloorY(), Tools.rand(-30, 30)));
+            }
+        }
+        for (Position position : positions) {
+            //检查地面
+            for (int y = position.getFloorY() + 10; y > 0; y--) {
+                if (!position.getLevelBlock().canPassThrough()) {
+                    break;
+                }
+                position.setY(y);
+            }
+            if (position.getFloorY() == 0) {
+                continue;
+            }
+            position.y += 1;
+            EntityCamouflageEntity.create(position.getChunk(),
+                    Entity.getDefaultNBT(position),
+                    EntityData.getRandomEntityName()
+            ).spawnToAll();
         }
     }
 
     @Override
-    public void asyncTimeTask() {
-        super.asyncTimeTask();
+    public synchronized void endGame(int victory) {
+        for (EntityCamouflageEntity entity : this.playerCamouflageEntity.values()) {
+            if (entity != null && !entity.isClosed()) {
+                entity.setMaster(null);
+                entity.close();
+            }
+        }
+
+        super.endGame(victory);
+    }
+
+    @Override
+    public void assignIdentity() {
+        if (BlockHunt.debug) {
+            Player ltname = Server.getInstance().getPlayer("ltname");
+            if (ltname != null && this.players.containsKey(ltname)) {
+                for (Player player : this.getPlayers().keySet()) {
+                    player.getInventory().clearAll();
+                    player.getUIInventory().clearAll();
+                    if (player == ltname) {
+                        this.players.put(player, 2);
+                        player.sendTitle(this.blockHunt.getLanguage(player).titleHuntersTitle,
+                                this.blockHunt.getLanguage(player).titleHuntersSubtitle, 10, 40, 10);
+                        continue;
+                    }
+                    this.players.put(player, 1);
+                    player.sendTitle(this.blockHunt.getLanguage(player).titlePreyTitle,
+                            this.blockHunt.getLanguage(player).titlePreySubtitle, 10, 40, 10);
+                }
+                return;
+            }
+        }
+
+        super.assignIdentity();
+    }
+
+    @Override
+    public void timeTask() {
+        super.timeTask();
 
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");

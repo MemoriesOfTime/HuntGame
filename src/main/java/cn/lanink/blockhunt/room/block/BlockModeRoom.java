@@ -105,8 +105,8 @@ public class BlockModeRoom extends BaseRoom {
      * 计时Task
      */
     @Override
-    public void asyncTimeTask() {
-        super.asyncTimeTask();
+    public void timeTask() {
+        super.timeTask();
 
         //防止玩家长时间不动导致方块消失
         if (this.gameTime%5 == 0) {
