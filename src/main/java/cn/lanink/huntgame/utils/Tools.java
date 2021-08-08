@@ -120,7 +120,7 @@ public class Tools {
      * @param invisible 是否隐身
      */
     public static void setPlayerInvisible(Player player, boolean invisible) {
-        player.setDataFlag(0, 5, invisible);
+        player.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, invisible);
     }
 
     /**

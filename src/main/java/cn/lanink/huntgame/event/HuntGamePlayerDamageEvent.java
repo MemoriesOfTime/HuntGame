@@ -8,6 +8,7 @@ import cn.nukkit.event.HandlerList;
 /**
  * @author lt_name
  */
+@Deprecated //暂时没有使用
 public class HuntGamePlayerDamageEvent extends HuntGameRoomPlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();

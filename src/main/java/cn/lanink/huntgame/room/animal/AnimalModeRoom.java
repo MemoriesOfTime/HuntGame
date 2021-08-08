@@ -63,6 +63,7 @@ public class AnimalModeRoom extends BaseRoom {
             }
             player.teleport(this.getRandomSpawn().get(x));
             x++;
+
             String randomEntityName = EntityData.getRandomEntityName();
             EntityCamouflageEntity camouflageEntity =
                     EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
@@ -73,7 +74,7 @@ public class AnimalModeRoom extends BaseRoom {
 
             Item item = Item.get(280);
             item.setCustomName("伪装道具\n更换伪装：点击要伪装的生物");
-            player.getInventory().setItem(8, item);
+            player.getInventory().setItem(0, item);
 
             player.setScale(1);
 

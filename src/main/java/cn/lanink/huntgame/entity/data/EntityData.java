@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @AllArgsConstructor
 @Data
-public class EntityData {
+public class EntityData implements Cloneable {
 
     private final static List<String> SUPPORT_ENTITY_NAME_LIST =
             Arrays.asList(
@@ -45,7 +45,15 @@ public class EntityData {
             ENTITY_DATA_CACHE.put(entityName, new EntityData(entity.getNetworkId(), entity.getWidth(), entity.getHeight()));
             entity.close();
         }
-        return ENTITY_DATA_CACHE.get(entityName);
+        return ENTITY_DATA_CACHE.get(entityName).clone();
     }
 
+    @Override
+    public EntityData clone() {
+        try {
+            return (EntityData) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

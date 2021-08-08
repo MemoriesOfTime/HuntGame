@@ -1,17 +1,14 @@
 package cn.lanink.huntgame.room.block;
 
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
-import cn.lanink.huntgame.entity.EntityPlayerCorpse;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
 import java.util.*;
@@ -85,7 +82,13 @@ public class BlockModeRoom extends BaseRoom {
             integers[0] = Integer.parseInt(s[0]);
             integers[1] = Integer.parseInt(s[1]);
             this.playerCamouflageBlock.put(player, integers);
-            player.getInventory().setItem(8, Item.get(integers[0], integers[1]));
+
+            Item item = Item.get(280);
+            item.setCustomName("伪装道具\n更换伪装：点击要伪装的方块");
+            player.getInventory().setItem(0, item);
+            Item block = Item.get(integers[0], integers[1]);
+            block.setCustomName("当前伪装的方块");
+            player.getInventory().setItem(8, block);
 
             CompoundTag tag = Entity.getDefaultNBT(player);
             tag.putCompound("Skin", new CompoundTag()
@@ -93,7 +96,8 @@ public class BlockModeRoom extends BaseRoom {
                     .putString("ModelId", EntityCamouflageBlock.EMPTY_SKIN.getSkinId()));
             tag.putFloat("Scale", 1.0F);
             tag.putString("playerName", player.getName());
-            EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag);
+            EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag, player);
+            entity.hidePlayer(player);
             entity.spawnToAll();
             this.entityCamouflageBlocks.put(player, entity);
 
@@ -130,35 +134,6 @@ public class BlockModeRoom extends BaseRoom {
             }
             this.huntGame.getScoreboard().showScoreboard(entry.getKey(), this.huntGame.getLanguage(entry.getKey()).scoreBoardTitle, ms);
         }
-    }
-
-    @Override
-    protected void playerRespawn(Player player) {
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, new Task() {
-            @Override
-            public void onRun(int i) {
-                for (Entity entity : level.getEntities()) {
-                    if (entity instanceof EntityPlayerCorpse) {
-                        if (entity.namedTag != null &&
-                                entity.namedTag.getString("playerName").equals(player.getName())) {
-                            entity.close();
-                        }
-                    }
-                }
-                players.put(player, 12);
-                players.keySet().forEach(p -> p.showPlayer(player));
-                player.teleport(randomSpawn.get(
-                        new Random().nextInt(randomSpawn.size())));
-                Tools.rePlayerState(player, true);
-                Item[] armor = new Item[4];
-                armor[0] = Item.get(306);
-                armor[1] = Item.get(307);
-                armor[2] = Item.get(308);
-                armor[3] = Item.get(309);
-                player.getInventory().setArmorContents(armor);
-                player.getInventory().addItem(Item.get(276));
-            }
-        }, 1);
     }
 
     public HashMap<Player, Integer[]> getPlayerCamouflageBlock() {

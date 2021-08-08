@@ -451,24 +451,6 @@ public abstract class BaseRoom implements IRoom {
     }
 
     /**
-     * 符合游戏条件的攻击
-     *
-     * @param damager 攻击者
-     * @param player 被攻击者
-     */
-    public void playerDamage(Player damager, Player player) {
-        HuntGamePlayerDamageEvent ev = new HuntGamePlayerDamageEvent(this, damager, player);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) {
-            return;
-        }
-
-        if (this.getPlayers(player) == 1) {
-            this.playerDeath(player);
-        }
-    }
-
-    /**
      * 玩家死亡
      *
      * @param player 玩家

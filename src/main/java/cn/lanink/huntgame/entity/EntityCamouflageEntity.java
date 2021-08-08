@@ -20,7 +20,7 @@ import java.util.HashSet;
  *
  * @author LT_Name
  */
-public class EntityCamouflageEntity extends EntityLiving {
+public class EntityCamouflageEntity extends EntityLiving implements IEntityCamouflage {
 
     static {
         Entity.registerEntity("EntityCamouflageEntity", EntityCamouflageEntity.class);
@@ -59,6 +59,18 @@ public class EntityCamouflageEntity extends EntityLiving {
         };
     }
 
+    @Override
+    public int getNetworkId() {
+        throw new RuntimeException("错误的实例化 EntityCamouflageEntity");
+    }
+
+    @Deprecated
+    public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+        this.entityName = "Pig";
+        this.close();
+    }
+
     private EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, String entityName) {
         super(chunk, nbt);
         this.entityName = entityName;
@@ -70,16 +82,10 @@ public class EntityCamouflageEntity extends EntityLiving {
         this.pitch = 0;
     }
 
-    @Deprecated
-    public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-        this.entityName = "Pig";
-        this.close();
-    }
-
     @Override
-    public int getNetworkId() {
-        return -1;
+    protected void initEntity() {
+        super.initEntity();
+        this.setMaxHealth(20);
     }
 
     @Override
