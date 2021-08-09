@@ -342,15 +342,12 @@ public abstract class BaseRoom implements IRoom {
             this.players.keySet().forEach(player -> player.sendTip(this.huntGame.getLanguage(player)
                     .translateString("huntersDispatchedTimeBottom").replace("time%", time + "")));
             if (time%10 == 0) {
-                Effect e1 = Effect.getEffect(15); //失明
-                e1.setDuration(400).setVisible(false);
-                Effect e2 = Effect.getEffect(1); //速度提升
-                e2.setDuration(400).setVisible(false);
                 for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
                     if (entry.getValue() == 2) {
-                        entry.getKey().addEffect(e1);
+                        entry.getKey().addEffect(Effect.getEffect(15).setDuration(400).setVisible(false)); //失明
+                        entry.getKey().addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(400).setVisible(false)); //缓慢2
                     }else {
-                        entry.getKey().addEffect(e2);
+                        entry.getKey().addEffect(Effect.getEffect(1).setDuration(400).setVisible(false)); //速度提升
                     }
                 }
             }

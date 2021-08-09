@@ -10,6 +10,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 
@@ -150,6 +151,14 @@ public class AnimalModeRoom extends BaseRoom {
         super.timeTask();
 
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            if (this.gameTime < (this.getSetGameTime() - 60) && this.gameTime%10 == 0) {
+                if (entry.getValue() == 2 || entry.getValue() == 12) {
+                    entry.getKey().addEffect(Effect.getEffect(1).setDuration(400).setVisible(false)); //速度提升 1
+                }else if (entry.getValue() == 1) {
+                    entry.getKey().addEffect(Effect.getEffect(2).setDuration(400).setVisible(false)); //缓慢1
+                }
+            }
+
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
             for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {
