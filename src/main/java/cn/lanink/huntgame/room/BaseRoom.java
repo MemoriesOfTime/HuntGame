@@ -22,7 +22,6 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
@@ -325,14 +324,13 @@ public abstract class BaseRoom implements IRoom {
         }
         this.initData();
 
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, new Task() {
-            @Override
-            public void onRun(int i) {
-                //所有玩家退出房间后再给奖励，防止物品被清
+        //所有玩家退出房间后再给奖励，防止物品被清
+        if (!victoryPlayers.isEmpty() && !defeatPlayers.isEmpty()) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
                 victoryPlayers.forEach(player -> Tools.cmd(player, huntGame.getVictoryCmd()));
                 defeatPlayers.forEach(player -> Tools.cmd(player, huntGame.getDefeatCmd()));
-            }
-        }, 1);
+            }, 1);
+        }
     }
 
     /**
