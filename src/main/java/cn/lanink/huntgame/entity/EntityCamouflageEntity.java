@@ -139,8 +139,11 @@ public class EntityCamouflageEntity extends EntityLiving implements IEntityCamou
             this.moveTime--;
             //TODO 跳跃检查
             Position target = this.add(this.mx, 2, this.mz);
-            while (target.getLevelBlock().canPassThrough()) {
-                target.y -= 1;
+            for (int ny = target.getFloorY(); ny > target.y - 5; ny--) {
+                if (!target.getLevelBlock().canPassThrough()) {
+                    break;
+                }
+                target.y = ny;
             }
             this.move(this.mx, target.y- this.y, this.mz);
         }

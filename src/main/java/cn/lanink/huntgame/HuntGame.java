@@ -72,7 +72,7 @@ public class HuntGame extends PluginBase {
         huntGame = this;
 
         this.saveDefaultConfig();
-        this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
 
         if (config.getBoolean("debug", false)) {
             debug = true;
