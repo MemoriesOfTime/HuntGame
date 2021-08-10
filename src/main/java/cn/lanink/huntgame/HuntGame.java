@@ -21,6 +21,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -53,6 +54,8 @@ public class HuntGame extends PluginBase {
 
     private String cmdUser;
     private String cmdAdmin;
+    @Getter
+    private List<String> cmdWhitelist;
 
     private final HashMap<String, Language> languageHashMap = new HashMap<>();
     private HashMap<String, String> languageMappingTable;
@@ -130,6 +133,7 @@ public class HuntGame extends PluginBase {
 
         this.cmdUser = this.config.getString("cmdUser", "HuntGame");
         this.cmdAdmin = this.config.getString("cmdAdmin", "HuntGameAdmin");
+        this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
 
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));

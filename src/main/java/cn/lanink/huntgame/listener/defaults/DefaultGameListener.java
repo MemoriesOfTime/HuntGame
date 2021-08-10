@@ -77,6 +77,11 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 event.getMessage().startsWith(this.huntGame.getCmdAdmin(), 1)) {
             return;
         }
+        for (String string : this.huntGame.getCmdWhitelist()) {
+            if (string.equalsIgnoreCase(event.getMessage())) {
+                return;
+            }
+        }
         event.setMessage("");
         event.setCancelled(true);
         player.sendMessage(this.huntGame.getLanguage(player).translateString("useCmdInRoom"));
