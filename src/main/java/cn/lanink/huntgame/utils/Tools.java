@@ -23,15 +23,36 @@ import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.List;
+import java.util.SplittableRandom;
 
 
 public class Tools {
+
+    public static final SplittableRandom random = new SplittableRandom();
 
     public static int rand(int min, int max) {
         if (min == max) {
             return max;
         }
-        return HuntGame.RANDOM.nextInt(max + 1 - min) + min;
+        return random.nextInt(max + 1 - min) + min;
+    }
+
+    public static double rand(double min, double max) {
+        if (min == max) {
+            return max;
+        }
+        return min + Math.random() * (max-min);
+    }
+
+    public static float rand(float min, float max) {
+        if (min == max) {
+            return max;
+        }
+        return min + (float) Math.random() * (max-min);
+    }
+
+    public static boolean rand() {
+        return random.nextBoolean();
     }
 
     public static String getStringIdentity(BaseRoom room, Player player) {
@@ -72,14 +93,14 @@ public class Tools {
      * @return 物品
      */
     public static Item getHuntGameItem(int tagNumber, Player player) {
-        Item item;
+        Item item = Item.get(0);
         switch (tagNumber) {
             case 1:
                 item = Item.get(261, 0, 1);
-                return item;
+                break;
             case 2:
                 item = Item.get(267, 0, 1);
-                return item;
+                break;
             case 10:
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
@@ -87,9 +108,44 @@ public class Tools {
                         .putInt("HuntGameType", 10));
                 item.setCustomName(HuntGame.getInstance().getLanguage(player).translateString("itemQuitRoom"));
                 item.setLore(HuntGame.getInstance().getLanguage(player).translateString("itemQuitRoomLore").split("\n"));
-                return item;
+                break;
+            case 20:
+                item = Item.get(289);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 20));
+                item.setCustomName("冷却中");
+                break;
+            case 21:
+                item = Item.get(353);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 21));
+                item.setCustomName("安全的嘲讽");
+                break;
+            case 22:
+                item = Item.get(331);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 22));
+                item.setCustomName("危险的嘲讽");
+                break;
+            case 23:
+                item = Item.get(401);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 23));
+                item.setCustomName("烟花嘲讽");
+                break;
+            case 24:
+                item = Item.get(377);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 24));
+                item.setCustomName("闪电嘲讽");
+                break;
         }
-        return null;
+        return item;
     }
 
     /**

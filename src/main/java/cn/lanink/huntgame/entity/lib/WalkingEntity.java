@@ -1,7 +1,7 @@
 package cn.lanink.huntgame.entity.lib;
 
 import cn.lanink.gamecore.api.Info;
-import cn.lanink.huntgame.utils.Utils;
+import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
@@ -80,23 +80,23 @@ public abstract class WalkingEntity extends BaseEntity {
                 if (this.followTarget == null || this.followTarget.closed || !this.followTarget.isAlive() || targetOption(this.followTarget,
                         distanceSquared(this.followTarget)) || this.target == null)
                     if (this.stayTime > 0) {
-                        if (Utils.rand(1, 1000) > 50)
+                        if (Tools.rand(1, 1000) > 50)
                             return;
-                        int x = Utils.rand(10, 30);
-                        int z = Utils.rand(10, 30);
-                        this.target = add((Utils.rand(1, 100) <= 40) ? x : -x, Utils.rand(-20.0D, 20.0D) / 10.0D, (Utils.rand(1, 100) <= 60) ? z : -z);
-                    } else if (Utils.rand(1, 1000) <= 10) {
-                        int x = Utils.rand(10, 30);
-                        int z = Utils.rand(10, 30);
-                        this.stayTime = Utils.rand(100, 200);
-                        this.target = add((Utils.rand(1, 100) <= 40) ? x : -x, Utils.rand(-20.0D, 20.0D) / 10.0D, (Utils.rand(1, 100) <= 60) ? z : -z);
+                        int x = Tools.rand(10, 30);
+                        int z = Tools.rand(10, 30);
+                        this.target = add((Tools.rand(1, 100) <= 40) ? x : -x, Tools.rand(-20.0D, 20.0D) / 10.0D, (Tools.rand(1, 100) <= 60) ? z : -z);
+                    } else if (Tools.rand(1, 1000) <= 10) {
+                        int x = Tools.rand(10, 30);
+                        int z = Tools.rand(10, 30);
+                        this.stayTime = Tools.rand(200, 600);
+                        this.target = add((Tools.rand(1, 100) <= 40) ? x : -x, Tools.rand(-20.0D, 20.0D) / 10.0D, (Tools.rand(1, 100) <= 60) ? z : -z);
                     } else if ((this.moveTime <= 0 || this.target == null) &&
-                            Utils.rand(1, 1000) <= 70) {
-                        int x = Utils.rand(20, 100);
-                        int z = Utils.rand(20, 100);
+                            Tools.rand(1, 1000) <= 70) {
+                        int x = Tools.rand(20, 100);
+                        int z = Tools.rand(20, 100);
                         this.stayTime = 0;
-                        this.moveTime = Utils.rand(30, 200);
-                        this.target = add((Utils.rand(1, 100) <= 40) ? x : -x, 0.0D, (Utils.rand(1, 100) <= 60) ? z : -z);
+                        this.moveTime = Tools.rand(30, 200);
+                        this.target = add((Tools.rand(1, 100) <= 40) ? x : -x, 0.0D, (Tools.rand(1, 100) <= 60) ? z : -z);
                     }
             } else {
                 double distance = distanceSquared(this.followTarget);
@@ -194,7 +194,7 @@ public abstract class WalkingEntity extends BaseEntity {
                     if (isInsideOfWater()) {
                         this.motionX = getSpeed() * 0.05D * d1 / diff;
                         this.motionZ = getSpeed() * 0.05D * d2 / diff;
-                        this.level.addParticle(new BubbleParticle(add(Utils.rand(-2.0D, 2.0D), Utils.rand(-0.5D, 0.0D), Utils.rand(-2.0D, 2.0D))));
+                        this.level.addParticle(new BubbleParticle(add(Tools.rand(-2.0D, 2.0D), Tools.rand(-0.5D, 0.0D), Tools.rand(-2.0D, 2.0D))));
                     } else {
                         this.motionX = getSpeed() * 0.1D * d1 / diff;
                         this.motionZ = getSpeed() * 0.1D * d2 / diff;
@@ -203,8 +203,9 @@ public abstract class WalkingEntity extends BaseEntity {
                     this.motionX = 0.0D;
                     this.motionZ = 0.0D;
                 }
-                if (this.passengers.isEmpty() && (this.stayTime <= 0 || Utils.rand()))
+                if (this.passengers.isEmpty() && (this.stayTime <= 0 || Tools.rand(0, 1000) < 10)) {
                     this.yaw = Math.toDegrees(-Math.atan2(d1 / diff, d2 / diff));
+                }
             }
             Vector3 before = this.target;
             checkTarget();
@@ -219,7 +220,7 @@ public abstract class WalkingEntity extends BaseEntity {
                     if (isInsideOfWater()) {
                         this.motionX = getSpeed() * 0.05D * d1 / diff;
                         this.motionZ = getSpeed() * 0.05D * d2 / diff;
-                        this.level.addParticle(new BubbleParticle(add(Utils.rand(-2.0D, 2.0D), Utils.rand(-0.5D, 0.0D), Utils.rand(-2.0D, 2.0D))));
+                        this.level.addParticle(new BubbleParticle(add(Tools.rand(-2.0D, 2.0D), Tools.rand(-0.5D, 0.0D), Tools.rand(-2.0D, 2.0D))));
                     } else {
                         this.motionX = getSpeed() * 0.15D * d1 / diff;
                         this.motionZ = getSpeed() * 0.15D * d2 / diff;
@@ -228,8 +229,9 @@ public abstract class WalkingEntity extends BaseEntity {
                     this.motionX = 0.0D;
                     this.motionZ = 0.0D;
                 }
-                if (this.passengers.isEmpty() && (this.stayTime <= 0 || Utils.rand()))
+                if (this.passengers.isEmpty() && (this.stayTime <= 0 || Tools.rand(0, 1000) < 10)) {
                     this.yaw = Math.toDegrees(-Math.atan2(d1 / diff, d2 / diff));
+                }
             }
             double x = this.motionX * tickDiff;
             double z = this.motionZ * tickDiff;
