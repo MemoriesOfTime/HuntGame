@@ -1,12 +1,11 @@
 package cn.lanink.huntgame.entity;
 
-import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.data.EntityData;
-import cn.lanink.huntgame.utils.Tools;
+import cn.lanink.huntgame.entity.lib.WalkingEntity;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.level.Position;
+import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -20,7 +19,7 @@ import java.util.HashSet;
  *
  * @author LT_Name
  */
-public class EntityCamouflageEntity extends EntityLiving implements IEntityCamouflage {
+public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamouflage {
 
     static {
         Entity.registerEntity("EntityCamouflageEntity", EntityCamouflageEntity.class);
@@ -89,6 +88,16 @@ public class EntityCamouflageEntity extends EntityLiving implements IEntityCamou
     }
 
     @Override
+    public void onAttack(EntityDamageEvent paramEntityDamageEvent) {
+
+    }
+
+    @Override
+    public void attackEntity(EntityCreature paramEntityCreature) {
+
+    }
+
+    @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
             return false;
@@ -106,48 +115,17 @@ public class EntityCamouflageEntity extends EntityLiving implements IEntityCamou
             this.x = this.getMaster().getX();
             this.y = this.getMaster().getY();
             this.z = this.getMaster().getZ();
-        }else if (currentTick%60 == 0) {
-            //进行一些随机移动
-            if (HuntGame.RANDOM.nextInt(100) < 10) {
-                if (this.moveTime <= 0) {
-                    double targetX = HuntGame.RANDOM.nextDouble() * (HuntGame.RANDOM.nextBoolean() ? 1 : -1);
-                    double targetZ = HuntGame.RANDOM.nextDouble() * (HuntGame.RANDOM.nextBoolean() ? 1 : -1);
-                    Vector3 target = this.add(targetX, 0, targetZ);
 
-                    double x = target.x - this.x;
-                    double z = target.z - this.z;
-                    double diff = Math.abs(x) + Math.abs(z);
-
-                    this.mx = 0.15 * (x / diff);
-                    this.mz = 0.15 * (z / diff);
-                    this.moveTime = Tools.rand(40, 200);
-
-                    double dx = this.x - target.x;
-                    double dz = this.z - target.z;
-                    double yaw = Math.asin(dx / Math.sqrt(dx * dx + dz * dz)) / 3.14D * 180.0D;
-                    if (dz > 0.0D) {
-                        yaw = -yaw + 180.0D;
-                    }
-                    this.yaw = yaw;
-                }
-            }else if (HuntGame.RANDOM.nextInt(100) < 10) {
-                this.yaw += HuntGame.RANDOM.nextInt(180) - 60;
+            int tickDiff = currentTick - this.lastUpdate;
+            if (tickDiff <= 0) {
+                return false;
+            } else {
+                this.lastUpdate = currentTick;
+                boolean hasUpdate = this.entityBaseTick(tickDiff);
+                this.updateMovement();
+                return hasUpdate;
             }
         }
-
-        if (this.moveTime > 0) {
-            this.moveTime--;
-            //TODO 跳跃检查
-            Position target = this.add(this.mx, 0, this.mz);
-            if (currentTick%10 == 0) {
-                if (target.add(0, -1).getLevelBlock().canPassThrough()) {
-                    target.y -= 1;
-                }
-            }
-            this.move(this.mx, target.y- this.y, this.mz);
-        }
-
-        this.pitch = 0;
         return super.onUpdate(currentTick);
     }
 
