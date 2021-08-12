@@ -6,6 +6,8 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.inventory.InventoryClickEvent;
@@ -47,17 +49,22 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }else if (room.getStatus() == RoomStatus.GAME) {
             if (tag.getBoolean("isHuntGameItem")) {
                 event.setCancelled(true);
+                Item item = Tools.getHuntGameItem(20, player);
                 switch (tag.getInt("HuntGameType")) {
                     case 21:
                     case 22:
                         break;
                     case 23:
                         Tools.spawnFirework(player);
-                        final Item item = Tools.getHuntGameItem(20, player);
                         item.setCount(32);
                         player.getInventory().setItem(6, item);
                         break;
                     case 24:
+                        EntityLightning lightning = new EntityLightning(player.chunk, Entity.getDefaultNBT(player));
+                        lightning.setEffect(false);
+                        player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + 10));
+                        item.setCount(32);
+                        player.getInventory().setItem(7, item);
                         break;
                 }
             }

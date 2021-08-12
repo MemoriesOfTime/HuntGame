@@ -83,10 +83,12 @@ public class AnimalModeRoom extends BaseRoom {
             camouflageEntity.spawnToAll();
 
             player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
-            player.getInventory().setItem(4, Tools.getHuntGameItem(21, player));
-            player.getInventory().setItem(5, Tools.getHuntGameItem(22, player));
-            player.getInventory().setItem(6, Tools.getHuntGameItem(23, player));
-            player.getInventory().setItem(7, Tools.getHuntGameItem(24, player));
+            Item item = Tools.getHuntGameItem(20, player);
+            item.setCount(64);
+            player.getInventory().setItem(4, item);
+            player.getInventory().setItem(5, item);
+            player.getInventory().setItem(6, item);
+            player.getInventory().setItem(7, item);
 
             player.setScale(1);
 
