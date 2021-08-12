@@ -15,6 +15,9 @@ import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.ParticleEffect;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.particle.LavaParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.Map;
@@ -52,7 +55,18 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 Item item = Tools.getHuntGameItem(20, player);
                 switch (tag.getInt("HuntGameType")) {
                     case 21:
+                        player.getLevel().addParticleEffect(player, ParticleEffect.WATER_EVAPORATION_BUCKET);
+                        player.getLevel().addSound(player, Sound.RANDOM_ORB);
+                        item.setCount(8);
+                        player.getInventory().setItem(4, item);
+                        break;
                     case 22:
+                        player.getLevel().addParticle(new LavaParticle(player));
+                        player.getLevel().addParticle(new LavaParticle(player.add(0, 1.5, 0)));
+                        player.getLevel().addParticleEffect(player, ParticleEffect.WATER_EVAPORATION_BUCKET);
+                        player.getLevel().addSound(player, Sound.RANDOM_LEVELUP);
+                        item.setCount(16);
+                        player.getInventory().setItem(5, item);
                         break;
                     case 23:
                         Tools.spawnFirework(player);
@@ -62,6 +76,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     case 24:
                         EntityLightning lightning = new EntityLightning(player.chunk, Entity.getDefaultNBT(player));
                         lightning.setEffect(false);
+                        lightning.spawnToAll();
                         player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + 10));
                         item.setCount(32);
                         player.getInventory().setItem(7, item);
