@@ -19,9 +19,15 @@ public class EntityData implements Cloneable {
 
     private final static List<String> SUPPORT_ENTITY_NAME_LIST =
             Arrays.asList(
+                    "Fox",
+                    "Horse",
+                    "Cat",
                     "Cow",
+                    "Panda",
                     "Pig",
-                    "Sheep"
+                    "Sheep",
+                    "Rabbit",
+                    "Wolf"
             );
     private final static ConcurrentHashMap<String, EntityData> ENTITY_DATA_CACHE = new ConcurrentHashMap<>();
 

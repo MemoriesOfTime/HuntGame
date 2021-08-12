@@ -4,6 +4,7 @@ import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.data.EntityData;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.tasks.game.AnimalSpawnTask;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author LT_Name
@@ -26,6 +28,9 @@ public class AnimalModeRoom extends BaseRoom {
 
     @Getter
     protected final HashMap<Player, EntityCamouflageEntity> playerCamouflageEntity = new HashMap<>();
+
+    @Getter
+    private final ConcurrentLinkedQueue<Position> animalSpawnList = new ConcurrentLinkedQueue<>();
 
     /**
      * 初始化
@@ -85,14 +90,14 @@ public class AnimalModeRoom extends BaseRoom {
         //TODO 改为在地图上随机生成实体
         LinkedList<Position> positions = new LinkedList<>();
         for (Position position : this.getRandomSpawn()) {
-            int count = Tools.rand(15, 30);
+            int count = Tools.rand(10, 20);
             for (int c = 0; c < count; c++) {
-                positions.add(position.add(Tools.rand(-50, 50), position.getFloorY(), Tools.rand(-50, 50)));
+                positions.add(position.add(Tools.rand(-30, 30), position.getFloorY(), Tools.rand(-30, 30)));
             }
         }
         for (Position position : positions) {
             //检查地面
-            for (int y = position.getFloorY() + 10; y > 0; y--) {
+            for (int y = position.getFloorY() + 5; y > 0; y--) {
                 if (!position.getLevelBlock().canPassThrough()) {
                     break;
                 }
@@ -107,6 +112,12 @@ public class AnimalModeRoom extends BaseRoom {
                     EntityData.getRandomEntityName()
             ).spawnToAll();
         }
+
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                this.huntGame,
+                new AnimalSpawnTask(this.huntGame, this),
+                40, true
+        );
     }
 
     @Override
@@ -149,6 +160,23 @@ public class AnimalModeRoom extends BaseRoom {
     @Override
     public void timeTask() {
         super.timeTask();
+
+        int count = 0;
+        while (!this.animalSpawnList.isEmpty()) {
+            if (count > 5) {
+                break;
+            }
+            count++;
+            Position first = this.animalSpawnList.poll();
+            if (first != null) {
+                EntityCamouflageEntity.create(first.getChunk(),
+                        Entity.getDefaultNBT(first),
+                        EntityData.getRandomEntityName()
+                ).spawnToAll();
+            }else {
+                break;
+            }
+        }
 
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
             if (this.gameTime < (this.getSetGameTime() - 60) && this.gameTime%10 == 0) {
