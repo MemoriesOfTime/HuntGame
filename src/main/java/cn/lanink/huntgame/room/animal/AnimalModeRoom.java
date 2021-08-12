@@ -9,10 +9,7 @@ import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
-import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 
@@ -81,16 +78,6 @@ public class AnimalModeRoom extends BaseRoom {
             camouflageEntity.setMaster(player);
             camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
-
-            player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
-            Item item = Tools.getHuntGameItem(20, player);
-            item.setCount(64);
-            player.getInventory().setItem(4, item);
-            player.getInventory().setItem(5, item);
-            player.getInventory().setItem(6, item);
-            player.getInventory().setItem(7, item);
-
-            player.setScale(1);
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
@@ -186,58 +173,6 @@ public class AnimalModeRoom extends BaseRoom {
         }
 
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-            //嘲讽道具
-            PlayerInventory inventory = entry.getKey().getInventory();
-            Item coolingItem = Tools.getHuntGameItem(20, entry.getKey());
-            Item item = inventory.getItem(4);
-            if (coolingItem.equals(item)) {
-                if (item.getCount() > 1) {
-                    item.setCount(item.getCount() -1);
-                }else {
-                    item = Tools.getHuntGameItem(21, entry.getKey());
-                }
-                inventory.setItem(4, item);
-            }
-
-            item = inventory.getItem(5);
-            if (coolingItem.equals(item)) {
-                if (item.getCount() > 1) {
-                    item.setCount(item.getCount() -1);
-                }else {
-                    item = Tools.getHuntGameItem(22, entry.getKey());
-                }
-                inventory.setItem(5, item);
-            }
-
-            item = inventory.getItem(6);
-            if (coolingItem.equals(item)) {
-                if (item.getCount() > 1) {
-                    item.setCount(item.getCount() -1);
-                }else {
-                    item = Tools.getHuntGameItem(23, entry.getKey());
-                }
-                inventory.setItem(6, item);
-            }
-
-            item = inventory.getItem(7);
-            if (coolingItem.equals(item)) {
-                if (item.getCount() > 1) {
-                    item.setCount(item.getCount() -1);
-                }else {
-                    item = Tools.getHuntGameItem(24, entry.getKey());
-                }
-                inventory.setItem(7, item);
-            }
-
-
-            if (this.gameTime < (this.getSetGameTime() - 60) && this.gameTime%10 == 0) {
-                if (entry.getValue() == 2 || entry.getValue() == 12) {
-                    entry.getKey().addEffect(Effect.getEffect(1).setDuration(400).setVisible(false)); //速度提升 1
-                }else if (entry.getValue() == 1) {
-                    entry.getKey().addEffect(Effect.getEffect(2).setDuration(400).setVisible(false)); //缓慢1
-                }
-            }
-
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
             for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {

@@ -15,6 +15,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -279,6 +280,22 @@ public abstract class BaseRoom implements IRoom {
 
         this.assignIdentity();
 
+        for (Player player: this.players.keySet()) {
+            if (this.getPlayers(player) != 1) {
+                continue;
+            }
+
+            player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
+            Item item = Tools.getHuntGameItem(20, player);
+            item.setCount(60);
+            player.getInventory().setItem(4, item);
+            player.getInventory().setItem(5, item);
+            player.getInventory().setItem(6, item);
+            player.getInventory().setItem(7, item);
+
+            player.setScale(1);
+        }
+
         Server.getInstance().getScheduler().scheduleRepeatingTask(this.huntGame,
                 new TimeTask(this.huntGame, this), 20);
     }
@@ -359,17 +376,20 @@ public abstract class BaseRoom implements IRoom {
                     entry.getKey().removeAllEffects();
                     if (entry.getValue() == 2) {
                         entry.getKey().teleport(randomSpawn.get(HuntGame.RANDOM.nextInt(randomSpawn.size())));
-                        Item[] armor = new Item[4];
-                        armor[0] = Item.get(306).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
-                        armor[1] = Item.get(307).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
-                        armor[2] = Item.get(308).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
-                        armor[3] = Item.get(309).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
-                        entry.getKey().getInventory().setArmorContents(armor);
-                        entry.getKey().getInventory().setItem(0, Tools.getHuntGameItem(2, entry.getKey()));
+                        this.giveHuntItem(entry.getKey());
                     }
                 }
             }
+        }else if (this.gameTime%5 == 0) {
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == 2 || entry.getValue() == 12) {
+                    entry.getKey().addEffect(Effect.getEffect(1).setDuration(400).setVisible(false)); //速度提升1
+                } else if (entry.getValue() == 1) {
+                    entry.getKey().addEffect(Effect.getEffect(2).setDuration(400).setVisible(false)); //缓慢1
+                }
+            }
         }
+
         //计时与胜利判断
         if (this.gameTime > 0) {
             this.gameTime--;
@@ -394,6 +414,7 @@ public abstract class BaseRoom implements IRoom {
         }else {
             this.victory(1);
         }
+
         //复活
         for (Map.Entry<Player, Integer> entry : this.playerRespawnTime.entrySet()) {
             if (entry.getValue() > 0) {
@@ -405,6 +426,72 @@ public abstract class BaseRoom implements IRoom {
                 }
             }
         }
+
+        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            //道具
+            PlayerInventory inventory = entry.getKey().getInventory();
+            Item coolingItem = Tools.getHuntGameItem(20, entry.getKey());
+            Item item = inventory.getItem(4);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() - 1);
+                } else {
+                    item = Tools.getHuntGameItem(21, entry.getKey());
+                }
+                inventory.setItem(4, item);
+            }
+
+            item = inventory.getItem(5);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() - 1);
+                } else {
+                    item = Tools.getHuntGameItem(22, entry.getKey());
+                }
+                inventory.setItem(5, item);
+            }else {
+                Item coolingItem2 = Tools.getHuntGameItem(30, entry.getKey());
+                if (coolingItem2.equals(item)) {
+                    if (item.getCount() > 1) {
+                        item.setCount(item.getCount() - 1);
+                    } else {
+                        item = Tools.getHuntGameItem(31, entry.getKey());
+                    }
+                    inventory.setItem(5, item);
+                }
+            }
+
+            item = inventory.getItem(6);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() - 1);
+                } else {
+                    item = Tools.getHuntGameItem(23, entry.getKey());
+                }
+                inventory.setItem(6, item);
+            }
+
+            item = inventory.getItem(7);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() - 1);
+                } else {
+                    item = Tools.getHuntGameItem(24, entry.getKey());
+                }
+                inventory.setItem(7, item);
+            }
+        }
+    }
+
+    protected void giveHuntItem(Player player) {
+        Item[] armor = new Item[4];
+        armor[0] = Item.get(306).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+        armor[1] = Item.get(307).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+        armor[2] = Item.get(308).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+        armor[3] = Item.get(309).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+        player.getInventory().setArmorContents(armor);
+        player.getInventory().setItem(0, Tools.getHuntGameItem(2, player));
+        player.getInventory().setItem(5, Tools.getHuntGameItem(31, player));
     }
 
     /**
@@ -501,13 +588,7 @@ public abstract class BaseRoom implements IRoom {
         Tools.rePlayerState(player, true);
         Tools.setPlayerInvisible(player, false);
 
-        Item[] armor = new Item[4];
-        armor[0] = Item.get(306);
-        armor[1] = Item.get(307);
-        armor[2] = Item.get(308);
-        armor[3] = Item.get(309);
-        player.getInventory().setArmorContents(armor);
-        player.getInventory().setItem(0, Item.get(276));
+        this.giveHuntItem(player);
     }
 
     /**

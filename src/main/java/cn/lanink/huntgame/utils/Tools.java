@@ -14,6 +14,7 @@ import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -150,8 +151,40 @@ public class Tools {
                         .putInt("HuntGameType", 24));
                 item.setCustomName("闪电嘲讽");
                 break;
+            case 30:
+                item = Item.get(368);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 30));
+                item.setCustomName("冷却中");
+                break;
+            case 31:
+                item = Item.get(381);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 31));
+                item.setCustomName("猎物搜索器");
+                break;
         }
         return item;
+    }
+
+    public static Vector3 getMotion(Vector3 start, Vector3 end) {
+        double dx = start.x - end.x;
+        double dy = start.y - end.y;
+        double dz = start.z - end.z;
+
+        double yaw = Math.asin(dx / Math.sqrt(dx * dx + dz * dz)) / Math.PI * 180.0D;
+        double pitch = Math.round(Math.asin(dy / Math.sqrt(dx * dx + dz * dz + dy * dy)) / Math.PI * 180.0D);
+        if (dz > 0.0D) {
+            yaw = -yaw + 180.0D;
+        }
+
+        return new Vector3(
+                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI),
+                -Math.sin(pitch / 180 * Math.PI),
+                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI)
+        );
     }
 
     /**

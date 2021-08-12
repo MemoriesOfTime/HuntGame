@@ -2,6 +2,7 @@ package cn.lanink.huntgame.listener.defaults;
 
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.huntgame.HuntGame;
+import cn.lanink.huntgame.entity.FindPlayerEntity;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.Tools;
@@ -20,6 +21,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.LavaParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -80,6 +82,24 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + 10));
                         item.setCount(32);
                         player.getInventory().setItem(7, item);
+                        break;
+                    case 31:
+                        ArrayList<Player> list = new ArrayList<>();
+                        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                            if (entry.getValue() == 1) {
+                                list.add(entry.getKey());
+                            }
+                        }
+                        if (!list.isEmpty()) {
+                            list.sort((mapping1, mapping2) -> Double.compare(player.distance(mapping1) - player.distance(mapping2), 0.0D));
+                            Player target = list.get(0);
+                            FindPlayerEntity projectile = new FindPlayerEntity(player, target);
+                            projectile.spawnToAll();
+
+                            Item item1 = Tools.getHuntGameItem(30, player);
+                            item1.setCount(32);
+                            player.getInventory().setItem(5, item1);
+                        }
                         break;
                 }
             }
