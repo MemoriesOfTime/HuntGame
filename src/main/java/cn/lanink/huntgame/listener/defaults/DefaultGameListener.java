@@ -12,6 +12,7 @@ import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.Map;
@@ -28,17 +29,37 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         BaseRoom room = this.getListenerRoom(player.getLevel());
-        if (room == null) {
+        if (room == null || event.getItem() == null) {
             return;
         }
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             player.setAllowModifyWorld(false);
         }
+        CompoundTag tag = event.getItem().getNamedTag();
+        if (tag == null) {
+            return;
+        }
         if (room.getStatus() == RoomStatus.WAIT) {
-            CompoundTag tag = event.getItem() != null ? event.getItem().getNamedTag() : null;
-            if (tag != null && tag.getBoolean("isHuntGameItem") && tag.getInt("HuntGameType") == 10) {
+            if (tag.getBoolean("isHuntGameItem") && tag.getInt("HuntGameType") == 10) {
                 room.quitRoom(player);
                 event.setCancelled(true);
+            }
+        }else if (room.getStatus() == RoomStatus.GAME) {
+            if (tag.getBoolean("isHuntGameItem")) {
+                event.setCancelled(true);
+                switch (tag.getInt("HuntGameType")) {
+                    case 21:
+                    case 22:
+                        break;
+                    case 23:
+                        Tools.spawnFirework(player);
+                        final Item item = Tools.getHuntGameItem(20, player);
+                        item.setCount(32);
+                        player.getInventory().setItem(6, item);
+                        break;
+                    case 24:
+                        break;
+                }
             }
         }
     }

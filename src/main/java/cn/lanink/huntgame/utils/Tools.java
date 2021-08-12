@@ -97,9 +97,15 @@ public class Tools {
         switch (tagNumber) {
             case 1:
                 item = Item.get(261, 0, 1);
+                item.setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
                 break;
             case 2:
-                item = Item.get(267, 0, 1);
+                item = Item.get(276, 0, 1);
+                item.setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+                break;
+            case 3:
+                item = Item.get(280);
+                item.setCustomName("伪装道具\n更换伪装：点击要伪装的生物");
                 break;
             case 10:
                 item = Item.get(324, 0, 1);

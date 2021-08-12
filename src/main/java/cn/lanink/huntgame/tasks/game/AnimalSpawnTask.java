@@ -34,21 +34,25 @@ public class AnimalSpawnTask extends PluginTask<HuntGame> {
             return;
         }
         for (Player player : this.room.getPlayers().keySet()) {
+            if (this.room.getAnimalSpawnList().size() > 200) {
+                break;
+            }
             if (this.room.getPlayers(player) != 1) {
                 continue;
             }
             int count = 0;
             for (Entity entity : this.room.getLevel().getEntities()) {
                 if (entity instanceof EntityCamouflageEntity) {
-                    if (player.distance(entity) <= 30) {
+                    if (player.distance(entity) <= 50) {
                         count++;
                     }
                 }
             }
-            if (count < 10) {
+            if (count < 20) {
                 LinkedList<Position> positions = new LinkedList<>();
-                for (int c = 0; c < 5; c++) {
-                    positions.add(player.add(Tools.rand(-30, 30), player.getFloorY(), Tools.rand(-30, 30)));
+                int needCount = Tools.rand(5, 10);
+                for (int c = 0; c < needCount; c++) {
+                    positions.add(player.add(Tools.rand(-40, 40), player.getFloorY(), Tools.rand(-40, 40)));
                 }
                 for (Position position : positions) {
                     //检查地面

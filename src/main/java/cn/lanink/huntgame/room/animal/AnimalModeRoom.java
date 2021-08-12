@@ -9,6 +9,7 @@ import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.potion.Effect;
@@ -54,6 +55,9 @@ public class AnimalModeRoom extends BaseRoom {
         if (this.playerCamouflageEntity != null) {
             this.playerCamouflageEntity.clear();
         }
+        if (this.animalSpawnList != null) {
+            this.animalSpawnList.clear();
+        }
     }
 
     @Override
@@ -78,17 +82,18 @@ public class AnimalModeRoom extends BaseRoom {
             camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
 
-            Item item = Item.get(280);
-            item.setCustomName("伪装道具\n更换伪装：点击要伪装的生物");
-            player.getInventory().setItem(0, item);
+            player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
+            player.getInventory().setItem(4, Tools.getHuntGameItem(21, player));
+            player.getInventory().setItem(5, Tools.getHuntGameItem(22, player));
+            player.getInventory().setItem(6, Tools.getHuntGameItem(23, player));
+            player.getInventory().setItem(7, Tools.getHuntGameItem(24, player));
 
             player.setScale(1);
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
 
-        //TODO 改为在地图上随机生成实体
-        LinkedList<Position> positions = new LinkedList<>();
+/*        LinkedList<Position> positions = new LinkedList<>();
         for (Position position : this.getRandomSpawn()) {
             int count = Tools.rand(10, 20);
             for (int c = 0; c < count; c++) {
@@ -111,12 +116,12 @@ public class AnimalModeRoom extends BaseRoom {
                     Entity.getDefaultNBT(position),
                     EntityData.getRandomEntityName()
             ).spawnToAll();
-        }
+        }*/
 
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.huntGame,
                 new AnimalSpawnTask(this.huntGame, this),
-                40, true
+                25, true
         );
     }
 
@@ -163,7 +168,7 @@ public class AnimalModeRoom extends BaseRoom {
 
         int count = 0;
         while (!this.animalSpawnList.isEmpty()) {
-            if (count > 5) {
+            if (count > 100) {
                 break;
             }
             count++;
@@ -179,6 +184,50 @@ public class AnimalModeRoom extends BaseRoom {
         }
 
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            //嘲讽道具
+            PlayerInventory inventory = entry.getKey().getInventory();
+            Item coolingItem = Tools.getHuntGameItem(20, entry.getKey());
+            Item item = inventory.getItem(4);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() -1);
+                }else {
+                    item = Tools.getHuntGameItem(21, entry.getKey());
+                }
+                inventory.setItem(4, item);
+            }
+
+            item = inventory.getItem(5);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() -1);
+                }else {
+                    item = Tools.getHuntGameItem(22, entry.getKey());
+                }
+                inventory.setItem(5, item);
+            }
+
+            item = inventory.getItem(6);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() -1);
+                }else {
+                    item = Tools.getHuntGameItem(23, entry.getKey());
+                }
+                inventory.setItem(6, item);
+            }
+
+            item = inventory.getItem(7);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() -1);
+                }else {
+                    item = Tools.getHuntGameItem(24, entry.getKey());
+                }
+                inventory.setItem(7, item);
+            }
+
+
             if (this.gameTime < (this.getSetGameTime() - 60) && this.gameTime%10 == 0) {
                 if (entry.getValue() == 2 || entry.getValue() == 12) {
                     entry.getKey().addEffect(Effect.getEffect(1).setDuration(400).setVisible(false)); //速度提升 1

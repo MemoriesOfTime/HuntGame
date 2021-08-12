@@ -360,12 +360,12 @@ public abstract class BaseRoom implements IRoom {
                     if (entry.getValue() == 2) {
                         entry.getKey().teleport(randomSpawn.get(HuntGame.RANDOM.nextInt(randomSpawn.size())));
                         Item[] armor = new Item[4];
-                        armor[0] = Item.get(306);
-                        armor[1] = Item.get(307);
-                        armor[2] = Item.get(308);
-                        armor[3] = Item.get(309);
+                        armor[0] = Item.get(306).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+                        armor[1] = Item.get(307).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+                        armor[2] = Item.get(308).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+                        armor[3] = Item.get(309).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
                         entry.getKey().getInventory().setArmorContents(armor);
-                        entry.getKey().getInventory().setItem(0, Item.get(276));
+                        entry.getKey().getInventory().setItem(0, Tools.getHuntGameItem(2, entry.getKey()));
                     }
                 }
             }
