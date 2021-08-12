@@ -40,14 +40,14 @@ public class AnimalSpawnTask extends PluginTask<HuntGame> {
             int count = 0;
             for (Entity entity : this.room.getLevel().getEntities()) {
                 if (entity instanceof EntityCamouflageEntity) {
-                    if (player.distance(entity) <= 50) {
+                    if (player.distance(entity) <= 30) {
                         count++;
                     }
                 }
             }
-            if (count < 20) {
+            if (count < 10) {
                 LinkedList<Position> positions = new LinkedList<>();
-                for (int c = 0; c < 10; c++) {
+                for (int c = 0; c < 5; c++) {
                     positions.add(player.add(Tools.rand(-30, 30), player.getFloorY(), Tools.rand(-30, 30)));
                 }
                 for (Position position : positions) {
