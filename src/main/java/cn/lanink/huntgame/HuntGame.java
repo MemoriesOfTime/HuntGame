@@ -16,6 +16,7 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
 import cn.lanink.huntgame.ui.GuiListener;
+import cn.lanink.huntgame.utils.MetricsLite;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -146,11 +147,11 @@ public class HuntGame extends PluginBase {
 
         this.loadRooms();
 
-/*        try {
-            new MetricsLite(this, ？？？);
+        try {
+            new MetricsLite(this, 12405);
         } catch (Exception ignored) {
 
-        }*/
+        }
 
         this.getLogger().info(this.getLanguage().translateString("pluginEnable"));
     }
