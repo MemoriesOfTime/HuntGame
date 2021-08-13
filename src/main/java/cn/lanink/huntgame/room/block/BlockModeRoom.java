@@ -33,6 +33,9 @@ public class BlockModeRoom extends BaseRoom {
     public BlockModeRoom(Config config) {
         super(config);
         this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
+        if (this.camouflageBlocks.isEmpty()) {
+            this.camouflageBlocks.add("2:0");
+        }
     }
 
     public List<String> getListeners() {

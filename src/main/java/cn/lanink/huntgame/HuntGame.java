@@ -304,7 +304,6 @@ public class HuntGame extends PluginBase {
                             config.getInt("gameTime", 0) == 0 ||
                             "".equals(config.getString("waitSpawn", "").trim()) ||
                             config.getStringList("randomSpawn").size() == 0 ||
-                            config.getStringList("blocks").size() == 0 ||
                             "".equals(config.getString("world", "").trim())) {
                         this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByConfig").replace("%name%", fileName[0]));
                         continue;
@@ -325,7 +324,7 @@ public class HuntGame extends PluginBase {
                         this.rooms.put(fileName[0], baseRoom);
                         this.getLogger().info(this.getLanguage().translateString("roomLoadedSuccess").replace("%name%", fileName[0]));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        this.getLogger().error("加载房间时出错：", e);
                     }
                 }
             }
