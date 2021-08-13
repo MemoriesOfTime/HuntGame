@@ -6,7 +6,6 @@ import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
@@ -52,10 +51,6 @@ public class Tools {
         return min + (float) Math.random() * (max-min);
     }
 
-    public static boolean rand() {
-        return random.nextBoolean();
-    }
-
     public static String getStringIdentity(BaseRoom room, Player player) {
         switch (room.getPlayers(player)) {
             case 1:
@@ -80,7 +75,7 @@ public class Tools {
         for (String s : cmds) {
             String[] cmd = s.split("&");
             if ((cmd.length > 1) && (cmd[1].equals("con"))) {
-                Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
+                Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), cmd[0].replace("@p", player.getName()));
             } else {
                 Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
             }
@@ -106,7 +101,7 @@ public class Tools {
                 break;
             case 3:
                 item = Item.get(280);
-                item.setCustomName("伪装道具\n更换伪装：点击要伪装的生物");
+                item.setCustomName("伪装道具");
                 break;
             case 10:
                 item = Item.get(324, 0, 1);
@@ -163,7 +158,7 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 31));
-                item.setCustomName("猎物搜索器");
+                item.setCustomName("猎物追踪器");
                 break;
         }
         return item;

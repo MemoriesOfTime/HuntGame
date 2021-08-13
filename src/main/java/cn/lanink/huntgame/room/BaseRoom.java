@@ -287,7 +287,11 @@ public abstract class BaseRoom implements IRoom {
 
             player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
             Item item = Tools.getHuntGameItem(20, player);
-            item.setCount(60);
+            item.setCount(64);
+            player.getInventory().setItem(1, Tools.getHuntGameItem(1, player));
+            Item arrow = Item.get(262);
+            arrow.setCount(5);
+            player.getInventory().setItem(2, arrow);
             player.getInventory().setItem(4, item);
             player.getInventory().setItem(5, item);
             player.getInventory().setItem(6, item);
@@ -491,6 +495,8 @@ public abstract class BaseRoom implements IRoom {
         armor[3] = Item.get(309).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
         player.getInventory().setArmorContents(armor);
         player.getInventory().setItem(0, Tools.getHuntGameItem(2, player));
+        player.getInventory().setItem(1, Tools.getHuntGameItem(1, player));
+        player.getInventory().setItem(2, Item.get(262));
         player.getInventory().setItem(5, Tools.getHuntGameItem(31, player));
     }
 

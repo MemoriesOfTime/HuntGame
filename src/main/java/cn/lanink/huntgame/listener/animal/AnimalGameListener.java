@@ -8,10 +8,7 @@ import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDeathEvent;
-import cn.nukkit.event.entity.EntityRegainHealthEvent;
+import cn.nukkit.event.entity.*;
 
 /**
  * @author LT_Name
@@ -58,7 +55,7 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     player.teleport(room.getWaitSpawn());
                 }
             }
-            if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+            if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event instanceof EntityDamageByChildEntityEvent)) {
                 event.setCancelled(true);
             }else if (event.getFinalDamage() + 1 > player.getHealth()) {
                 event.setDamage(0);
@@ -81,17 +78,26 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                 return;
             }
             if ((room.getPlayers(damager) == 2 || room.getPlayers(damager) == 12) &&
-                    damager.getInventory().getItemInHand().getId() != 276) {
+                    (damager.getInventory().getItemInHand().getId() != 276 && !(event instanceof EntityDamageByChildEntityEvent))) {
                 event.setCancelled(true);
                 return;
             }
-            if (event.getEntity() instanceof EntityCamouflageEntity) {
+            if (event.getEntity() instanceof Player) {
+                Player player = ((Player) event.getEntity());
+                if (room.getPlayers(player) == 1 && (room.getPlayers(damager) == 2 || room.getPlayers(damager) == 12)) {
+                    player.attack(new EntityDamageEvent(damager, EntityDamageEvent.DamageCause.CUSTOM, event.getDamage()));
+                    damager.setHealth(Math.min(damager.getHealth() + 4, damager.getMaxHealth()));
+                }else if ((room.getPlayers(player) == 2 || room.getPlayers(player) == 12) && room.getPlayers(damager) == 1) {
+                    event.setDamage(0);
+                    event.setKnockBack(event.getKnockBack() * 1.5f);
+                }
+            }else if (event.getEntity() instanceof EntityCamouflageEntity) {
                 EntityCamouflageEntity entity = (EntityCamouflageEntity) event.getEntity();
                 if (room.getPlayers(damager) == 2 || room.getPlayers(damager) == 12) {
                     if (entity.getMaster() == null) {
                         damager.attack(new EntityDamageEvent(damager, EntityDamageEvent.DamageCause.CUSTOM, 1));
                     }else {
-                        damager.setHealth(Math.min(damager.getHealth() + 2, damager.getMaxHealth()));
+                        damager.setHealth(Math.min(damager.getHealth() + 4, damager.getMaxHealth()));
                     }
                 }else {
                     event.setCancelled(true);

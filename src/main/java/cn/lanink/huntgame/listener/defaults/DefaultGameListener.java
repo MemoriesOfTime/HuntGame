@@ -7,18 +7,23 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
+import cn.nukkit.event.entity.EntityShootBowEvent;
+import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.LavaParticle;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.ArrayList;
@@ -31,6 +36,52 @@ import java.util.Map;
 public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final HuntGame huntGame = HuntGame.getInstance();
+
+    @EventHandler
+    public void onShootBow(EntityShootBowEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            if (event.getProjectile() == null) {
+                return;
+            }
+            BaseRoom room = this.getListenerRooms().get(player.getLevel().getName());
+            if (room == null || room.getStatus() != RoomStatus.GAME) {
+                return;
+            }
+            event.getProjectile().namedTag.putString("HuntGameDamager", player.getName());
+            PlayerInventory inventory = player.getInventory();
+            if (room.getPlayers(player) == 1) {
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
+                    if (room.getStatus() == RoomStatus.GAME && room.isPlaying(player)) {
+                        Item item = inventory.getItem(2);
+                        int count = item.getCount() + 1;
+                        if (item.getId() == 0) {
+                            count = 1;
+                        }
+                        inventory.setItem(2, Item.get(262, 0, count));
+                    }
+                }, 100);
+            }else {
+                inventory.addItem(Item.get(262, 0, 1));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        Entity entity = event.getEntity();
+        if (entity == null) {
+            return;
+        }
+        BaseRoom room = this.getListenerRooms().get(entity.getLevel().getName());
+        if (room == null || room.getStatus() != RoomStatus.GAME) {
+            return;
+        }
+        if (entity.getNetworkId() == 80) {
+            Vector3 motion = entity.getMotion();
+            entity.setPosition(entity.add(motion.x, motion.y, motion.z));
+        }
+    }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -116,11 +167,13 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (room == null || room.getStatus() != RoomStatus.GAME || !room.isPlaying(player)) {
             return;
         }
+        event.setCancelled(true);
+
         //猎人不能卸下盔甲
-        if (event.getSlot() >= event.getInventory().getSize() ||
+        /*if (event.getSlot() >= event.getInventory().getSize() ||
                 (room.getPlayers(player) == 1 && event.getSlot() == 8)) {
             event.setCancelled(true);
-        }
+        }*/
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
