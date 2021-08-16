@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * @author lt_name
  */
+@Deprecated
 public class AddBlock extends BaseSubCommand {
 
     public AddBlock(String name) {

@@ -19,7 +19,6 @@ public class AdminCommand extends BaseCommand {
         this.setPermission("huntgame.command.admin");
         this.addSubCommand(new SetWaitSpawn("setwaitspawn"));
         this.addSubCommand(new AddRandomSpawn("addrandomspawn"));
-        this.addSubCommand(new AddBlock("addblock"));
         this.addSubCommand(new SetWaitTime("setwaittime"));
         this.addSubCommand(new SetGameTime("setgametime"));
         this.addSubCommand(new SetGameMode("setgamemode"));

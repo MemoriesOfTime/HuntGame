@@ -10,6 +10,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
 
 import java.util.*;
 
@@ -20,9 +21,9 @@ import java.util.*;
  */
 public class BlockModeRoom extends BaseRoom {
 
-    protected final ArrayList<String> camouflageBlocks;
-
+    @Getter
     protected final HashMap<Player, Integer[]> playerCamouflageBlock = new HashMap<>();
+    @Getter
     protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlocks = new HashMap<>();
 
     /**
@@ -32,10 +33,6 @@ public class BlockModeRoom extends BaseRoom {
      */
     public BlockModeRoom(Config config) {
         super(config);
-        this.camouflageBlocks = (ArrayList<String>) config.getStringList("blocks");
-        if (this.camouflageBlocks.isEmpty()) {
-            this.camouflageBlocks.add("2:0");
-        }
     }
 
     public List<String> getListeners() {
@@ -71,24 +68,38 @@ public class BlockModeRoom extends BaseRoom {
     @Override
     public synchronized void gameStart() {
         super.gameStart();
-        int x = 0;
+        int c = 0;
         for (Player player : this.getPlayers().keySet()) {
             if (this.getPlayers(player) == 2) continue;
-            if (x >= this.getRandomSpawn().size()) {
-                x = 0;
+            if (c >= this.getRandomSpawn().size()) {
+                c = 0;
             }
-            player.teleport(this.getRandomSpawn().get(x));
-            x++;
+            player.teleport(this.getRandomSpawn().get(c));
+            c++;
             player.setScale(0.5F);
-            String[] s = this.camouflageBlocks.get(new Random().nextInt(this.camouflageBlocks.size())).split(":");
+
             Integer[] integers = new Integer[2];
-            integers[0] = Integer.parseInt(s[0]);
-            integers[1] = Integer.parseInt(s[1]);
+            for (int x = -3; x < 3; x++) {
+                for (int y = -3; y < 3; y++) {
+                    for (int z = -3; z < 3; z++) {
+                        if (integers[0] != 0) {
+                            break;
+                        }
+                        Block block = player.add(x, y, z).getLevelBlock();
+                        if (block.isNormalBlock()) {
+                            integers[0] = block.getId();
+                            integers[1] = block.getDamage();
+                        }
+                    }
+                }
+            }
+            if (integers[0] == 0) {
+                integers[0] = 2;
+                integers[1] = 0;
+            }
             this.playerCamouflageBlock.put(player, integers);
 
-            Item item = Item.get(280);
-            item.setCustomName("伪装道具\n更换伪装：点击要伪装的方块");
-            player.getInventory().setItem(0, item);
+            player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
             Item block = Item.get(integers[0], integers[1]);
             block.setCustomName("当前伪装的方块");
             player.getInventory().setItem(8, block);
@@ -139,10 +150,6 @@ public class BlockModeRoom extends BaseRoom {
         }
     }
 
-    public HashMap<Player, Integer[]> getPlayerCamouflageBlock() {
-        return this.playerCamouflageBlock;
-    }
-
     /**
      * 获取玩家伪装的方块
      * @param player 玩家
@@ -150,10 +157,6 @@ public class BlockModeRoom extends BaseRoom {
      */
     public Integer[] getPlayerCamouflageBlock(Player player) {
         return this.playerCamouflageBlock.get(player);
-    }
-
-    public HashMap<Player, EntityCamouflageBlock> getEntityCamouflageBlocks() {
-        return this.entityCamouflageBlocks;
     }
 
     public EntityCamouflageBlock getEntityCamouflageBlocks(Player player) {
