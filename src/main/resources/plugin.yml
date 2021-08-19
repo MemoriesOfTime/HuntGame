@@ -1,7 +1,7 @@
 name: HuntGame
 main: cn.lanink.huntgame.HuntGame
-version: "1.0.0"
-api: ["1.0.9"]
+version: "1.0.0-PM1E"
+api: ["Nukkit-PM1E"]
 load: POSTWORLD
 author: "LT_Name"
 depend:

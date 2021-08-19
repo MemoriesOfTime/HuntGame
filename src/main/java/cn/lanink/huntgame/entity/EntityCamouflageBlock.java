@@ -23,7 +23,6 @@ public class EntityCamouflageBlock extends EntityHuman implements IEntityCamoufl
 
     static {
         EMPTY_SKIN.setSkinData(SerializedImage.fromLegacy(new byte[Skin.DOUBLE_SKIN_SIZE]));
-        EMPTY_SKIN.generateSkinId("EntityCamouflageBlock");
     }
 
     @Setter
