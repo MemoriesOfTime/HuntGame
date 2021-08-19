@@ -23,7 +23,7 @@ import java.util.*;
 public class BlockModeRoom extends BaseRoom {
 
     @Getter
-    protected final HashMap<Player, Integer[]> playerCamouflageBlock = new HashMap<>();
+    protected final HashMap<Player, BlockInfo> playerCamouflageBlock = new HashMap<>();
     @Getter
     protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlocks = new HashMap<>();
 
@@ -79,29 +79,27 @@ public class BlockModeRoom extends BaseRoom {
             c++;
             player.setScale(0.5F);
 
-            Integer[] integers = new Integer[2];
+            BlockInfo blockInfo = null;
             for (int x = -3; x < 3; x++) {
                 for (int y = -3; y < 3; y++) {
                     for (int z = -3; z < 3; z++) {
-                        if (integers[0] != 0) {
+                        if (blockInfo != null) {
                             break;
                         }
                         Block block = player.add(x, y, z).getLevelBlock();
                         if (block.isNormalBlock()) {
-                            integers[0] = block.getId();
-                            integers[1] = block.getDamage();
+                            blockInfo = new BlockInfo(block.getId(), block.getDamage());
                         }
                     }
                 }
             }
-            if (integers[0] == 0) {
-                integers[0] = 2;
-                integers[1] = 0;
+            if (blockInfo == null) {
+                blockInfo = new BlockInfo(2, 0);
             }
-            this.playerCamouflageBlock.put(player, integers);
+            this.playerCamouflageBlock.put(player, blockInfo);
 
             player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
-            Item block = Item.get(integers[0], integers[1]);
+            Item block = Item.get(blockInfo.getId(), blockInfo.getDamage());
             block.setCustomName(HuntGame.getInstance().getLanguage(player).translateString("item-name-currentlyDisguisedBlock"));
             player.getInventory().setItem(8, block);
 
@@ -133,8 +131,8 @@ public class BlockModeRoom extends BaseRoom {
                 if (entry.getValue() != 1) continue;
                 Set<Player> p = new HashSet<>(this.players.keySet());
                 p.remove(entry.getKey());
-                Integer[] integers = getPlayerCamouflageBlock(entry.getKey());
-                Block block = Block.get(integers[0], integers[1], entry.getKey().floor());
+                BlockInfo blockInfo = this.getPlayerCamouflageBlock(entry.getKey());
+                Block block = Block.get(blockInfo.getId(), blockInfo.getDamage(), entry.getKey().floor());
                 entry.getKey().getLevel().sendBlocks(p.toArray(new Player[0]), new Vector3[] { block });
             }
         }
@@ -156,7 +154,7 @@ public class BlockModeRoom extends BaseRoom {
      * @param player 玩家
      * @return 方块id
      */
-    public Integer[] getPlayerCamouflageBlock(Player player) {
+    public BlockInfo getPlayerCamouflageBlock(Player player) {
         return this.playerCamouflageBlock.get(player);
     }
 

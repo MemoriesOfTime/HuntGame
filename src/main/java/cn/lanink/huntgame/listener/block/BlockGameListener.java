@@ -6,6 +6,7 @@ import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.RoomStatus;
+import cn.lanink.huntgame.room.block.BlockInfo;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -54,7 +55,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                 Block block = event.getBlock();
                 Language language = this.huntGame.getLanguage(player);
                 if (block.isNormalBlock()) {
-                    room.getPlayerCamouflageBlock().put(player, new Integer[]{ block.getId(), block.getDamage() });
+                    room.getPlayerCamouflageBlock().put(player, new BlockInfo(block.getId(), block.getDamage()));
                     Item blockItem = Item.get(block.getId(), block.getDamage());
                     blockItem.setCustomName(language.translateString("item-name-currentlyDisguisedBlock"));
                     player.getInventory().setItem(8, blockItem);
@@ -132,9 +133,9 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             Level level = player.getLevel();
             Set<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.remove(player);
-            Integer[] integers = room.getPlayerCamouflageBlock(player);
+            BlockInfo blockInfo = room.getPlayerCamouflageBlock(player);
             Position newPos = event.getTo().add(0, 0.5, 0).floor();
-            Block block = Block.get(integers[0], integers[1], newPos);
+            Block block = Block.get(blockInfo.getId(), blockInfo.getDamage(), newPos);
             newPos.x += 0.5;
             newPos.z += 0.5;
             room.getEntityCamouflageBlocks(player).setPosition(newPos);
