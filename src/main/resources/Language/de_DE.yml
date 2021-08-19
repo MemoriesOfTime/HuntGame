@@ -33,6 +33,8 @@ adminHelp: |-
     §a/%cmdName% setwaittime <Zeit> §eWartezeit einstellen
     §a/%cmdName% setgametime <Zeit> §eSpielzeit einstellen
     §a/%cmdName% setgamemode <Modus> §eRaummodus einstellen
+    §a/%cmdName% setminplayers <minPlayers> §eLegen Sie die Mindestanzahl der Personen im Raum fest (Google Translate)
+    §a/%cmdName% setmaxplayers <maxPlayers> §eLegen Sie die maximale Anzahl von Personen im Raum fest (Google Translate)
     §a/%cmdName% startroom §eSpielstart
     §a/%cmdName% stoproom §eSpielabbruch
     §a/%cmdName% reloadroom §eLädt alle Räume
@@ -45,6 +47,8 @@ adminSetGameTime: "§aSpielzeit ist eingestellt auf：%time%"
 adminSetGameTimeShort: "§aMinimale Spielzeit 1 Minute！"
 adminSetGameMode: "§aRaummodus wurde eingestellt auf: %mode%"
 adminSetGameModeNotFound: "§cRaummodus: %mode% ist nicht vorhanden！"
+adminSetMinPlayers: "§aDie Mindestanzahl der Personen im Raum wurde festgelegt auf: %1% (Google Translate)"
+adminSetMaxPlayers: "§aDie maximale Anzahl von Personen im Raum wurde festgelegt auf: %1% (Google Translate)"
 adminStartRoom: "§aDas Spiel wurde zwangsweise gestartet! (Google Translate)"
 adminStartRoomNoPlayer: "§aZu wenig Spieler um zu Starten！"
 adminStartRoomIsPlaying: "§cDer Raum spielt! (Google Translate)"
@@ -73,10 +77,10 @@ victoryPreyBottom: "§eGlückwunsch！"
 victoryPreyScoreBoard: "§eGlückwunsch an die Blöcke！"
 scoreBoardTitle: "§eHide and Seek"
 waitTimeScoreBoard: |-
-    Spieleranzahl: §a %playerNumber%/16
+    Spieleranzahl: §a %playerNumber%/%maxPlayers%
     §aSpielstart in： §l§e %time%
 waitScoreBoard: |-
-    Spieleranzahl: §a %playerNumber%/16
+    Spieleranzahl: §a %playerNumber%/%maxPlayers%
     Mindestanzahl 3 Spieler
     Warte auf weitere Spieler
 gameTimeScoreBoard: |-

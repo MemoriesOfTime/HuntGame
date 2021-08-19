@@ -33,6 +33,8 @@ adminHelp: |-
   §a/%cmdName% setwaittime <time> §eSet the waiting time after the number of players is enough
   §a/%cmdName% setgametime <time> §eSet the maximum time of each game round
   §a/%cmdName% setgamemode <mode> §eSet room game mode
+  §a/%cmdName% setminplayers <minPlayers> §eSet the minimum number of people in the room
+  §a/%cmdName% setmaxplayers <maxPlayers> §eSet the maximum number of people in the room
   §a/%cmdName% startroom §eStart Game
   §a/%cmdName% stoproom §eEnd Game
   §a/%cmdName% reloadroom §Reload all the rooms
@@ -45,6 +47,8 @@ adminSetGameTime: "§aTime of each game is set to:%time%"
 adminSetGameTimeShort: "§aThe minimum time of each game should be more than 1 minute!"
 adminSetGameMode: "§aThe mode of this room is set to :%mode%"
 adminSetGameModeNotFound: "§cRoom game mode: %mode% does not exist!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %1%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %1%"
 adminStartRoom: "§aThe game has been forcibly started!"
 adminStartRoomNoPlayer: "§aThe number of the players is less than 3,you can't start game."
 adminStartRoomIsPlaying: "§cThe room is playing!"
@@ -73,10 +77,10 @@ victoryPreyBottom: "§ePrey wins!"
 victoryPreyScoreBoard: "§ePrey wins!"
 scoreBoardTitle: "§eHuntGame"
 waitTimeScoreBoard: |-
-  Players: §a %playerNumber%/16
+  Players: §a %playerNumber%/%maxPlayers%
   §aTime: §l§e %time%
 waitScoreBoard: |-
-  Players: §a %playerNumber%/16
+  Players: §a %playerNumber%/%maxPlayers%
   We need three players
   Waiting for players
 gameTimeScoreBoard: |-

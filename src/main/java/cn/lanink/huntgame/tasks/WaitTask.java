@@ -42,6 +42,7 @@ public class WaitTask extends PluginTask<HuntGame> {
                     for (String string : owner.getLanguage(player).translateString("waitTimeScoreBoard").split("\n")) {
                         ms.add(string.replace("%gamemode%", Tools.getShowRoomGameMode(this.room, player))
                                 .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                                .replace("%maxPlayers%", room.getMaxPlayers() + "")
                                 .replace("%time%", this.room.waitTime + ""));
                     }
                     owner.getScoreboard().showScoreboard(player,owner.getLanguage(player).translateString("scoreBoardTitle"), ms);
@@ -61,6 +62,7 @@ public class WaitTask extends PluginTask<HuntGame> {
                 for (String string : owner.getLanguage(player).translateString("waitScoreBoard").split("\n")) {
                     ms.add(string.replace("%gamemode%", Tools.getShowRoomGameMode(this.room, player))
                             .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                            .replace("%maxPlayers%", room.getMaxPlayers() + "")
                             .replace("%minPlayers%", this.room.getMinPlayers() + ""));
                 }
                 owner.getScoreboard().showScoreboard(player, owner.getLanguage(player).translateString("scoreBoardTitle"),  ms);

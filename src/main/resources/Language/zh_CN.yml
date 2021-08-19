@@ -33,6 +33,8 @@ adminHelp: |-
   §a/%cmdName% setwaittime <时间> §e设置游戏人数足够后的等待时间
   §a/%cmdName% setgametime <时间> §e设置每局游戏最长时间
   §a/%cmdName% setgamemode <模式> §e设置房间游戏模式
+  §a/%cmdName% setminplayers <人数> §e设置房间最少人数
+  §a/%cmdName% setmaxplayers <人数> §e设置房间最多人数
   §a/%cmdName% startroom §e开始所在地图的房间游戏
   §a/%cmdName% stoproom §e强制结束所在地图的房间
   §a/%cmdName% reloadroom §e重载所有房间
@@ -45,6 +47,8 @@ adminSetGameTime: "§a游戏时间已设置为：%time%"
 adminSetGameTimeShort: "§a游戏时间最小不能低于1分钟！"
 adminSetGameMode: "§a房间游戏模式已设置为: %mode%"
 adminSetGameModeNotFound: "§c房间游戏模式: %mode% 不存在！"
+adminSetMinPlayers: "§a房间最少人数已设置为: %1%"
+adminSetMaxPlayers: "§a房间最多人数已设置为: %1%"
 adminStartRoom: "§a已强制开启游戏！"
 adminStartRoomNoPlayer: "§a房间人数不足两人,无法开始游戏！"
 adminStartRoomIsPlaying: "§c房间已经开始了！"
@@ -74,12 +78,12 @@ victoryPreyScoreBoard: "§e恭喜猎物获得胜利！"
 scoreBoardTitle: "§e躲猫猫"
 waitScoreBoard: |-
   游戏模式：%gamemode%
-  玩家: §a %playerNumber%/16
+  玩家: §a %playerNumber%/%maxPlayers%
   最低游戏人数为 %minPlayers% 人
   等待玩家加入中
 waitTimeScoreBoard: |-
   游戏模式：%gamemode%
-  玩家: §a %playerNumber%/16
+  玩家: §a %playerNumber%/%maxPlayers%
   §a开始倒计时： §l§e %time%
 waitBottom: "§c等待玩家加入中"
 waitTimeBottom: "§a游戏还有: §e%time% §a秒开始!"

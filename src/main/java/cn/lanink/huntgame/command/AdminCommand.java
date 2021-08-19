@@ -1,6 +1,5 @@
 package cn.lanink.huntgame.command;
 
-import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.command.adminsubcommand.*;
 import cn.lanink.huntgame.command.base.BaseCommand;
 import cn.lanink.huntgame.ui.GuiCreate;
@@ -22,13 +21,15 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetWaitTime("setwaittime"));
         this.addSubCommand(new SetGameTime("setgametime"));
         this.addSubCommand(new SetGameMode("setgamemode"));
+
+        this.addSubCommand(new SetMinPlayers("SetMinPlayers"));
+        this.addSubCommand(new SetMaxPlayers("SetMaxPlayers"));
+
         this.addSubCommand(new StartRoom("startroom"));
         this.addSubCommand(new StopRoom("stoproom"));
+
         this.addSubCommand(new ReloadRoom("reloadroom"));
         this.addSubCommand(new UnloadRoom("unloadroom"));
-        if (HuntGame.debug) {
-            this.addSubCommand(new test("test"));
-        }
     }
 
     @Override
