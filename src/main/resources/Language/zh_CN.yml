@@ -30,7 +30,6 @@ adminHelp: |-
   §a/%cmdName% §e打开ui
   §a/%cmdName% setwaitspawn §e设置当前位置为等待出生点
   §a/%cmdName% addrandomspawn  §e添加当前位置为随机出生点
-  §a/%cmdName% addblock §e将手中的方块添加为可伪装的方块
   §a/%cmdName% setwaittime <时间> §e设置游戏人数足够后的等待时间
   §a/%cmdName% setgametime <时间> §e设置每局游戏最长时间
   §a/%cmdName% setgamemode <模式> §e设置房间游戏模式

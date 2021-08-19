@@ -30,7 +30,6 @@ adminHelp: |-
     §a/%cmdName% §eGui öffnen
     §a/%cmdName% setwaitspawn §eWartespawn hinzufügen
     §a/%cmdName% addrandomspawn  §eSpielspawn hinzufügen
-    §a/%cmdName% addblock §eTarnblock hinzufügen
     §a/%cmdName% setwaittime <Zeit> §eWartezeit einstellen
     §a/%cmdName% setgametime <Zeit> §eSpielzeit einstellen
     §a/%cmdName% setgamemode <Modus> §eRaummodus einstellen

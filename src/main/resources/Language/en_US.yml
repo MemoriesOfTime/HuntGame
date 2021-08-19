@@ -30,7 +30,6 @@ adminHelp: |-
   §a/%cmdName% §eOpen UI
   §a/%cmdName% setwaitspawn §eSet the current location as the spawnpoint of the game
   §a/%cmdName% addrandomspawn  §eAdd the current location as the waiting spawnpoint of the game
-  §a/%cmdName% addblock §eAdd the block in your hand as a block that can be disguised
   §a/%cmdName% setwaittime <time> §eSet the waiting time after the number of players is enough
   §a/%cmdName% setgametime <time> §eSet the maximum time of each game round
   §a/%cmdName% setgamemode <mode> §eSet room game mode
