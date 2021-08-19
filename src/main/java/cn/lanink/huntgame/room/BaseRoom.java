@@ -44,6 +44,12 @@ public abstract class BaseRoom implements IRoom {
     @Setter
     @Getter
     protected RoomStatus status;
+
+    @Getter
+    protected int minPlayers;
+    @Getter
+    protected int maxPlayers;
+
     protected final int setWaitTime;
     protected final int setGameTime;
     public int waitTime;
@@ -62,6 +68,16 @@ public abstract class BaseRoom implements IRoom {
      */
     public BaseRoom(Config config) {
         this.level = Server.getInstance().getLevelByName(config.getString("world"));
+
+        this.minPlayers = config.getInt("minPlayers", 3);
+        if (this.minPlayers < 2) {
+            this.minPlayers = 2;
+        }
+        this.maxPlayers = config.getInt("maxPlayers", 16);
+        if (this.maxPlayers < this.minPlayers) {
+            this.maxPlayers = this.minPlayers;
+        }
+
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         String[] s1 = config.getString("waitSpawn").split(":");
@@ -132,7 +148,7 @@ public abstract class BaseRoom implements IRoom {
      * @param player 玩家
      */
     public synchronized void joinRoom(Player player) {
-        if (this.players.values().size() < 16) {
+        if (this.players.values().size() < this.getMaxPlayers()) {
             if (this.status == RoomStatus.TASK_NEED_INITIALIZED) {
                 this.initTask();
             }

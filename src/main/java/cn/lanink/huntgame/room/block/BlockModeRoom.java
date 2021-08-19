@@ -1,5 +1,6 @@
 package cn.lanink.huntgame.room.block;
 
+import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.utils.Tools;
@@ -101,7 +102,7 @@ public class BlockModeRoom extends BaseRoom {
 
             player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
             Item block = Item.get(integers[0], integers[1]);
-            block.setCustomName("当前伪装的方块");
+            block.setCustomName(HuntGame.getInstance().getLanguage(player).translateString("item-name-currentlyDisguisedBlock"));
             player.getInventory().setItem(8, block);
 
             CompoundTag tag = Entity.getDefaultNBT(player);
@@ -142,7 +143,7 @@ public class BlockModeRoom extends BaseRoom {
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
             for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {
-                ms.add(string.replace("%mode%", Tools.getStringIdentity(this, entry.getKey()))
+                ms.add(string.replace("%mode%", Tools.getShowIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
                         .replace("%time%", this.gameTime + ""));
             }

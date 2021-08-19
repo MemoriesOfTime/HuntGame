@@ -1,12 +1,9 @@
-scoreboardAPINotFound: "§cPlease install ScoreboardAPI plugin in your server!"
-defaultSkinFailure: "§cFailed to load the default body skin!"
 startLoadingRoom: "§eStart loading game rooms..."
 roomLoadedSuccess: "§aSuccessfully loaded the game room: %name% !"
 roomLoadedFailureByConfig: "§cFailed to load the game room: %name% because its configuration file lacks something."
 roomLoadedFailureByLevel: "§cFailed to load the game room: %name% because we cant load its game map."
 roomLoadedAllSuccess: "§eAll game rooms have been checked with %number% game rooms loaded successfully!"
 roomUnloadSuccess: "§cThe game room: %name% have been unloaded!"
-roomUnloadFailure: "§cThe game room: %name% can not be unloaded!"
 pluginEnable: "§ePlugin §aHuntGame§e enabled!§lWelcome to use!!!"
 pluginDisable: "§ePlugin §aHuntGame§e disabled!§lThanks for your use!!!"
 useCmdInRoom: "§e >> §cYou can't use this commands here!"
@@ -27,7 +24,6 @@ joinRoomIsNotFound: "§aCan't find this room!"
 joinRoomNotAvailable: "§aThere is no vacant room to use!"
 quitRoom: "§aYou have quit the room!"
 quitRoomNotInRoom: "§aYou are not in a room!"
-listRoom: "§eRoom list: §a %list%"
 useCmdInCon: "Please use command in the game!"
 adminHelp: |-
   §eHuntGame--Help
@@ -44,7 +40,6 @@ adminHelp: |-
   §a/%cmdName% unloadroom §eClose all rooms and uninstall config
 adminSetSpawn: "§aThe default spawnpoint is set successfully!"
 adminAddRandomSpawn: "§aThe random spawnpoint is set successfully!"
-adminAddGoldSpawn: "§aThe default gold ingot generation point is set successfully!"
 adminNotNumber: "§aPlease input number"
 adminSetWaitTime: "§aWaiting time is set to:%time%"
 adminSetGameTime: "§aTime of each game is set to:%time%"
@@ -54,22 +49,16 @@ adminSetGameModeNotFound: "§cRoom game mode: %mode% does not exist!"
 adminStartRoom: "§aThe game has been forcibly started!"
 adminStartRoomNoPlayer: "§aThe number of the players is less than 3,you can't start game."
 adminStartRoomIsPlaying: "§cThe room is playing!"
-adminLevelNoRoom: "§aYou are not in the game room"
 adminStopRoom: "§aThe room has been forcibly ended!"
+adminLevelNoRoom: "§aYou are not in the game room"
 adminReload: "§aConfig reload complete! Please check the information in the background!"
 adminUnload: "§aAll rooms unloaded! Please check the information in the background!"
-roomSafeKick: |-
-  §cRoom is closed abnormally!
-  For the safety of your backpack, please re-enter the server later!
-adminAddBlock: "§aThe block %id% has been added as a disguise block!"
-adminAddBlockFailure: "§cItem: %id% cannot be set as a block that can be disguised!"
-preyChat: "§a[prey] %player% + §b >>> %message%"
-huntersChat: "§a[hunters] %player% + §b >>> %message%"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room"
 itemQuitRoom: "§cQuit room"
 itemQuitRoomLore: "You can quit room when you click it"
-classic: "Classic"
+gamemode-block: "block"
+gamemode-animal: "animal"
 prey: "prey"
 hunters: "hunters"
 death: "death"
@@ -91,12 +80,12 @@ waitScoreBoard: |-
   Players: §a %playerNumber%/16
   We need three players
   Waiting for players
-waitTimeBottom: "§aThere is: %time% seconds to start!"
-waitBottom: "§cWaiting for players to join"
 gameTimeScoreBoard: |-
   §l§aIdentity:§e %mode%
   §l§aSurvivors:§e %playerNumber%
   §l§aTime:§e %time% §as
+waitBottom: "§cWaiting for players to join"
+waitTimeBottom: "§aThere is: %time% seconds to start!"
 huntersDispatchedTimeBottom: "§aHunters will be dispatched in §e%time%§a seconds"
 respawnTimeBottom: "§aWill be resurrected as a hunter in %time% seconds!"
 huntersKillPrey: "%damagePlayer% Caught %player%"
@@ -115,3 +104,16 @@ adminTimeMenuInputText2: "Playing Time(s)"
 joinRoomOK: "§l§aCofirm to join the room: %name% §l§a?"
 buttonOK: "§aConfirm"
 buttonReturn: "§cBack"
+
+subtitle-successfullySwitchedCamouflageBlocks: "Successfully switched camouflage blocks!"
+subtitle-cannotPretendToBeThisBlock: "Cannot pretend to be this block!"
+subtitle-camouflageAnimalSuccess: "You are pretending to be %1%!"
+subtitle-CanNotDisguiseAnimalsRepeatedly: "You have already pretended to be %1%! Can't pretend to be repeated"
+
+item-name-currentlyDisguisedBlock: "The currently disguised block"
+item-name-coolDown: "cooling"
+item-name-taunt-safe: "Safe taunts"
+item-name-taunt-danger: "Dangerous taunt"
+item-name-taunt-fireworks: "Fireworks taunt"
+item-name-taunt-lightning: "Lightning taunt"
+item-name-preyTracker: "Prey tracker"

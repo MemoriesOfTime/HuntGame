@@ -1,6 +1,7 @@
 package cn.lanink.huntgame.listener.block;
 
 import cn.lanink.gamecore.listener.BaseGameListener;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.room.BaseRoom;
@@ -51,14 +52,15 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                         () -> this.clickToCool.remove(player), 10);
 
                 Block block = event.getBlock();
+                Language language = this.huntGame.getLanguage(player);
                 if (block.isNormalBlock()) {
                     room.getPlayerCamouflageBlock().put(player, new Integer[]{ block.getId(), block.getDamage() });
                     Item blockItem = Item.get(block.getId(), block.getDamage());
-                    blockItem.setCustomName("当前伪装的方块");
+                    blockItem.setCustomName(language.translateString("item-name-currentlyDisguisedBlock"));
                     player.getInventory().setItem(8, blockItem);
-                    player.sendTitle("", "切换伪装方块成功！");
+                    player.sendTitle("", language.translateString("subtitle-successfullySwitchedCamouflageBlocks"));
                 }else {
-                    player.sendTitle("", "无法伪装成此方块！");
+                    player.sendTitle("", language.translateString("subtitle-cannotPretendToBeThisBlock"));
                 }
             }
         }

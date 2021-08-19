@@ -48,7 +48,7 @@ public class JoinRoom extends BaseSubCommand {
                 LinkedList<BaseRoom> rooms = new LinkedList<>();
                 for (BaseRoom room : this.huntGame.getRooms().values()) {
                     if ((room.getStatus() == RoomStatus.TASK_NEED_INITIALIZED || room.getStatus() == RoomStatus.WAIT) &&
-                            room.getPlayers().size() < 16) {
+                            room.getPlayers().size() < room.getMaxPlayers()) {
                         if (room.getPlayers().size() > 0) {
                             room.joinRoom(player);
                             sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
@@ -70,7 +70,7 @@ public class JoinRoom extends BaseSubCommand {
                     LinkedList<BaseRoom> rooms = new LinkedList<>();
                     for (BaseRoom room : this.huntGame.getRooms().values()) {
                         if ((room.getStatus() == RoomStatus.TASK_NEED_INITIALIZED || room.getStatus() == RoomStatus.WAIT) &&
-                                room.getPlayers().size() < 16 &&
+                                room.getPlayers().size() < room.getMaxPlayers() &&
                                 room.getGameMode().equals(modeName)) {
                             if (room.getPlayers().size() > 0) {
                                 room.joinRoom(player);
@@ -92,7 +92,7 @@ public class JoinRoom extends BaseSubCommand {
                     BaseRoom room = this.huntGame.getRooms().get(args[1]);
                     if (room.getStatus() == RoomStatus.GAME || room.getStatus() == RoomStatus.VICTORY) {
                         sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomIsPlaying"));
-                    }else if (room.getPlayers().values().size() >= 16) {
+                    }else if (room.getPlayers().values().size() >= room.getMaxPlayers()) {
                         sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRoomIsFull"));
                     } else {
                         room.joinRoom(player);

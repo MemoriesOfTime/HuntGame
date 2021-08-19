@@ -25,8 +25,8 @@ public class WaitTask extends PluginTask<HuntGame> {
             this.cancel();
             return;
         }
-        if (this.room.getPlayers().size() >= 2) {
-            if (this.room.getPlayers().size() == 16 && this.room.waitTime > 10) {
+        if (this.room.getPlayers().size() >= room.getMinPlayers()) {
+            if (this.room.getPlayers().size() == room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }
             if (this.room.waitTime > 0) {
@@ -40,8 +40,9 @@ public class WaitTask extends PluginTask<HuntGame> {
                             .replace("%time%", room.waitTime + ""));
                     LinkedList<String> ms = new LinkedList<>();
                     for (String string : owner.getLanguage(player).translateString("waitTimeScoreBoard").split("\n")) {
-                        ms.add(string.replace("%playerNumber%", room.getPlayers().size() + "")
-                                .replace("%time%", room.waitTime + ""));
+                        ms.add(string.replace("%gamemode%", Tools.getShowRoomGameMode(this.room, player))
+                                .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                                .replace("%time%", this.room.waitTime + ""));
                     }
                     owner.getScoreboard().showScoreboard(player,owner.getLanguage(player).translateString("scoreBoardTitle"), ms);
                 }
@@ -58,7 +59,9 @@ public class WaitTask extends PluginTask<HuntGame> {
                         .replace("%playerNumber%", room.getPlayers().size() + ""));
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : owner.getLanguage(player).translateString("waitScoreBoard").split("\n")) {
-                    ms.add(string.replace("%playerNumber%", room.getPlayers().size() + ""));
+                    ms.add(string.replace("%gamemode%", Tools.getShowRoomGameMode(this.room, player))
+                            .replace("%playerNumber%", this.room.getPlayers().size() + "")
+                            .replace("%minPlayers%", this.room.getMinPlayers() + ""));
                 }
                 owner.getScoreboard().showScoreboard(player, owner.getLanguage(player).translateString("scoreBoardTitle"),  ms);
             }

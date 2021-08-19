@@ -1,6 +1,7 @@
 package cn.lanink.huntgame.listener.animal;
 
 import cn.lanink.gamecore.listener.BaseGameListener;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.room.RoomStatus;
@@ -101,9 +102,10 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     }
                 }else {
                     event.setCancelled(true);
+                    Language language = this.huntGame.getLanguage(damager);
                     if (damager.getInventory().getItemInHand().getId() == 280) {
                         if (room.getPlayerCamouflageEntity().get(damager).getEntityName().equals(entity.getEntityName())) {
-                            damager.sendTitle("", "你已经伪装成 " + entity.getEntityName() + " 了！不能重复伪装");
+                            damager.sendTitle("", language.translateString("subtitle-CanNotDisguiseAnimalsRepeatedly", entity.getEntityName()));
                         }else {
                             room.getPlayerCamouflageEntity().get(damager).close();
 
@@ -114,7 +116,7 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                             newEntity.hidePlayer(damager);
                             newEntity.spawnToAll();
 
-                            damager.sendTitle("", "你伪装成了 " + entity.getEntityName() + " ！");
+                            damager.sendTitle("", language.translateString("subtitle-camouflageAnimalSuccess", entity.getEntityName()));
                         }
                     }
                 }

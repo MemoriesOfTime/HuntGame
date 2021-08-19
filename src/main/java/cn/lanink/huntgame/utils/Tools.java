@@ -1,5 +1,6 @@
 package cn.lanink.huntgame.utils;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.nukkit.AdventureSettings;
@@ -51,7 +52,18 @@ public class Tools {
         return min + (float) Math.random() * (max-min);
     }
 
-    public static String getStringIdentity(BaseRoom room, Player player) {
+    public static String getShowRoomGameMode(BaseRoom room, Player player) {
+        switch (room.getGameMode()) {
+            case "block":
+                return HuntGame.getInstance().getLanguage(player).translateString("gamemode-block");
+            case "animal":
+                return HuntGame.getInstance().getLanguage(player).translateString("gamemode-animal");
+            default:
+                return room.getGameMode();
+        }
+    }
+
+    public static String getShowIdentity(BaseRoom room, Player player) {
         switch (room.getPlayers(player)) {
             case 1:
                 return HuntGame.getInstance().getLanguage(player).translateString("prey");
@@ -89,6 +101,7 @@ public class Tools {
      * @return 物品
      */
     public static Item getHuntGameItem(int tagNumber, Player player) {
+        Language language = HuntGame.getInstance().getLanguage(player);
         Item item = Item.get(0);
         switch (tagNumber) {
             case 1:
@@ -116,49 +129,49 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 20));
-                item.setCustomName("冷却中");
+                item.setCustomName(language.translateString("item-name-coolDown"));
                 break;
             case 21:
                 item = Item.get(353);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 21));
-                item.setCustomName("安全的嘲讽");
+                item.setCustomName(language.translateString("item-name-taunt-safe"));
                 break;
             case 22:
                 item = Item.get(331);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 22));
-                item.setCustomName("危险的嘲讽");
+                item.setCustomName(language.translateString("item-name-taunt-danger"));
                 break;
             case 23:
                 item = Item.get(401);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 23));
-                item.setCustomName("烟花嘲讽");
+                item.setCustomName(language.translateString("item-name-taunt-fireworks"));
                 break;
             case 24:
                 item = Item.get(377);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 24));
-                item.setCustomName("闪电嘲讽");
+                item.setCustomName(language.translateString("item-name-taunt-lightning"));
                 break;
             case 30:
                 item = Item.get(368);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 30));
-                item.setCustomName("冷却中");
+                item.setCustomName(language.translateString("item-name-coolDown"));
                 break;
             case 31:
                 item = Item.get(381);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 31));
-                item.setCustomName("猎物追踪器");
+                item.setCustomName(language.translateString("item-name-preyTracker"));
                 break;
         }
         return item;

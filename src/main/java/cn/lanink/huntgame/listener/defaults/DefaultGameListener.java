@@ -213,7 +213,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (room == null || !room.isPlaying(player) || room.getStatus() != RoomStatus.GAME) {
             return;
         }
-        String message = "§7[§a" + Tools.getStringIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
+        String message = "§7[§a" + Tools.getShowIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
         event.setMessage("");
         event.setCancelled(true);
         for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {

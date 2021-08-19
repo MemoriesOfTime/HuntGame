@@ -1,6 +1,5 @@
 package cn.lanink.huntgame.room.animal;
 
-import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.data.EntityData;
 import cn.lanink.huntgame.room.BaseRoom;
@@ -127,31 +126,6 @@ public class AnimalModeRoom extends BaseRoom {
     }
 
     @Override
-    public void assignIdentity() {
-        if (HuntGame.debug) {
-            Player ltname = Server.getInstance().getPlayer("ltname");
-            if (ltname != null && this.players.containsKey(ltname)) {
-                for (Player player : this.getPlayers().keySet()) {
-                    player.getInventory().clearAll();
-                    player.getUIInventory().clearAll();
-                    if (player == ltname) {
-                        this.players.put(player, 2);
-                        player.sendTitle(this.huntGame.getLanguage(player).translateString("titleHuntersTitle"),
-                                this.huntGame.getLanguage(player).translateString("titleHuntersSubtitle"), 10, 40, 10);
-                        continue;
-                    }
-                    this.players.put(player, 1);
-                    player.sendTitle(this.huntGame.getLanguage(player).translateString("titlePreyTitle"),
-                            this.huntGame.getLanguage(player).translateString("titlePreySubtitle"), 10, 40, 10);
-                }
-                return;
-            }
-        }
-
-        super.assignIdentity();
-    }
-
-    @Override
     public void timeTask() {
         super.timeTask();
 
@@ -176,7 +150,7 @@ public class AnimalModeRoom extends BaseRoom {
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
             for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {
-                ms.add(string.replace("%mode%", Tools.getStringIdentity(this, entry.getKey()))
+                ms.add(string.replace("%mode%", Tools.getShowIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
                         .replace("%time%", this.gameTime + ""));
             }

@@ -103,7 +103,7 @@ public class GuiCreate {
         for (Map.Entry<String, BaseRoom> entry : HuntGame.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e§l" + entry.getKey() +
                     "\n§r§eMode: " + entry.getValue().getGameMode() +
-                    " Player: " + entry.getValue().getPlayers().size() + "/16",
+                    " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
         simple.addButton(new ElementButton(language.translateString("buttonReturn"),
@@ -124,7 +124,7 @@ public class GuiCreate {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, language.translateString("joinRoomIsPlaying"),
                         language.translateString("buttonReturn"), language.translateString("buttonReturn"));
-            }else if (room.getPlayers().size() >= 16) {
+            }else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, language.translateString("joinRoomIsFull"),
                         language.translateString("buttonReturn"), language.translateString("buttonReturn"));

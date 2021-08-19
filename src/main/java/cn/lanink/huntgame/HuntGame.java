@@ -96,15 +96,21 @@ public class HuntGame extends PluginBase {
         this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
 
         //语言文件
-        this.saveResource("Language/zh_CN.yml", false);
-        this.saveResource("Language/en_US.yml", false);
-        this.saveResource("Language/de_DE.yml", false);
-        File[] files = new File(getDataFolder() + "/Language").listFiles();
+        List<String> languages = Arrays.asList("zh_CN", "en_US", "de_DE");
+        for (String l : languages) {
+            this.saveResource("Language/" + l + ".yml", false);
+        }
+        File[] files = new File(this.getDataFolder() + "/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
                 String name = file.getName().split("\\.")[0];
-                this.languageHashMap.put(name, new Language(new Config(file, Config.YAML)));
-                getLogger().info("§aLanguage: " + name + " loaded !");
+                Language language = new Language(new Config(file, Config.YAML));
+                this.languageHashMap.put(name, language);
+                if (languages.contains(name)) {
+                    this.saveResource("Language/" + name + ".yml", "Language/cache/new.yml", true);
+                    language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+                }
+                this.getLogger().info("§aLanguage: " + name + " loaded !");
             }
         }
 
@@ -159,6 +165,7 @@ public class HuntGame extends PluginBase {
     @Override
     public void onDisable() {
         this.unloadRooms();
+        this.getLogger().info(this.getLanguage().translateString("pluginDisable"));
     }
 
     /**
@@ -284,7 +291,7 @@ public class HuntGame extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
-        Config config = new Config(this.getDataFolder() + "/Rooms/" + level + ".yml", 2);
+        Config config = new Config(this.getDataFolder() + "/Rooms/" + level + ".yml", Config.YAML);
         this.roomConfigs.put(level, config);
         return config;
     }
@@ -294,7 +301,7 @@ public class HuntGame extends PluginBase {
      */
     private void loadRooms() {
         this.getLogger().info(this.getLanguage().translateString("startLoadingRoom"));
-        File[] s = new File(getDataFolder() + "/Rooms").listFiles();
+        File[] s = new File(this.getDataFolder() + "/Rooms").listFiles();
         if (s != null && s.length > 0) {
             for (File file1 : s) {
                 String[] fileName = file1.getName().split("\\.");
@@ -314,7 +321,7 @@ public class HuntGame extends PluginBase {
                         continue;
                     }
                     try {
-                        String gameMode = config.getString("gameMode");
+                        String gameMode = config.getString("gameMode").toLowerCase();
                         if (!ROOM_CLASS.containsKey(gameMode)) {
                             gameMode = "block";
                         }
