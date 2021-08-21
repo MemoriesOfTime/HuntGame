@@ -103,14 +103,16 @@ public class HuntGame extends PluginBase {
         File[] files = new File(this.getDataFolder() + "/Language").listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
-                String name = file.getName().split("\\.")[0];
-                Language language = new Language(new Config(file, Config.YAML));
-                this.languageHashMap.put(name, language);
-                if (languages.contains(name)) {
-                    this.saveResource("Language/" + name + ".yml", "Language/cache/new.yml", true);
-                    language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+                if(file.isFile()) {
+                    String name = file.getName().split("\\.")[0];
+                    Language language = new Language(new Config(file, Config.YAML));
+                    this.languageHashMap.put(name, language);
+                    if (languages.contains(name)) {
+                        this.saveResource("Language/" + name + ".yml", "Language/cache/new.yml", true);
+                        language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+                    }
+                    this.getLogger().info("§aLanguage: " + name + " loaded !");
                 }
-                this.getLogger().info("§aLanguage: " + name + " loaded !");
             }
         }
 
