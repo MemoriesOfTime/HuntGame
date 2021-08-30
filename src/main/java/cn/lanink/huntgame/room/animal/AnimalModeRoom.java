@@ -1,5 +1,6 @@
 package cn.lanink.huntgame.room.animal;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.data.EntityData;
 import cn.lanink.huntgame.room.BaseRoom;
@@ -148,13 +149,16 @@ public class AnimalModeRoom extends BaseRoom {
 
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");
+            final Language language = this.huntGame.getLanguage(entry.getKey());
+            entry.getKey().sendTip(this.huntGame.getLanguage().translateString("tip-currentlyDisguisedAnimal",
+                    this.playerCamouflageEntity.get(entry.getKey()).getEntityName()));
             LinkedList<String> ms = new LinkedList<>();
-            for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {
+            for (String string : language.translateString("gameTimeScoreBoard").split("\n")) {
                 ms.add(string.replace("%mode%", Tools.getShowIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
                         .replace("%time%", this.gameTime + ""));
             }
-            this.huntGame.getScoreboard().showScoreboard(entry.getKey(), this.huntGame.getLanguage(entry.getKey()).translateString("scoreBoardTitle"), ms);
+            this.huntGame.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
         }
     }
 

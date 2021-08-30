@@ -113,6 +113,8 @@ subtitle-cannotPretendToBeThisBlock: "Kann nicht so tun, als wäre er dieser Blo
 subtitle-camouflageAnimalSuccess: "Sie geben vor, %1% zu sein! (Google Translate)"
 subtitle-CanNotDisguiseAnimalsRepeatedly: "Du hast bereits so getan, als wärst du %1%! Kann nicht vorgeben, wiederholt zu werden (Google Translate)"
 
+tip-currentlyDisguisedAnimal: "Derzeit verkleidete Tiere: %1% (Google Translate)"
+
 item-name-currentlyDisguisedBlock: "Der aktuell verkleidete Block (Google Translate)"
 item-name-coolDown: "Kühlung (Google Translate)"
 item-name-taunt-safe: "Sichere Verspottungen (Google Translate)"

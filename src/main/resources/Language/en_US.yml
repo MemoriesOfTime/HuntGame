@@ -113,6 +113,8 @@ subtitle-cannotPretendToBeThisBlock: "Cannot pretend to be this block!"
 subtitle-camouflageAnimalSuccess: "You are pretending to be %1%!"
 subtitle-CanNotDisguiseAnimalsRepeatedly: "You have already pretended to be %1%! Can't pretend to be repeated"
 
+tip-currentlyDisguisedAnimal: "Currently disguised animals: %1%"
+
 item-name-currentlyDisguisedBlock: "The currently disguised block"
 item-name-coolDown: "cooling"
 item-name-taunt-safe: "Safe taunts"

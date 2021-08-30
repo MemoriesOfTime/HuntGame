@@ -86,7 +86,7 @@ public class Tools {
         }
         for (String s : cmds) {
             String[] cmd = s.split("&");
-            if ((cmd.length > 1) && (cmd[1].equals("con"))) {
+            if ((cmd.length > 1) && ("con".equals(cmd[1]))) {
                 Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), cmd[0].replace("@p", player.getName()));
             } else {
                 Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
@@ -102,7 +102,7 @@ public class Tools {
      */
     public static Item getHuntGameItem(int tagNumber, Player player) {
         Language language = HuntGame.getInstance().getLanguage(player);
-        Item item = Item.get(0);
+        Item item;
         switch (tagNumber) {
             case 1:
                 item = Item.get(261, 0, 1);
@@ -172,6 +172,9 @@ public class Tools {
                         .putBoolean("isHuntGameItem", true)
                         .putInt("HuntGameType", 31));
                 item.setCustomName(language.translateString("item-name-preyTracker"));
+                break;
+            default:
+                item = Item.get(0);
                 break;
         }
         return item;
@@ -283,7 +286,9 @@ public class Tools {
      * @return Y
      */
     public static double getFloorY(Player player) {
-        if (player.getFloorY() <= 0) return 1;
+        if (player.getFloorY() <= 0) {
+            return 1;
+        }
         for (int y = 0; y < 15; y++) {
             Level level = player.getLevel();
             Block block = level.getBlock(player.getFloorX(), player.getFloorY() - y, player.getFloorZ());
