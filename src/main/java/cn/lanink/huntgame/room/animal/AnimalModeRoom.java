@@ -150,8 +150,10 @@ public class AnimalModeRoom extends BaseRoom {
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");
             final Language language = this.huntGame.getLanguage(entry.getKey());
-            entry.getKey().sendTip(this.huntGame.getLanguage().translateString("tip-currentlyDisguisedAnimal",
-                    this.playerCamouflageEntity.get(entry.getKey()).getEntityName()));
+            if (entry.getValue() == 1) {
+                entry.getKey().sendTip(this.huntGame.getLanguage().translateString("tip-currentlyDisguisedAnimal",
+                        this.playerCamouflageEntity.get(entry.getKey()).getEntityName()));
+            }
             LinkedList<String> ms = new LinkedList<>();
             for (String string : language.translateString("gameTimeScoreBoard").split("\n")) {
                 ms.add(string.replace("%mode%", Tools.getShowIdentity(this, entry.getKey()))
