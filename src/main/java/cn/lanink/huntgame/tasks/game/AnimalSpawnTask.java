@@ -60,7 +60,8 @@ public class AnimalSpawnTask extends PluginTask<HuntGame> {
                         if (!this.getBlockFast(position).canPassThrough()) {
                             break;
                         }
-                        position.setY(y);
+                        //position.setY(y); f powernukkit
+                        position.y = y;
                     }
                     if (position.getFloorY() == 0) {
                         continue;
