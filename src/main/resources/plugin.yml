@@ -1,6 +1,6 @@
 name: HuntGame
 main: cn.lanink.huntgame.HuntGame
-version: "1.1.0"
+version: "1.1.1-SNAPSHOT"
 api: ["1.0.9"]
 load: POSTWORLD
 author: "LT_Name"

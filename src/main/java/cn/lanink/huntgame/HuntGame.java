@@ -17,11 +17,13 @@ import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
 import cn.lanink.huntgame.ui.GuiListener;
 import cn.lanink.huntgame.utils.MetricsLite;
+import cn.lanink.huntgame.utils.RsNpcXVariable;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import com.smallaswater.npc.variable.VariableManage;
 import lombok.Getter;
 
 import java.io.File;
@@ -154,6 +156,13 @@ public class HuntGame extends PluginBase {
         this.loadAllListener();
 
         this.loadRooms();
+
+        try {
+            Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
+            VariableManage.addVariableV2("HuntGame", RsNpcXVariable.class);
+        }catch (Exception ignored) {
+
+        }
 
         try {
             new MetricsLite(this, 12405);
