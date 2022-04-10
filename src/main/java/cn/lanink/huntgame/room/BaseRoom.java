@@ -26,6 +26,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -66,7 +67,7 @@ public abstract class BaseRoom implements IRoom {
      *
      * @param config 配置文件
      */
-    public BaseRoom(Config config) {
+    public BaseRoom(@NotNull Config config) {
         this.level = Server.getInstance().getLevelByName(config.getString("world"));
 
         this.minPlayers = config.getInt("minPlayers", 3);
@@ -187,6 +188,14 @@ public abstract class BaseRoom implements IRoom {
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(this.huntGame, player);
         this.players.keySet().forEach(p -> p.showPlayer(player));
+
+        if (this.huntGame.isAutomaticNextRound()) {
+            Server.getInstance().dispatchCommand(player, this.huntGame.getCmdUser() + " join mode:" + this.getGameMode());
+        }else {
+            if (this.huntGame.getConfig().exists("QuitRoom.cmd")) {
+                Tools.executeCommands(player, this.huntGame.getConfig().getStringList("QuitRoom.cmd"));
+            }
+        }
     }
 
     /**
@@ -364,8 +373,8 @@ public abstract class BaseRoom implements IRoom {
         //所有玩家退出房间后再给奖励，防止物品被清
         if (!victoryPlayers.isEmpty() && !defeatPlayers.isEmpty()) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
-                victoryPlayers.forEach(player -> Tools.cmd(player, huntGame.getVictoryCmd()));
-                defeatPlayers.forEach(player -> Tools.cmd(player, huntGame.getDefeatCmd()));
+                victoryPlayers.forEach(player -> Tools.executeCommands(player, huntGame.getVictoryCmd()));
+                defeatPlayers.forEach(player -> Tools.executeCommands(player, huntGame.getDefeatCmd()));
             }, 1);
         }
     }

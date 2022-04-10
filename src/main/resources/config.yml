@@ -1,3 +1,4 @@
+#语言设置
 defaultLanguage: "zh_CN"
 languageMap:
   zh: "zh_CN"
@@ -6,6 +7,7 @@ languageMap:
   zh_SG: "zh_CN"
   en: "en_US"
   en_GB: "en_US"
+#命令设置
 cmdUser: "HuntGame"
 cmdAdmin: "HuntGameAdmin"
 #可以在游戏房间中使用的命令
@@ -13,9 +15,18 @@ cmdWhitelist:
   - ban
   - kick
   - report
+
+QuitRoom:
+  #退出房间执行命令
+  cmd: []
+#游戏结束后自动加入下一局
+AutomaticNextRound: false
+
+#玩家胜利执行命令
 victoryCmd:
   - me 我胜利了
   - tell "@p" 恭喜获得胜利！&con
+#玩家失败执行命令
 defeatCmd:
   - me 我失败了
   - tell "@p" 再接再厉！&con
