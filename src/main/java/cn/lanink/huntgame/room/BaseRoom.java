@@ -169,12 +169,16 @@ public abstract class BaseRoom implements IRoom {
         }
     }
 
+    public synchronized void quitRoom(Player player) {
+        this.quitRoom(player, true);
+    }
+
     /**
      * 退出房间
      *
      * @param player 玩家
      */
-    public synchronized void quitRoom(Player player) {
+    public synchronized void quitRoom(Player player, boolean initiative) {
         if (this.isPlaying(player)) {
             this.players.remove(player);
         }
@@ -189,8 +193,8 @@ public abstract class BaseRoom implements IRoom {
         SavePlayerInventory.restore(this.huntGame, player);
         this.players.keySet().forEach(p -> p.showPlayer(player));
 
-        if (this.huntGame.isAutomaticNextRound()) {
-            Server.getInstance().dispatchCommand(player, this.huntGame.getCmdUser() + " join mode:" + this.getGameMode());
+        if (this.huntGame.isAutomaticNextRound() && !initiative) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> Server.getInstance().dispatchCommand(player, this.huntGame.getCmdUser() + " join mode:" + this.getGameMode()), 10);
         }else {
             if (this.huntGame.getConfig().exists("QuitRoom.cmd")) {
                 Tools.executeCommands(player, this.huntGame.getConfig().getStringList("QuitRoom.cmd"));
@@ -366,7 +370,7 @@ public abstract class BaseRoom implements IRoom {
         }
 
         for (Player player : new ArrayList<>(this.players.keySet())) {
-            this.quitRoom(player);
+            this.quitRoom(player, false);
         }
         this.initData();
 
@@ -666,6 +670,9 @@ public abstract class BaseRoom implements IRoom {
     protected synchronized void victory(int victoryMode) {
         if (this.getPlayers().size() > 0) {
             this.setStatus(RoomStatus.VICTORY);
+            for (Player player : this.players.keySet()) {
+                player.getInventory().setItem(8, Tools.getHuntGameItem(10, player));
+            }
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.huntGame,
                     new VictoryTask(this.huntGame, this, victoryMode), 20);
         }else {
