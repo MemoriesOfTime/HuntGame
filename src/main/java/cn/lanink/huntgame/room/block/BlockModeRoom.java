@@ -54,8 +54,8 @@ public class BlockModeRoom extends BaseRoom {
     }
 
     @Override
-    public synchronized void quitRoom(Player player) {
-        super.quitRoom(player);
+    public synchronized void quitRoom(Player player, boolean initiative) {
+        super.quitRoom(player, initiative);
         this.playerCamouflageBlock.remove(player);
         EntityCamouflageBlock camouflageBlock = this.entityCamouflageBlocks.remove(player);
         if (camouflageBlock != null) {

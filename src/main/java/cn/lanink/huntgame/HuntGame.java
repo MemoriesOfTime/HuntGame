@@ -64,6 +64,9 @@ public class HuntGame extends PluginBase {
     private HashMap<String, String> languageMappingTable;
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
 
+    @Getter
+    private boolean automaticNextRound = false; //游戏结束后自动加入新房间
+
     private List<String> victoryCmd;
     private List<String> defeatCmd;
 
@@ -93,10 +96,7 @@ public class HuntGame extends PluginBase {
             }
         }
 
-        this.victoryCmd = this.config.getStringList("victoryCmd");
-        this.defeatCmd = this.config.getStringList("defeatCmd");
         this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
-
         //语言文件
         List<String> languages = Arrays.asList("zh_CN", "en_US", "de_DE");
         for (String l : languages) {
@@ -117,6 +117,11 @@ public class HuntGame extends PluginBase {
                 }
             }
         }
+
+        this.automaticNextRound = this.config.getBoolean("AutomaticNextRound", false);
+
+        this.victoryCmd = this.config.getStringList("victoryCmd");
+        this.defeatCmd = this.config.getStringList("defeatCmd");
 
         registerListeners("DefaultGameListener", DefaultGameListener.class);
         registerListeners("BlockGameListener", BlockGameListener.class);
