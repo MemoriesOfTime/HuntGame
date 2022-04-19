@@ -149,7 +149,12 @@ public abstract class BaseRoom implements IRoom {
      * @param player 玩家
      */
     public synchronized void joinRoom(Player player) {
-        if (this.players.values().size() < this.getMaxPlayers()) {
+        if (this.players.size() < this.getMaxPlayers()) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
+                if (this.isPlaying(player) && player.getLevel() != this.level) {
+                    this.quitRoom(player);
+                }
+            }, 1);
             if (this.status == RoomStatus.TASK_NEED_INITIALIZED) {
                 this.initTask();
             }
@@ -157,15 +162,12 @@ public abstract class BaseRoom implements IRoom {
             Tools.rePlayerState(player, true);
             SavePlayerInventory.save(this.huntGame, player);
             player.getInventory().setItem(8, Tools.getHuntGameItem(10, player));
-            if (player.teleport(this.getWaitSpawn())) {
-                if (this.huntGame.isHasTips()) {
-                    Tips.closeTipsShow(this.level.getName(), player);
-                }
-                player.sendMessage(this.huntGame.getLanguage(player).translateString("joinRoom")
-                        .replace("%name%", this.level.getName()));
-            }else {
-                this.quitRoom(player);
+            player.teleport(this.getWaitSpawn());
+            if (this.huntGame.isHasTips()) {
+                Tips.closeTipsShow(this.level.getName(), player);
             }
+            player.sendMessage(this.huntGame.getLanguage(player).translateString("joinRoom")
+                    .replace("%name%", this.level.getName()));
         }
     }
 
@@ -177,6 +179,7 @@ public abstract class BaseRoom implements IRoom {
      * 退出房间
      *
      * @param player 玩家
+     * @param initiative 玩家主动退出
      */
     public synchronized void quitRoom(Player player, boolean initiative) {
         if (this.isPlaying(player)) {
