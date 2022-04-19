@@ -1,6 +1,6 @@
 package cn.lanink.huntgame.listener;
 
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
@@ -16,6 +16,7 @@ import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.scheduler.Task;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 /**
@@ -50,8 +51,13 @@ public class PlayerJoinAndQuit implements Listener {
                         if (huntGame.isHasTips()) {
                             Tips.removeTipsConfig(player.getLevel().getName(), player);
                         }
-                        SavePlayerInventory.restore(HuntGame.getInstance(), player);
-                        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+                        File file = new File(huntGame.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+                        if (file.exists()) {
+                            PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+                            if (file.delete()) {
+                                playerData.restoreAll();
+                            }
+                        }
                     }
                 }
             }, 1);

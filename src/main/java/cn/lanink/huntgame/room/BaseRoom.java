@@ -1,7 +1,7 @@
 package cn.lanink.huntgame.room;
 
 import cn.lanink.gamecore.room.IRoom;
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityPlayerCorpse;
@@ -28,6 +28,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -149,23 +150,29 @@ public abstract class BaseRoom implements IRoom {
      * @param player 玩家
      */
     public synchronized void joinRoom(Player player) {
-        if (this.players.values().size() < this.getMaxPlayers()) {
+        if (this.players.size() < this.getMaxPlayers()) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
+                if (this.isPlaying(player) && player.getLevel() != this.level) {
+                    this.quitRoom(player);
+                }
+            }, 1);
             if (this.status == RoomStatus.TASK_NEED_INITIALIZED) {
                 this.initTask();
             }
             this.addPlaying(player);
             Tools.rePlayerState(player, true);
-            SavePlayerInventory.save(this.huntGame, player);
+
+            PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player);
+            playerData.saveAll();
+            playerData.saveToFile(new File(this.huntGame.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json"));
+
             player.getInventory().setItem(8, Tools.getHuntGameItem(10, player));
-            if (player.teleport(this.getWaitSpawn())) {
-                if (this.huntGame.isHasTips()) {
-                    Tips.closeTipsShow(this.level.getName(), player);
-                }
-                player.sendMessage(this.huntGame.getLanguage(player).translateString("joinRoom")
-                        .replace("%name%", this.level.getName()));
-            }else {
-                this.quitRoom(player);
+            player.teleport(this.getWaitSpawn());
+            if (this.huntGame.isHasTips()) {
+                Tips.closeTipsShow(this.level.getName(), player);
             }
+            player.sendMessage(this.huntGame.getLanguage(player).translateString("joinRoom")
+                    .replace("%name%", this.level.getName()));
         }
     }
 
@@ -177,6 +184,7 @@ public abstract class BaseRoom implements IRoom {
      * 退出房间
      *
      * @param player 玩家
+     * @param initiative 玩家主动退出
      */
     public synchronized void quitRoom(Player player, boolean initiative) {
         if (this.isPlaying(player)) {
@@ -188,9 +196,16 @@ public abstract class BaseRoom implements IRoom {
         this.players.keySet().forEach(player::showPlayer);
         this.players.keySet().forEach(p -> p.showPlayer(player));
         this.huntGame.getScoreboard().closeScoreboard(player);
-        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(this.huntGame, player);
+
+        File file = new File(this.huntGame.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+        if (file.exists()) {
+            PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+            if (file.delete()) {
+                playerData.restoreAll();
+            }
+        }
+
         this.players.keySet().forEach(p -> p.showPlayer(player));
 
         if (this.huntGame.isAutomaticNextRound() && !initiative) {
