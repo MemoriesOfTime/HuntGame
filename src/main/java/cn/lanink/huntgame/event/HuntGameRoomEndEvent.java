@@ -1,6 +1,7 @@
 package cn.lanink.huntgame.event;
 
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.nukkit.event.HandlerList;
 
 /**
@@ -8,7 +9,7 @@ import cn.nukkit.event.HandlerList;
  */
 public class HuntGameRoomEndEvent extends HuntGameRoomEvent {
 
-    private int victory;
+    private PlayerIdentity victory;
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -16,16 +17,16 @@ public class HuntGameRoomEndEvent extends HuntGameRoomEvent {
         return handlers;
     }
 
-    public HuntGameRoomEndEvent(BaseRoom room, int victory) {
+    public HuntGameRoomEndEvent(BaseRoom room, PlayerIdentity victory) {
         this.room = room;
         this.victory = victory;
     }
 
-    public void setVictory(int victory) {
+    public void setVictory(PlayerIdentity victory) {
         this.victory = victory;
     }
 
-    public int getVictory() {
+    public PlayerIdentity getVictory() {
         return this.victory;
     }
 

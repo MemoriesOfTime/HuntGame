@@ -2,6 +2,7 @@ package cn.lanink.huntgame.tasks;
 
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
@@ -18,18 +19,18 @@ public class VictoryTask extends PluginTask<HuntGame> {
 
     private final BaseRoom room;
     private int victoryTime;
-    private final int victory;
+    private final PlayerIdentity victory;
 
-    public VictoryTask(HuntGame owner, BaseRoom room, int victory) {
+    public VictoryTask(HuntGame owner, BaseRoom room, PlayerIdentity victory) {
         super(owner);
         this.room = room;
         this.victoryTime = 10;
-        this.victory = victory;
-        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+        this.victory = victory == PlayerIdentity.CHANGE_HUNTER ? PlayerIdentity.HUNTER : victory;
+        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
             this.room.getPlayers().keySet().forEach(player -> entry.getKey().showPlayer(player));
             this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
                     new Vector3[] { entry.getKey().floor() });
-            if (victory == 2) {
+            if (victory == PlayerIdentity.HUNTER) {
                 entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).translateString("titleVictoryHuntersTitle"),
                         "", 10, 30, 10);
                 entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).translateString("victoryHuntersBottom"));
@@ -58,10 +59,10 @@ public class VictoryTask extends PluginTask<HuntGame> {
             this.cancel();
         }else {
             this.victoryTime--;
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                if (entry.getValue() != 0) {
-                    if (this.victory == 1 && entry.getValue() == 1 ||
-                            this.victory == 2 && (entry.getValue() == 2 || entry.getValue() == 12)) {
+            for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+                if (entry.getValue() != PlayerIdentity.NULL) {
+                    if (this.victory == PlayerIdentity.PREY && entry.getValue() == PlayerIdentity.PREY ||
+                            this.victory == PlayerIdentity.HUNTER && (entry.getValue() == PlayerIdentity.HUNTER || entry.getValue() == PlayerIdentity.CHANGE_HUNTER)) {
                         Tools.spawnFirework(entry.getKey());
                     }
                 }

@@ -4,6 +4,7 @@ import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.FindPlayerEntity;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
@@ -50,7 +51,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
             event.getProjectile().namedTag.putString("HuntGameDamager", player.getName());
             PlayerInventory inventory = player.getInventory();
-            if (room.getPlayers(player) == 1) {
+            if (room.getPlayer(player) == PlayerIdentity.PREY) {
                 Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
                     if (room.getStatus() == RoomStatus.GAME && room.isPlaying(player)) {
                         Item item = inventory.getItem(2);
@@ -136,8 +137,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         break;
                     case 31:
                         ArrayList<Player> list = new ArrayList<>();
-                        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                            if (entry.getValue() == 1) {
+                        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+                            if (entry.getValue() == PlayerIdentity.PREY) {
                                 list.add(entry.getKey());
                             }
                         }
@@ -216,10 +217,10 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         String message = "§7[§a" + Tools.getShowIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
         event.setMessage("");
         event.setCancelled(true);
-        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-            if (entry.getValue() == room.getPlayers(player) ||
-                    (room.getPlayers(player) == 2 && entry.getValue() == 12) ||
-                    (room.getPlayers(player) == 12 && entry.getValue() ==2)) {
+        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+            if (entry.getValue() == room.getPlayer(player) ||
+                    (room.getPlayer(player) == PlayerIdentity.HUNTER && entry.getValue() == PlayerIdentity.CHANGE_HUNTER) ||
+                    (room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER && entry.getValue() == PlayerIdentity.HUNTER)) {
                 entry.getKey().sendMessage(message);
             }
         }

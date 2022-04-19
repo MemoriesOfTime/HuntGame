@@ -2,6 +2,7 @@ package cn.lanink.huntgame.tasks.game;
 
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.utils.Tools;
@@ -37,7 +38,7 @@ public class AnimalSpawnTask extends PluginTask<HuntGame> {
             if (this.room.getAnimalSpawnList().size() > 200) {
                 break;
             }
-            if (this.room.getPlayers(player) != 1) {
+            if (this.room.getPlayer(player) != PlayerIdentity.PREY) {
                 continue;
             }
             int count = 0;
