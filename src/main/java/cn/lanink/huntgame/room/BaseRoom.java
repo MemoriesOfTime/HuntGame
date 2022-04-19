@@ -59,7 +59,8 @@ public abstract class BaseRoom implements IRoom {
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
     protected final Position waitSpawn;
     protected final Level level;
-    protected final LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1猎物 2猎人 12猎物转化成的猎人
+    @Getter
+    protected final LinkedHashMap<Player, PlayerIdentity> players = new LinkedHashMap<>();
     protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
 
 
@@ -224,7 +225,7 @@ public abstract class BaseRoom implements IRoom {
      */
     public void addPlaying(Player player) {
         if (!this.players.containsKey(player)) {
-            this.addPlaying(player, 0);
+            this.addPlaying(player, PlayerIdentity.NULL);
         }
     }
 
@@ -232,10 +233,10 @@ public abstract class BaseRoom implements IRoom {
      * 记录在游戏内的玩家
      *
      * @param player 玩家
-     * @param mode 身份
+     * @param playerIdentity 玩家身份
      */
-    public void addPlaying(Player player, Integer mode) {
-        this.players.put(player, mode);
+    public void addPlaying(Player player, PlayerIdentity playerIdentity) {
+        this.players.put(player, playerIdentity);
     }
 
     /**
@@ -247,23 +248,16 @@ public abstract class BaseRoom implements IRoom {
     }
 
     /**
-     * @return 玩家列表
-     */
-    public LinkedHashMap<Player, Integer> getPlayers() {
-        return this.players;
-    }
-
-    /**
      * 获取玩家身份
      *
      * @param player 玩家
      * @return 身份
      */
-    public int getPlayers(Player player) {
+    public PlayerIdentity getPlayer(Player player) {
         if (isPlaying(player)) {
             return this.players.get(player);
         }else {
-            return 0;
+            return PlayerIdentity.NULL;
         }
     }
 
@@ -325,7 +319,7 @@ public abstract class BaseRoom implements IRoom {
         this.assignIdentity();
 
         for (Player player: this.players.keySet()) {
-            if (this.getPlayers(player) != 1) {
+            if (this.getPlayer(player) != PlayerIdentity.PREY) {
                 continue;
             }
 
@@ -352,10 +346,11 @@ public abstract class BaseRoom implements IRoom {
      * 结束本局游戏
      */
     public synchronized void endGame() {
-        this.endGame(0);
+        this.endGame(PlayerIdentity.NULL);
     }
 
-    public synchronized void endGame(int victory) {
+    public synchronized void endGame(PlayerIdentity victory) {
+        victory = victory == PlayerIdentity.CHANGE_HUNTER ? PlayerIdentity.HUNTER : victory;
         HuntGameRoomEndEvent ev = new HuntGameRoomEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
 
@@ -364,18 +359,18 @@ public abstract class BaseRoom implements IRoom {
 
         HashSet<Player> victoryPlayers = new HashSet<>();
         HashSet<Player> defeatPlayers = new HashSet<>();
-        for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
             this.players.keySet().forEach(player -> entry.getKey().showPlayer(player));
             switch (victory) {
-                case 1:
-                    if (entry.getValue() == 1) {
+                case PREY:
+                    if (entry.getValue() == PlayerIdentity.PREY) {
                         victoryPlayers.add(entry.getKey());
                     }else {
                         defeatPlayers.add(entry.getKey());
                     }
                     break;
-                case 2:
-                    if (entry.getValue() == 2) {
+                case HUNTER:
+                    if (entry.getValue() == PlayerIdentity.HUNTER) {
                         victoryPlayers.add(entry.getKey());
                     }else {
                         defeatPlayers.add(entry.getKey());
@@ -407,8 +402,8 @@ public abstract class BaseRoom implements IRoom {
             this.players.keySet().forEach(player -> player.sendTip(this.huntGame.getLanguage(player)
                     .translateString("huntersDispatchedTimeBottom").replace("time%", time + "")));
             if (time%10 == 0) {
-                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-                    if (entry.getValue() == 2) {
+                for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
+                    if (entry.getValue() == PlayerIdentity.HUNTER) {
                         entry.getKey().addEffect(Effect.getEffect(15).setDuration(400).setVisible(false)); //失明
                         entry.getKey().addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(400).setVisible(false)); //缓慢2
                     }else {
@@ -420,19 +415,19 @@ public abstract class BaseRoom implements IRoom {
                 Tools.addSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
+                for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
                     entry.getKey().removeAllEffects();
-                    if (entry.getValue() == 2) {
+                    if (entry.getValue() == PlayerIdentity.HUNTER) {
                         entry.getKey().teleport(randomSpawn.get(HuntGame.RANDOM.nextInt(randomSpawn.size())));
                         this.giveHuntItem(entry.getKey());
                     }
                 }
             }
         }else if (this.gameTime%5 == 0) {
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == 2 || entry.getValue() == 12) {
+            for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == PlayerIdentity.HUNTER || entry.getValue() == PlayerIdentity.CHANGE_HUNTER) {
                     entry.getKey().addEffect(Effect.getEffect(1).setDuration(400).setVisible(false)); //速度提升1
-                } else if (entry.getValue() == 1) {
+                } else if (entry.getValue() == PlayerIdentity.PREY) {
                     entry.getKey().addEffect(Effect.getEffect(2).setDuration(400).setVisible(false)); //缓慢1
                 }
             }
@@ -443,24 +438,24 @@ public abstract class BaseRoom implements IRoom {
             this.gameTime--;
             int x = 0;
             boolean hunters = false;
-            for (Integer integer : this.players.values()) {
-                switch (integer) {
-                    case 1:
+            for (PlayerIdentity playerIdentity : this.players.values()) {
+                switch (playerIdentity) {
+                    case PREY:
                         x++;
                         break;
-                    case 2:
-                    case 12:
+                    case HUNTER:
+                    case CHANGE_HUNTER:
                         hunters = true;
                         break;
                 }
             }
             if (!hunters) {
-                this.victory(1);
+                this.victory(PlayerIdentity.PREY);
             }else if (x <= 0) {
-                this.victory(2);
+                this.victory(PlayerIdentity.HUNTER);
             }
         }else {
-            this.victory(1);
+            this.victory(PlayerIdentity.PREY);
         }
 
         //复活
@@ -475,7 +470,7 @@ public abstract class BaseRoom implements IRoom {
             }
         }
 
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
             //道具
             PlayerInventory inventory = entry.getKey().getInventory();
             Item coolingItem = Tools.getHuntGameItem(20, entry.getKey());
@@ -548,7 +543,7 @@ public abstract class BaseRoom implements IRoom {
      * 分配玩家身份
      */
     public void assignIdentity() {
-        LinkedHashMap<Player, Integer> players = this.getPlayers();
+        LinkedHashMap<Player, PlayerIdentity> players = this.getPlayers();
         int random = HuntGame.RANDOM.nextInt(players.size()) + 1;
         int x = 0;
         for (Player player : players.keySet()) {
@@ -556,12 +551,12 @@ public abstract class BaseRoom implements IRoom {
             player.getUIInventory().clearAll();
             x++;
             if (x == random) {
-                this.players.put(player, 2);
+                this.players.put(player, PlayerIdentity.HUNTER);
                 player.sendTitle(this.huntGame.getLanguage(player).translateString("titleHuntersTitle"),
                         this.huntGame.getLanguage(player).translateString("titleHuntersSubtitle"), 10, 40, 10);
                 continue;
             }
-            this.players.put(player, 1);
+            this.players.put(player, PlayerIdentity.PREY);
             player.sendTitle(this.huntGame.getLanguage(player).translateString("titlePreyTitle"),
                     this.huntGame.getLanguage(player).translateString("titlePreySubtitle"), 10, 40, 10);
         }
@@ -574,8 +569,8 @@ public abstract class BaseRoom implements IRoom {
      */
     public int getSurvivorPlayerNumber() {
         int x = 0;
-        for (Integer integer : this.getPlayers().values()) {
-            if (integer == 1) {
+        for (PlayerIdentity playerIdentity : this.getPlayers().values()) {
+            if (playerIdentity == PlayerIdentity.PREY) {
                 x++;
             }
         }
@@ -588,7 +583,7 @@ public abstract class BaseRoom implements IRoom {
      * @param player 玩家
      */
     public void playerDeath(Player player) {
-        if (this.getPlayers(player) == 0) {
+        if (this.getPlayer(player) == PlayerIdentity.NULL) {
             return;
         }
 
@@ -598,7 +593,7 @@ public abstract class BaseRoom implements IRoom {
             return;
         }
 
-        if (this.getPlayers(player) == 1) {
+        if (this.getPlayer(player) == PlayerIdentity.PREY) {
             this.playerRespawnTime.put(player, 20);
             this.playerCorpseSpawn(player);
 
@@ -608,7 +603,7 @@ public abstract class BaseRoom implements IRoom {
         player.getUIInventory().clearAll();
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(Player.SPECTATOR);
-        this.players.put(player, 0);
+        this.players.put(player, PlayerIdentity.NULL);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
     }
 
@@ -632,7 +627,7 @@ public abstract class BaseRoom implements IRoom {
                 }
             }
         }
-        this.players.put(player, 12);
+        this.players.put(player, PlayerIdentity.CHANGE_HUNTER);
         this.players.keySet().forEach(p -> p.showPlayer(player));
         player.teleport(this.randomSpawn.get(HuntGame.RANDOM.nextInt(this.randomSpawn.size())));
         Tools.rePlayerState(player, true);
@@ -682,7 +677,8 @@ public abstract class BaseRoom implements IRoom {
      *
      * @param victoryMode 胜利队伍
      */
-    protected synchronized void victory(int victoryMode) {
+    protected synchronized void victory(PlayerIdentity victoryMode) {
+        victoryMode = victoryMode == PlayerIdentity.CHANGE_HUNTER ? PlayerIdentity.HUNTER : victoryMode;
         if (this.getPlayers().size() > 0) {
             this.setStatus(RoomStatus.VICTORY);
             for (Player player : this.players.keySet()) {

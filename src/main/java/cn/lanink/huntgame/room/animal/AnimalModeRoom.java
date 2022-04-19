@@ -4,6 +4,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.data.EntityData;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.tasks.game.AnimalSpawnTask;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
@@ -62,7 +63,7 @@ public class AnimalModeRoom extends BaseRoom {
         super.gameStart();
         int x = 0;
         for (Player player: this.players.keySet()) {
-            if (this.getPlayers(player) != 1) {
+            if (this.getPlayer(player) != PlayerIdentity.PREY) {
                 continue;
             }
             if (x >= this.getRandomSpawn().size()) {
@@ -115,7 +116,7 @@ public class AnimalModeRoom extends BaseRoom {
     }
 
     @Override
-    public synchronized void endGame(int victory) {
+    public synchronized void endGame(PlayerIdentity victory) {
         for (EntityCamouflageEntity entity : this.playerCamouflageEntity.values()) {
             if (entity != null && !entity.isClosed()) {
                 entity.setMaster(null);
@@ -147,10 +148,10 @@ public class AnimalModeRoom extends BaseRoom {
             }
         }
 
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");
             final Language language = this.huntGame.getLanguage(entry.getKey());
-            if (entry.getValue() == 1) {
+            if (entry.getValue() == PlayerIdentity.PREY) {
                 entry.getKey().sendTip(language.translateString("tip-currentlyDisguisedAnimal",
                         language.translateString("animal-name-" + this.playerCamouflageEntity.get(entry.getKey()).getEntityName())));
             }

@@ -3,6 +3,7 @@ package cn.lanink.huntgame.room.block;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
@@ -71,7 +72,9 @@ public class BlockModeRoom extends BaseRoom {
         super.gameStart();
         int c = 0;
         for (Player player : this.getPlayers().keySet()) {
-            if (this.getPlayers(player) == 2) continue;
+            if (this.getPlayer(player) == PlayerIdentity.HUNTER) {
+                continue;
+            }
             if (c >= this.getRandomSpawn().size()) {
                 c = 0;
             }
@@ -127,8 +130,10 @@ public class BlockModeRoom extends BaseRoom {
 
         //防止玩家长时间不动导致方块消失
         if (this.gameTime%5 == 0) {
-            for (Map.Entry<Player, Integer> entry : this.players.entrySet()) {
-                if (entry.getValue() != 1) continue;
+            for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
+                if (entry.getValue() != PlayerIdentity.PREY) {
+                    continue;
+                }
                 Set<Player> p = new HashSet<>(this.players.keySet());
                 p.remove(entry.getKey());
                 BlockInfo blockInfo = this.getPlayerCamouflageBlock(entry.getKey());
@@ -137,7 +142,7 @@ public class BlockModeRoom extends BaseRoom {
             }
         }
 
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
             for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {

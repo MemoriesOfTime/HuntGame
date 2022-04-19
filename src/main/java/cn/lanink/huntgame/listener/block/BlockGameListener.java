@@ -5,6 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.block.BlockInfo;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
@@ -43,7 +44,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (room.getPlayers(player) == 1) {
+        if (room.getPlayer(player) == PlayerIdentity.PREY) {
             if (player.getInventory().getItemInHand().getId() == 280) {
                 if (this.clickToCool.contains(player)) {
                     return;
@@ -78,11 +79,11 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             event.setCancelled(true);
             Entity entity = event.getEntity();
             Item item = damager.getInventory().getItemInHand();
-            if ((room.getPlayers(damager) == 2 || room.getPlayers(damager) == 12)
+            if ((room.getPlayer(damager) == PlayerIdentity.HUNTER || room.getPlayer(damager) == PlayerIdentity.CHANGE_HUNTER)
                     && item.getId() == 276 &&
                     entity instanceof EntityCamouflageBlock) {
                 Player player = ((EntityCamouflageBlock) entity).getMaster();
-                if (room.getPlayers(player) == 1) {
+                if (room.getPlayer(player) == PlayerIdentity.PREY) {
                     room.playerDeath(player);
                     for (Player p : room.getPlayers().keySet()) {
                         p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
@@ -107,7 +108,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             }
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == RoomStatus.GAME) {
-                    if (room.getPlayers(player) == 1) {
+                    if (room.getPlayer(player) == PlayerIdentity.PREY) {
                         room.playerDeath(player);
                     }else {
                         player.teleport(room.getRandomSpawn().get(HuntGame.RANDOM.nextInt(room.getRandomSpawn().size())));
@@ -129,7 +130,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             return;
         }
         Player player = event.getPlayer();
-        if (room.getPlayers(player) == 1) {
+        if (room.getPlayer(player) == PlayerIdentity.PREY) {
             Level level = player.getLevel();
             Set<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.remove(player);

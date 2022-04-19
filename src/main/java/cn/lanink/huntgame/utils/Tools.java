@@ -64,11 +64,11 @@ public class Tools {
     }
 
     public static String getShowIdentity(BaseRoom room, Player player) {
-        switch (room.getPlayers(player)) {
-            case 1:
+        switch (room.getPlayer(player)) {
+            case PREY:
                 return HuntGame.getInstance().getLanguage(player).translateString("prey");
-            case 2:
-            case 12:
+            case HUNTER:
+            case CHANGE_HUNTER:
                 return HuntGame.getInstance().getLanguage(player).translateString("hunters");
             default:
                 return HuntGame.getInstance().getLanguage(player).translateString("death");
