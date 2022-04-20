@@ -190,8 +190,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (event.getMessage().startsWith(this.huntGame.getCmdUser(), 1) ||
-                event.getMessage().startsWith(this.huntGame.getCmdAdmin(), 1)) {
+        if (event.getMessage().toLowerCase().startsWith(this.huntGame.getCmdUser(), 1) ||
+                event.getMessage().toLowerCase().startsWith(this.huntGame.getCmdAdmin(), 1)) {
             return;
         }
         for (String string : this.huntGame.getCmdWhitelist()) {
