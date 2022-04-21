@@ -28,6 +28,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -195,7 +196,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             return;
         }
         for (String string : this.huntGame.getCmdWhitelist()) {
-            if (string.equalsIgnoreCase(event.getMessage())) {
+            if (string.equalsIgnoreCase(event.getMessage().trim()) || event.getMessage().toLowerCase().startsWith(string, 1)) {
                 return;
             }
         }
