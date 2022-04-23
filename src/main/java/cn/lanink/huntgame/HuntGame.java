@@ -149,6 +149,7 @@ public class HuntGame extends PluginBase {
 
         this.cmdUser = this.config.getString("cmdUser", "HuntGame").toLowerCase();
         this.cmdAdmin = this.config.getString("cmdAdmin", "HuntGameAdmin").toLowerCase();
+        this.cmdWhitelist = new ArrayList<>();
         for (String cmd : this.config.getStringList("cmdWhitelist")) {
             this.cmdWhitelist.add(cmd.toLowerCase());
         }

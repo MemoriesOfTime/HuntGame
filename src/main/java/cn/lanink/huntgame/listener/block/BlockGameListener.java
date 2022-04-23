@@ -4,6 +4,7 @@ import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
+import cn.lanink.huntgame.entity.EntityCamouflageBlockDamage;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
@@ -56,7 +57,9 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                 Block block = event.getBlock();
                 Language language = this.huntGame.getLanguage(player);
                 if (block.isNormalBlock()) {
-                    room.getPlayerCamouflageBlock().put(player, new BlockInfo(block.getId(), block.getDamage()));
+                    BlockInfo blockInfo = new BlockInfo(block.getId(), block.getDamage());
+                    room.getPlayerCamouflageBlockInfoMap().put(player, blockInfo);
+                    room.getEntityCamouflageBlock(player).setBlockInfo(blockInfo);
                     Item blockItem = Item.get(block.getId(), block.getDamage());
                     blockItem.setCustomName(language.translateString("item-name-currentlyDisguisedBlock"));
                     player.getInventory().setItem(8, blockItem);
@@ -81,8 +84,8 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             Item item = damager.getInventory().getItemInHand();
             if ((room.getPlayer(damager) == PlayerIdentity.HUNTER || room.getPlayer(damager) == PlayerIdentity.CHANGE_HUNTER)
                     && item.getId() == 276 &&
-                    entity instanceof EntityCamouflageBlock) {
-                Player player = ((EntityCamouflageBlock) entity).getMaster();
+                    entity instanceof EntityCamouflageBlockDamage) {
+                Player player = ((EntityCamouflageBlockDamage) entity).getMaster();
                 if (room.getPlayer(player) == PlayerIdentity.PREY) {
                     room.playerDeath(player);
                     for (Player p : room.getPlayers().keySet()) {
@@ -134,12 +137,17 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             Level level = player.getLevel();
             Set<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.remove(player);
-            BlockInfo blockInfo = room.getPlayerCamouflageBlock(player);
+            BlockInfo blockInfo = room.getPlayerCamouflageBlockInfo(player);
             Position newPos = event.getTo().add(0, 0.5, 0).floor();
             Block block = Block.get(blockInfo.getId(), blockInfo.getDamage(), newPos);
             newPos.x += 0.5;
             newPos.z += 0.5;
-            room.getEntityCamouflageBlocks(player).setPosition(newPos);
+            room.getEntityCamouflageBlockDamage(player).setPosition(newPos);
+            EntityCamouflageBlock entityCamouflageBlock = room.getEntityCamouflageBlock(player);
+            if (entityCamouflageBlock.distance(newPos) > 0.85) {
+                entityCamouflageBlock.setPosition(newPos);
+                entityCamouflageBlock.respawnToAll();
+            }
             level.sendBlocks(players.toArray(new Player[0]), new Vector3[] {
                     event.getFrom().add(0, 0.5, 0).floor(), block });
         }

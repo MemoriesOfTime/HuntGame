@@ -28,7 +28,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Map;
 
 /**
