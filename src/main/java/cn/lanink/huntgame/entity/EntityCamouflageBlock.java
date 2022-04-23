@@ -58,7 +58,7 @@ public class EntityCamouflageBlock extends EntityCreature implements IEntityCamo
 
     public void setBlockInfo(@NonNull BlockInfo blockInfo) {
         this.blockInfo = blockInfo;
-        this.setDataProperty(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getOrCreateRuntimeId(this.blockInfo.getId(), this.blockInfo.getDamage())));
+        this.setDataProperty(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getOrCreateRuntimeId(this.getMaster().protocol, this.blockInfo.getId(), this.blockInfo.getDamage())));
         this.respawnToAll();
     }
 
