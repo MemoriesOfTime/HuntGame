@@ -2,6 +2,7 @@ package cn.lanink.huntgame.room.block;
 
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
+import cn.lanink.huntgame.entity.EntityCamouflageBlockDamage;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.utils.Tools;
@@ -13,6 +14,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.*;
 
@@ -24,9 +26,11 @@ import java.util.*;
 public class BlockModeRoom extends BaseRoom {
 
     @Getter
-    protected final HashMap<Player, BlockInfo> playerCamouflageBlock = new HashMap<>();
+    protected final HashMap<Player, BlockInfo> playerCamouflageBlockInfoMap = new HashMap<>();
     @Getter
-    protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlocks = new HashMap<>();
+    protected final HashMap<Player, EntityCamouflageBlockDamage> entityCamouflageBlockDamageMap = new HashMap<>();
+    @Getter
+    protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlockMap = new HashMap<>();
 
     /**
      * 初始化
@@ -46,19 +50,22 @@ public class BlockModeRoom extends BaseRoom {
     @Override
     public void initData() {
         super.initData();
-        if (this.playerCamouflageBlock != null) {
-            this.playerCamouflageBlock.clear();
+        if (this.playerCamouflageBlockInfoMap != null) {
+            this.playerCamouflageBlockInfoMap.clear();
         }
-        if (this.entityCamouflageBlocks != null) {
-            this.entityCamouflageBlocks.clear();
+        if (this.entityCamouflageBlockDamageMap != null) {
+            this.entityCamouflageBlockDamageMap.clear();
+        }
+        if (this.entityCamouflageBlockMap != null) {
+            this.entityCamouflageBlockMap.clear();
         }
     }
 
     @Override
     public synchronized void quitRoom(Player player, boolean initiative) {
         super.quitRoom(player, initiative);
-        this.playerCamouflageBlock.remove(player);
-        EntityCamouflageBlock camouflageBlock = this.entityCamouflageBlocks.remove(player);
+        this.playerCamouflageBlockInfoMap.remove(player);
+        EntityCamouflageBlockDamage camouflageBlock = this.entityCamouflageBlockDamageMap.remove(player);
         if (camouflageBlock != null) {
             camouflageBlock.close();
         }
@@ -99,23 +106,29 @@ public class BlockModeRoom extends BaseRoom {
             if (blockInfo == null) {
                 blockInfo = new BlockInfo(2, 0);
             }
-            this.playerCamouflageBlock.put(player, blockInfo);
+            this.playerCamouflageBlockInfoMap.put(player, blockInfo);
 
             player.getInventory().setItem(0, Tools.getHuntGameItem(3, player));
             Item block = Item.get(blockInfo.getId(), blockInfo.getDamage());
             block.setCustomName(HuntGame.getInstance().getLanguage(player).translateString("item-name-currentlyDisguisedBlock"));
             player.getInventory().setItem(8, block);
 
+            //伤害判断实体
             CompoundTag tag = Entity.getDefaultNBT(player);
             tag.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", EntityCamouflageBlock.EMPTY_SKIN.getSkinData().data)
-                    .putString("ModelId", EntityCamouflageBlock.EMPTY_SKIN.getSkinId()));
+                    .putByteArray("Data", EntityCamouflageBlockDamage.EMPTY_SKIN.getSkinData().data)
+                    .putString("ModelId", EntityCamouflageBlockDamage.EMPTY_SKIN.getSkinId()));
             tag.putFloat("Scale", 1.0F);
             tag.putString("playerName", player.getName());
-            EntityCamouflageBlock entity = new EntityCamouflageBlock(player.getChunk(), tag, player);
+            EntityCamouflageBlockDamage entity = new EntityCamouflageBlockDamage(player.getChunk(), tag, player);
             entity.hidePlayer(player);
             entity.spawnToAll();
-            this.entityCamouflageBlocks.put(player, entity);
+            this.entityCamouflageBlockDamageMap.put(player, entity);
+
+            //显示给猎物自己查看的伪装实体 （其他玩家无需考虑碰撞所以用发包显示普通方块）
+            EntityCamouflageBlock entityCamouflageBlock = new EntityCamouflageBlock(player.getChunk(), tag, player, blockInfo);
+            entityCamouflageBlock.spawnToAll();
+            this.entityCamouflageBlockMap.put(player, entityCamouflageBlock);
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
@@ -136,9 +149,13 @@ public class BlockModeRoom extends BaseRoom {
                 }
                 Set<Player> p = new HashSet<>(this.players.keySet());
                 p.remove(entry.getKey());
-                BlockInfo blockInfo = this.getPlayerCamouflageBlock(entry.getKey());
+                BlockInfo blockInfo = this.getPlayerCamouflageBlockInfo(entry.getKey());
                 Block block = Block.get(blockInfo.getId(), blockInfo.getDamage(), entry.getKey().floor());
                 entry.getKey().getLevel().sendBlocks(p.toArray(new Player[0]), new Vector3[] { block });
+                //猎物自己查看的伪装方块无需频繁更新
+                if (this.gameTime%10 == 0) {
+                    this.getEntityCamouflageBlock(entry.getKey()).respawnToAll();
+                }
             }
         }
 
@@ -159,12 +176,16 @@ public class BlockModeRoom extends BaseRoom {
      * @param player 玩家
      * @return 方块id
      */
-    public BlockInfo getPlayerCamouflageBlock(Player player) {
-        return this.playerCamouflageBlock.get(player);
+    public BlockInfo getPlayerCamouflageBlockInfo(@NonNull Player player) {
+        return this.playerCamouflageBlockInfoMap.get(player);
     }
 
-    public EntityCamouflageBlock getEntityCamouflageBlocks(Player player) {
-        return this.entityCamouflageBlocks.get(player);
+    public EntityCamouflageBlockDamage getEntityCamouflageBlockDamage(@NonNull Player player) {
+        return this.entityCamouflageBlockDamageMap.get(player);
+    }
+
+    public EntityCamouflageBlock getEntityCamouflageBlock(@NonNull Player player) {
+        return this.entityCamouflageBlockMap.get(player);
     }
 
 }

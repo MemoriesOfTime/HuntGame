@@ -1,73 +1,65 @@
 package cn.lanink.huntgame.entity;
 
+import cn.lanink.huntgame.room.block.BlockInfo;
 import cn.nukkit.Player;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.entity.data.IntEntityData;
+import cn.nukkit.level.GlobalBlockPalette;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.SerializedImage;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
-import java.util.HashSet;
-
 /**
- * 玩家伪装的方块实体（用于判断攻击）
- *
- * @author lt_name
+ * @author LT_Name
  */
-public class EntityCamouflageBlock extends EntityHuman implements IEntityCamouflage {
+public class EntityCamouflageBlock extends EntityCreature implements IEntityCamouflage {
 
-    public static final Skin EMPTY_SKIN = new Skin();
-
-    static {
-        EMPTY_SKIN.setSkinData(SerializedImage.fromLegacy(new byte[Skin.DOUBLE_SKIN_SIZE]));
-        EMPTY_SKIN.generateSkinId("EntityCamouflageBlock");
-    }
+    public static final int NETWORK_ID = 66;
 
     @Setter
     @Getter
     private Player master;
 
-    private final HashSet<Player> hiddenPlayers = new HashSet<>();
+    @Getter
+    private BlockInfo blockInfo;
 
-    @Override
-    public float getLength() {
-        return 1.05F;
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
     public float getWidth() {
-        return 1.05F;
+        return 0.98f;
+    }
+
+    @Override
+    public float getLength() {
+        return 0.98f;
     }
 
     @Override
     public float getHeight() {
-        return 1.05F;
-    }
-
-    @Deprecated
-    public EntityCamouflageBlock(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-        this.close();
-    }
-
-    public EntityCamouflageBlock(FullChunk chunk, CompoundTag nbt, Player master) {
-        super(chunk, nbt);
-        this.master = master;
-        this.setSkin(EMPTY_SKIN);
-        this.setNameTag("");
-        this.setNameTagVisible(false);
-        this.setNameTagAlwaysVisible(false);
-        this.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_INVISIBLE, true); //隐身
-        this.namedTag.putBoolean("isHuntGameEntity", true);
+        return 0.98f;
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(20);
+    protected float getBaseOffset() {
+        return 0.49f;
+    }
+
+    public EntityCamouflageBlock(FullChunk chunk, CompoundTag nbt, @NonNull Player master, @NonNull BlockInfo blockInfo) {
+        super(chunk, nbt);
+        this.master = master;
+        this.setBlockInfo(blockInfo);
+    }
+
+    public void setBlockInfo(@NonNull BlockInfo blockInfo) {
+        this.blockInfo = blockInfo;
+        this.setDataProperty(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getOrCreateRuntimeId(this.blockInfo.getId(), this.blockInfo.getDamage())));
+        this.respawnToAll();
     }
 
     @Override
@@ -76,17 +68,21 @@ public class EntityCamouflageBlock extends EntityHuman implements IEntityCamoufl
             return false;
         }
 
-        if (this.getMaster() == null) {
-            this.close();
-            return false;
+        if (this.getMaster() != null) {
+            int tickDiff = currentTick - this.lastUpdate;
+            if (tickDiff <= 0) {
+                return false;
+            } else {
+                Position newPos = this.getMaster().add(0, 0.5, 0).floor().add(0.5, 0, 0.5);
+                this.x = newPos.x;
+                this.y = newPos.y;
+                this.z = newPos.z;
+                this.lastUpdate = currentTick;
+                boolean hasUpdate = this.entityBaseTick(tickDiff);
+                this.updateMovement();
+                return hasUpdate;
+            }
         }
-
-        //伪装方块实体坐标必须在方块的中心
-        /*Position newPos = this.getMaster().add(0, 0.5, 0).floor().add(0.5, 0, 0.5);
-        this.x = newPos.x;
-        this.y = newPos.y;
-        this.z = newPos.z;*/
-
         return super.onUpdate(currentTick);
     }
 
@@ -98,41 +94,18 @@ public class EntityCamouflageBlock extends EntityHuman implements IEntityCamoufl
     }
 
     @Override
-    public void close() {
-        this.setMaster(null);
-        super.close();
-    }
-
-    /**
-     * 玩家是否可以看到本实体
-     *
-     * @param player 玩家
-     * @return 玩家是否可以看到本实体
-     */
     public boolean canSee(Player player) {
-        return !this.hiddenPlayers.contains(player);
+        return this.getMaster() == null || player == this.getMaster();
     }
 
-    /**
-     * 隐藏实体
-     *
-     * @param player 目标玩家
-     */
+    @Override
     public void hidePlayer(Player player) {
-        this.hiddenPlayers.add(player);
-        this.despawnFrom(player);
+        throw new RuntimeException();
     }
 
-    /**
-     * 显示实体
-     *
-     * @param player 目标玩家
-     */
+    @Override
     public void showPlayer(Player player) {
-        this.hiddenPlayers.remove(player);
-        if (player.isOnline()) {
-            this.spawnTo(player);
-        }
+        throw new RuntimeException();
     }
 
 }
