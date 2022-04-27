@@ -75,6 +75,7 @@ victoryHuntersBottom: "§eGlückwunsch!"
 victoryHuntersScoreBoard: "§eGlückwunsch an die Sucher! "
 victoryPreyBottom: "§eGlückwunsch！"
 victoryPreyScoreBoard: "§eGlückwunsch an die Blöcke！"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a wird nach §e%1% §a Sekunden automatisch dem nächsten Spiel beitreten"
 scoreBoardTitle: "§eHide and Seek"
 waitTimeScoreBoard: |-
     Spieleranzahl: §a %playerNumber%/%maxPlayers%

@@ -60,6 +60,9 @@ public class VictoryTask extends PluginTask<HuntGame> {
         }else {
             this.victoryTime--;
             for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+                if (this.owner.isAutomaticNextRound()) {
+                    entry.getKey().sendTip(this.owner.getLanguage(entry.getKey()).translateString("victory_automaticallyJoinTheNextGameCountdown_Bottom", this.victoryTime));
+                }
                 if (entry.getValue() != PlayerIdentity.NULL) {
                     if (this.victory == PlayerIdentity.PREY && entry.getValue() == PlayerIdentity.PREY ||
                             this.victory == PlayerIdentity.HUNTER && (entry.getValue() == PlayerIdentity.HUNTER || entry.getValue() == PlayerIdentity.CHANGE_HUNTER)) {
