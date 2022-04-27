@@ -471,6 +471,9 @@ public abstract class BaseRoom implements IRoom {
         }
 
         for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+            if (this.gameTime%5 == 0) {
+                entry.getKey().getFoodData().addFoodLevel(1, 0);
+            }
             //道具
             PlayerInventory inventory = entry.getKey().getInventory();
             Item coolingItem = Tools.getHuntGameItem(20, entry.getKey());

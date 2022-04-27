@@ -75,6 +75,7 @@ victoryHuntersBottom: "§e恭喜猎人获得胜利"
 victoryHuntersScoreBoard: "§e恭喜猎人获得胜利!"
 victoryPreyBottom: "§e恭喜猎物获得胜利！"
 victoryPreyScoreBoard: "§e恭喜猎物获得胜利！"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a将在 §e%1% §a秒自动后加入下一局游戏"
 scoreBoardTitle: "§e躲猫猫"
 waitScoreBoard: |-
   游戏模式：%gamemode%

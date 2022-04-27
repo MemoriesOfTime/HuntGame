@@ -75,6 +75,7 @@ victoryHuntersBottom: "§eHunter wins!"
 victoryHuntersScoreBoard: "§eHunter wins!"
 victoryPreyBottom: "§ePrey wins!"
 victoryPreyScoreBoard: "§ePrey wins!"
+victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a will join the next game after §e%1% §a seconds automatically"
 scoreBoardTitle: "§eHuntGame"
 waitTimeScoreBoard: |-
   Players: §a %playerNumber%/%maxPlayers%
