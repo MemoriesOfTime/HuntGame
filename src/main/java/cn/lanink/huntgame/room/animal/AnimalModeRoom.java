@@ -1,7 +1,9 @@
 package cn.lanink.huntgame.room.animal;
 
 import cn.lanink.gamecore.utils.Language;
-import cn.lanink.huntgame.entity.EntityCamouflageEntity;
+import cn.lanink.huntgame.HuntGame;
+import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
+import cn.lanink.huntgame.entity.EntityCamouflageEntityTest;
 import cn.lanink.huntgame.entity.data.EntityData;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.PlayerIdentity;
@@ -26,7 +28,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class AnimalModeRoom extends BaseRoom {
 
     @Getter
-    protected final HashMap<Player, EntityCamouflageEntity> playerCamouflageEntity = new HashMap<>();
+    protected final HashMap<Player, EntityCamouflageEntityDamage> playerCamouflageEntity = new HashMap<>();
+    @Getter
+    protected final HashMap<Player, EntityCamouflageEntityTest> playerCamouflageEntityTest = new HashMap<>();
 
     @Getter
     private final ConcurrentLinkedQueue<Position> animalSpawnList = new ConcurrentLinkedQueue<>();
@@ -73,12 +77,19 @@ public class AnimalModeRoom extends BaseRoom {
             x++;
 
             String randomEntityName = EntityData.getRandomEntityName();
-            EntityCamouflageEntity camouflageEntity =
-                    EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
+            EntityCamouflageEntityDamage camouflageEntity =
+                    EntityCamouflageEntityDamage.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
             this.playerCamouflageEntity.put(player, camouflageEntity);
             camouflageEntity.setMaster(player);
             camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
+
+            if (HuntGame.debug) {
+                EntityCamouflageEntityTest entityCamouflageEntityTest = EntityCamouflageEntityTest.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
+                entityCamouflageEntityTest.setMaster(player);
+                entityCamouflageEntityTest.spawnToAll();
+                this.playerCamouflageEntityTest.put(player, entityCamouflageEntityTest);
+            }
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
@@ -117,7 +128,7 @@ public class AnimalModeRoom extends BaseRoom {
 
     @Override
     public synchronized void endGame(PlayerIdentity victory) {
-        for (EntityCamouflageEntity entity : this.playerCamouflageEntity.values()) {
+        for (EntityCamouflageEntityDamage entity : this.playerCamouflageEntity.values()) {
             if (entity != null && !entity.isClosed()) {
                 entity.setMaster(null);
                 entity.close();
@@ -139,7 +150,7 @@ public class AnimalModeRoom extends BaseRoom {
             count++;
             Position first = this.animalSpawnList.poll();
             if (first != null) {
-                EntityCamouflageEntity.create(first.getChunk(),
+                EntityCamouflageEntityDamage.create(first.getChunk(),
                         Entity.getDefaultNBT(first),
                         EntityData.getRandomEntityName()
                 ).spawnToAll();
