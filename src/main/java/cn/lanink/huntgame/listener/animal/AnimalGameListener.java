@@ -4,6 +4,7 @@ import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
+import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
@@ -63,8 +64,8 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                 event.setDamage(0);
                 room.playerDeath(player);
             }
-        }else if (event.getEntity() instanceof EntityCamouflageEntity) {
-            EntityCamouflageEntity entity = (EntityCamouflageEntity) event.getEntity();
+        }else if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
+            EntityCamouflageEntityDamage entity = (EntityCamouflageEntityDamage) event.getEntity();
             if (entity.getMaster() == null) {
                 event.setDamage(0);
             }
@@ -93,8 +94,8 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     event.setDamage(0);
                     event.setKnockBack(event.getKnockBack() * 1.5f);
                 }
-            }else if (event.getEntity() instanceof EntityCamouflageEntity) {
-                EntityCamouflageEntity entity = (EntityCamouflageEntity) event.getEntity();
+            }else if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
+                EntityCamouflageEntityDamage entity = (EntityCamouflageEntityDamage) event.getEntity();
                 if (room.getPlayer(damager) == PlayerIdentity.HUNTER || room.getPlayer(damager) == PlayerIdentity.CHANGE_HUNTER) {
                     if (entity.getMaster() == null) {
                         damager.attack(new EntityDamageEvent(damager, EntityDamageEvent.DamageCause.CUSTOM, 1));
@@ -105,17 +106,22 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     event.setCancelled(true);
                     Language language = this.huntGame.getLanguage(damager);
                     if (damager.getInventory().getItemInHand().getId() == 280) {
-                        if (room.getPlayerCamouflageEntity().get(damager).getEntityName().equals(entity.getEntityName())) {
+                        if (room.getPlayerCamouflageEntityDamageMap().get(damager).getEntityName().equals(entity.getEntityName())) {
                             damager.sendTitle("", language.translateString("subtitle-CanNotDisguiseAnimalsRepeatedly", entity.getEntityName()));
                         }else {
-                            room.getPlayerCamouflageEntity().get(damager).close();
-
-                            EntityCamouflageEntity newEntity =
-                                    EntityCamouflageEntity.create(damager.chunk, Entity.getDefaultNBT(damager), entity.getEntityName());
-                            room.getPlayerCamouflageEntity().put(damager, newEntity);
+                            room.getPlayerCamouflageEntityDamageMap().get(damager).close();
+                            EntityCamouflageEntityDamage newEntity =
+                                    EntityCamouflageEntityDamage.create(damager.chunk, Entity.getDefaultNBT(damager), entity.getEntityName());
+                            room.getPlayerCamouflageEntityDamageMap().put(damager, newEntity);
                             newEntity.setMaster(damager);
                             newEntity.hidePlayer(damager);
                             newEntity.spawnToAll();
+
+                            room.getPlayerCamouflageEntityMap().get(damager).close();
+                            EntityCamouflageEntity entityCamouflageEntity = EntityCamouflageEntity.create(damager.chunk, Entity.getDefaultNBT(damager), entity.getEntityName());
+                            room.getPlayerCamouflageEntityMap().put(damager, entityCamouflageEntity);
+                            entityCamouflageEntity.setMaster(damager);
+                            entityCamouflageEntity.spawnToAll();
 
                             damager.sendTitle("", language.translateString("subtitle-camouflageAnimalSuccess", entity.getEntityName()));
                         }
@@ -127,8 +133,8 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntity() instanceof EntityCamouflageEntity) {
-            EntityCamouflageEntity entity = (EntityCamouflageEntity) event.getEntity();
+        if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
+            EntityCamouflageEntityDamage entity = (EntityCamouflageEntityDamage) event.getEntity();
             AnimalModeRoom room = this.getListenerRoom(entity.getLevel());
             if (room == null) {
                 return;

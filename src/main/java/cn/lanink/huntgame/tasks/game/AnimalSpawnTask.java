@@ -1,7 +1,7 @@
 package cn.lanink.huntgame.tasks.game;
 
 import cn.lanink.huntgame.HuntGame;
-import cn.lanink.huntgame.entity.EntityCamouflageEntity;
+import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
@@ -43,7 +43,7 @@ public class AnimalSpawnTask extends PluginTask<HuntGame> {
             }
             int count = 0;
             for (Entity entity : this.room.getLevel().getEntities()) {
-                if (entity instanceof EntityCamouflageEntity) {
+                if (entity instanceof EntityCamouflageEntityDamage) {
                     if (player.distance(entity) <= 50) {
                         count++;
                     }

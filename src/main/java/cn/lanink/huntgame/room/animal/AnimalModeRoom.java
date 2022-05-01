@@ -2,6 +2,7 @@ package cn.lanink.huntgame.room.animal;
 
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
+import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
 import cn.lanink.huntgame.entity.data.EntityData;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.PlayerIdentity;
@@ -26,7 +27,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class AnimalModeRoom extends BaseRoom {
 
     @Getter
-    protected final HashMap<Player, EntityCamouflageEntity> playerCamouflageEntity = new HashMap<>();
+    protected final HashMap<Player, EntityCamouflageEntityDamage> playerCamouflageEntityDamageMap = new HashMap<>();
+    @Getter
+    protected final HashMap<Player, EntityCamouflageEntity> playerCamouflageEntityMap = new HashMap<>();
 
     @Getter
     private final ConcurrentLinkedQueue<Position> animalSpawnList = new ConcurrentLinkedQueue<>();
@@ -50,11 +53,28 @@ public class AnimalModeRoom extends BaseRoom {
     @Override
     public void initData() {
         super.initData();
-        if (this.playerCamouflageEntity != null) {
-            this.playerCamouflageEntity.clear();
+        if (this.playerCamouflageEntityDamageMap != null) {
+            this.playerCamouflageEntityDamageMap.clear();
+        }
+        if (this.playerCamouflageEntityMap != null) {
+            this.playerCamouflageEntityMap.clear();
         }
         if (this.animalSpawnList != null) {
             this.animalSpawnList.clear();
+        }
+    }
+
+    @Override
+    public synchronized void quitRoom(Player player, boolean initiative) {
+        super.quitRoom(player, initiative);
+
+        EntityCamouflageEntityDamage entityCamouflageEntityDamage = this.playerCamouflageEntityDamageMap.remove(player);
+        if (entityCamouflageEntityDamage != null && !entityCamouflageEntityDamage.isClosed()) {
+            entityCamouflageEntityDamage.close();
+        }
+        EntityCamouflageEntity entityCamouflageEntity = this.playerCamouflageEntityMap.remove(player);
+        if (entityCamouflageEntity != null && !entityCamouflageEntity.isClosed()) {
+            entityCamouflageEntity.close();
         }
     }
 
@@ -73,12 +93,16 @@ public class AnimalModeRoom extends BaseRoom {
             x++;
 
             String randomEntityName = EntityData.getRandomEntityName();
-            EntityCamouflageEntity camouflageEntity =
-                    EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
-            this.playerCamouflageEntity.put(player, camouflageEntity);
+            EntityCamouflageEntityDamage camouflageEntity = EntityCamouflageEntityDamage.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
+            this.playerCamouflageEntityDamageMap.put(player, camouflageEntity);
             camouflageEntity.setMaster(player);
             camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
+
+            EntityCamouflageEntity entityCamouflageEntityTest = EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
+            entityCamouflageEntityTest.setMaster(player);
+            entityCamouflageEntityTest.spawnToAll();
+            this.playerCamouflageEntityMap.put(player, entityCamouflageEntityTest);
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
@@ -117,9 +141,13 @@ public class AnimalModeRoom extends BaseRoom {
 
     @Override
     public synchronized void endGame(PlayerIdentity victory) {
-        for (EntityCamouflageEntity entity : this.playerCamouflageEntity.values()) {
+        for (EntityCamouflageEntityDamage entity : this.playerCamouflageEntityDamageMap.values()) {
             if (entity != null && !entity.isClosed()) {
-                entity.setMaster(null);
+                entity.close();
+            }
+        }
+        for (EntityCamouflageEntity entity : this.playerCamouflageEntityMap.values()) {
+            if (entity != null && !entity.isClosed()) {
                 entity.close();
             }
         }
@@ -139,7 +167,7 @@ public class AnimalModeRoom extends BaseRoom {
             count++;
             Position first = this.animalSpawnList.poll();
             if (first != null) {
-                EntityCamouflageEntity.create(first.getChunk(),
+                EntityCamouflageEntityDamage.create(first.getChunk(),
                         Entity.getDefaultNBT(first),
                         EntityData.getRandomEntityName()
                 ).spawnToAll();
@@ -153,7 +181,7 @@ public class AnimalModeRoom extends BaseRoom {
             final Language language = this.huntGame.getLanguage(entry.getKey());
             if (entry.getValue() == PlayerIdentity.PREY) {
                 entry.getKey().sendTip(language.translateString("tip-currentlyDisguisedAnimal",
-                        language.translateString("animal-name-" + this.playerCamouflageEntity.get(entry.getKey()).getEntityName())));
+                        language.translateString("animal-name-" + this.playerCamouflageEntityDamageMap.get(entry.getKey()).getEntityName())));
             }
             LinkedList<String> ms = new LinkedList<>();
             for (String string : language.translateString("gameTimeScoreBoard").split("\n")) {

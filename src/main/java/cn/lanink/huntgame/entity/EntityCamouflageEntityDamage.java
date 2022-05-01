@@ -15,12 +15,14 @@ import lombok.Setter;
 import java.util.HashSet;
 
 /**
+ * 玩家伪装的动物实体
+ *
  * @author LT_Name
  */
-public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamouflage {
+public class EntityCamouflageEntityDamage extends WalkingEntity implements IEntityCamouflage {
 
     static {
-        Entity.registerEntity("EntityCamouflageEntityTest", EntityCamouflageEntity.class);
+        Entity.registerEntity("EntityCamouflageEntityDamage", EntityCamouflageEntityDamage.class);
     }
 
     @Getter
@@ -36,12 +38,27 @@ public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamo
     private double mz;
     private int moveTime;
 
-    public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, String entityName) {
+    public static EntityCamouflageEntityDamage create(FullChunk chunk, CompoundTag nbt, String entityName) {
         EntityData entityData = EntityData.getEntityDataByName(entityName);
-        return new EntityCamouflageEntity(chunk, nbt, entityName) {
+        return new EntityCamouflageEntityDamage(chunk, nbt, entityName) {
             @Override
             public int getNetworkId() {
                 return entityData.getNetworkID();
+            }
+
+            @Override
+            public float getWidth() {
+                return entityData.getWidth();
+            }
+
+            @Override
+            public float getHeight() {
+                return entityData.getHeight();
+            }
+
+            @Override
+            public float getLength() {
+                return entityData.getLength();
             }
         };
     }
@@ -52,13 +69,13 @@ public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamo
     }
 
     @Deprecated
-    public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt) {
+    public EntityCamouflageEntityDamage(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.entityName = "Pig";
         this.close();
     }
 
-    private EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, String entityName) {
+    private EntityCamouflageEntityDamage(FullChunk chunk, CompoundTag nbt, String entityName) {
         super(chunk, nbt);
         this.entityName = entityName;
         this.setNameTag("");
@@ -67,21 +84,6 @@ public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamo
         this.setHealth(20f);
         this.namedTag.putBoolean("isHuntGameEntity", true);
         this.pitch = 0;
-    }
-
-    @Override
-    public float getWidth() {
-        return 0;
-    }
-
-    @Override
-    public float getHeight() {
-        return 0;
-    }
-
-    @Override
-    public float getLength() {
-        return 0;
     }
 
     @Override
@@ -179,7 +181,7 @@ public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamo
      * @return 玩家是否可以看到本实体
      */
     public boolean canSee(Player player) {
-        return player == this.getMaster();
+        return !this.hiddenPlayers.contains(player);
     }
 
     /**

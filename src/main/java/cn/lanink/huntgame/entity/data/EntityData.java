@@ -34,6 +34,7 @@ public class EntityData implements Cloneable {
     private int networkID;
     private float width;
     private float height;
+    private float length;
 
     public static String getRandomEntityName() {
         return SUPPORT_ENTITY_NAME_LIST.get(HuntGame.RANDOM.nextInt(SUPPORT_ENTITY_NAME_LIST.size()));
@@ -48,7 +49,7 @@ public class EntityData implements Cloneable {
         }
         if (!ENTITY_DATA_CACHE.containsKey(entityName)) {
             Entity entity = Entity.createEntity(entityName, Server.getInstance().getDefaultLevel().getSafeSpawn());
-            ENTITY_DATA_CACHE.put(entityName, new EntityData(entity.getNetworkId(), entity.getWidth(), entity.getHeight()));
+            ENTITY_DATA_CACHE.put(entityName, new EntityData(entity.getNetworkId(), entity.getWidth(), entity.getHeight(), entity.getLength()));
             entity.close();
         }
         return ENTITY_DATA_CACHE.get(entityName).clone();
