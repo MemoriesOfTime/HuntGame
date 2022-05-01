@@ -55,6 +55,11 @@ public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamo
             public float getHeight() {
                 return entityData.getHeight();
             }
+
+            @Override
+            public float getLength() {
+                return entityData.getLength();
+            }
         };
     }
 
