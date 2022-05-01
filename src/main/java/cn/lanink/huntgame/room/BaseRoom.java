@@ -167,6 +167,11 @@ public abstract class BaseRoom implements IRoom {
             playerData.saveAll();
             playerData.saveToFile(new File(this.huntGame.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json"));
 
+            player.getInventory().clearAll();
+            player.getOffhandInventory().clearAll();
+            player.getUIInventory().clearAll();
+            player.getEnderChestInventory().clearAll();
+
             player.getInventory().setItem(8, Tools.getHuntGameItem(10, player));
             player.teleport(this.getWaitSpawn());
             if (this.huntGame.isHasTips()) {
@@ -198,6 +203,11 @@ public abstract class BaseRoom implements IRoom {
         this.players.keySet().forEach(p -> p.showPlayer(player));
         this.huntGame.getScoreboard().closeScoreboard(player);
         Tools.rePlayerState(player, false);
+
+        player.getInventory().clearAll();
+        player.getOffhandInventory().clearAll();
+        player.getUIInventory().clearAll();
+        player.getEnderChestInventory().clearAll();
 
         File file = new File(this.huntGame.getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
         if (file.exists()) {
