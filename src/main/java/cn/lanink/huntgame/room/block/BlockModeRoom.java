@@ -65,9 +65,13 @@ public class BlockModeRoom extends BaseRoom {
     public synchronized void quitRoom(Player player, boolean initiative) {
         super.quitRoom(player, initiative);
         this.playerCamouflageBlockInfoMap.remove(player);
-        EntityCamouflageBlockDamage camouflageBlock = this.entityCamouflageBlockDamageMap.remove(player);
-        if (camouflageBlock != null) {
-            camouflageBlock.close();
+        EntityCamouflageBlockDamage entityCamouflageBlockDamage = this.entityCamouflageBlockDamageMap.remove(player);
+        if (entityCamouflageBlockDamage != null && !entityCamouflageBlockDamage.isClosed()) {
+            entityCamouflageBlockDamage.close();
+        }
+        EntityCamouflageBlock entityCamouflageBlock = this.entityCamouflageBlockMap.remove(player);
+        if (entityCamouflageBlock != null && !entityCamouflageBlock.isClosed()) {
+            entityCamouflageBlock.close();
         }
     }
 
@@ -132,6 +136,22 @@ public class BlockModeRoom extends BaseRoom {
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
+    }
+
+    @Override
+    public synchronized void endGame(PlayerIdentity victory) {
+        for (EntityCamouflageBlockDamage entity : this.entityCamouflageBlockDamageMap.values()) {
+            if (entity != null && !entity.isClosed()) {
+                entity.close();
+            }
+        }
+        for (EntityCamouflageBlock entity : this.entityCamouflageBlockMap.values()) {
+            if (entity != null && !entity.isClosed()) {
+                entity.close();
+            }
+        }
+
+        super.endGame(victory);
     }
 
     /**

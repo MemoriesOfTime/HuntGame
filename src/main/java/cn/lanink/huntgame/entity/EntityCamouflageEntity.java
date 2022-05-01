@@ -17,10 +17,10 @@ import java.util.HashSet;
 /**
  * @author LT_Name
  */
-public class EntityCamouflageEntityTest  extends WalkingEntity implements IEntityCamouflage {
+public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamouflage {
 
     static {
-        Entity.registerEntity("EntityCamouflageEntityTest", EntityCamouflageEntityTest.class);
+        Entity.registerEntity("EntityCamouflageEntityTest", EntityCamouflageEntity.class);
     }
 
     @Getter
@@ -36,9 +36,9 @@ public class EntityCamouflageEntityTest  extends WalkingEntity implements IEntit
     private double mz;
     private int moveTime;
 
-    public static EntityCamouflageEntityTest create(FullChunk chunk, CompoundTag nbt, String entityName) {
+    public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, String entityName) {
         EntityData entityData = EntityData.getEntityDataByName(entityName);
-        return new EntityCamouflageEntityTest(chunk, nbt, entityName) {
+        return new EntityCamouflageEntity(chunk, nbt, entityName) {
             @Override
             public int getNetworkId() {
                 return entityData.getNetworkID();
@@ -52,13 +52,13 @@ public class EntityCamouflageEntityTest  extends WalkingEntity implements IEntit
     }
 
     @Deprecated
-    public EntityCamouflageEntityTest(FullChunk chunk, CompoundTag nbt) {
+    public EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.entityName = "Pig";
         this.close();
     }
 
-    private EntityCamouflageEntityTest(FullChunk chunk, CompoundTag nbt, String entityName) {
+    private EntityCamouflageEntity(FullChunk chunk, CompoundTag nbt, String entityName) {
         super(chunk, nbt);
         this.entityName = entityName;
         this.setNameTag("");

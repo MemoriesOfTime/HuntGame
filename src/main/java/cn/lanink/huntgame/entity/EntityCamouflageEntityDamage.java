@@ -22,7 +22,7 @@ import java.util.HashSet;
 public class EntityCamouflageEntityDamage extends WalkingEntity implements IEntityCamouflage {
 
     static {
-        Entity.registerEntity("EntityCamouflageEntity", EntityCamouflageEntityDamage.class);
+        Entity.registerEntity("EntityCamouflageEntityDamage", EntityCamouflageEntityDamage.class);
     }
 
     @Getter
