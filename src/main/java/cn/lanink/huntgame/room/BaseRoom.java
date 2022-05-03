@@ -145,6 +145,11 @@ public abstract class BaseRoom implements IRoom {
         }
     }
 
+    public boolean canJoin() {
+        return (this.getStatus() == RoomStatus.TASK_NEED_INITIALIZED || this.getStatus() == RoomStatus.WAIT) &&
+                this.getPlayers().size() < this.getMaxPlayers();
+    }
+
     /**
      * 加入房间
      *

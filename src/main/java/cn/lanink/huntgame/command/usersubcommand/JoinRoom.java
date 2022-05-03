@@ -47,8 +47,7 @@ public class JoinRoom extends BaseSubCommand {
             if (args.length < 2) {
                 LinkedList<BaseRoom> rooms = new LinkedList<>();
                 for (BaseRoom room : this.huntGame.getRooms().values()) {
-                    if ((room.getStatus() == RoomStatus.TASK_NEED_INITIALIZED || room.getStatus() == RoomStatus.WAIT) &&
-                            room.getPlayers().size() < room.getMaxPlayers()) {
+                    if (room.canJoin()) {
                         if (room.getPlayers().size() > 0) {
                             room.joinRoom(player);
                             sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
@@ -69,9 +68,7 @@ public class JoinRoom extends BaseSubCommand {
                     String modeName = s[1].toLowerCase().trim();
                     LinkedList<BaseRoom> rooms = new LinkedList<>();
                     for (BaseRoom room : this.huntGame.getRooms().values()) {
-                        if ((room.getStatus() == RoomStatus.TASK_NEED_INITIALIZED || room.getStatus() == RoomStatus.WAIT) &&
-                                room.getPlayers().size() < room.getMaxPlayers() &&
-                                room.getGameMode().equals(modeName)) {
+                        if (room.canJoin() && room.getGameMode().equals(modeName)) {
                             if (room.getPlayers().size() > 0) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
