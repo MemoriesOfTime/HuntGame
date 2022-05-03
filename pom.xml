@@ -153,8 +153,9 @@
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>PM1E-MOT-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>PM1E</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/Nukkit-PM1E_1.18.30.2049.jar</systemPath>
         </dependency>
 
         <dependency>
