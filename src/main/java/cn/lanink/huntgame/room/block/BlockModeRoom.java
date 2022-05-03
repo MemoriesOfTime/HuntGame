@@ -54,9 +54,19 @@ public class BlockModeRoom extends BaseRoom {
             this.playerCamouflageBlockInfoMap.clear();
         }
         if (this.entityCamouflageBlockDamageMap != null) {
+            for (EntityCamouflageBlockDamage entity : this.entityCamouflageBlockDamageMap.values()) {
+                if (entity != null && !entity.isClosed()) {
+                    entity.close();
+                }
+            }
             this.entityCamouflageBlockDamageMap.clear();
         }
         if (this.entityCamouflageBlockMap != null) {
+            for (EntityCamouflageBlock entity : this.entityCamouflageBlockMap.values()) {
+                if (entity != null && !entity.isClosed()) {
+                    entity.close();
+                }
+            }
             this.entityCamouflageBlockMap.clear();
         }
     }
@@ -136,22 +146,6 @@ public class BlockModeRoom extends BaseRoom {
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
-    }
-
-    @Override
-    public synchronized void endGame(PlayerIdentity victory) {
-        for (EntityCamouflageBlockDamage entity : this.entityCamouflageBlockDamageMap.values()) {
-            if (entity != null && !entity.isClosed()) {
-                entity.close();
-            }
-        }
-        for (EntityCamouflageBlock entity : this.entityCamouflageBlockMap.values()) {
-            if (entity != null && !entity.isClosed()) {
-                entity.close();
-            }
-        }
-
-        super.endGame(victory);
     }
 
     /**
