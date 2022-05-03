@@ -33,7 +33,7 @@ public class StartRoom extends BaseSubCommand {
         Player player = (Player) sender;
         BaseRoom room = this.huntGame.getRooms().get(player.getLevel().getName());
         if (room != null) {
-            if (room.getPlayers().size() >= 2) {
+            if (room.getPlayers().size() >= room.getMinPlayers()) {
                 if (room.getStatus() == RoomStatus.WAIT) {
                     room.gameStart();
                     sender.sendMessage(this.huntGame.getLanguage(sender).translateString("adminStartRoom"));
