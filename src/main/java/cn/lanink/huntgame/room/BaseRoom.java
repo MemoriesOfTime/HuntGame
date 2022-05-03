@@ -364,8 +364,7 @@ public abstract class BaseRoom implements IRoom {
         HuntGameRoomEndEvent ev = new HuntGameRoomEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
 
-        this.status = RoomStatus.TASK_NEED_INITIALIZED;
-        Tools.cleanEntity(getLevel(), true);
+        this.setStatus(RoomStatus.ROOM_PREPARE);
 
         HashSet<Player> victoryPlayers = new HashSet<>();
         HashSet<Player> defeatPlayers = new HashSet<>();
@@ -394,6 +393,8 @@ public abstract class BaseRoom implements IRoom {
         }
         this.initData();
 
+        Tools.cleanEntity(this.getLevel(), true);
+
         //所有玩家退出房间后再给奖励，防止物品被清
         if (!victoryPlayers.isEmpty() && !defeatPlayers.isEmpty()) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
@@ -401,6 +402,8 @@ public abstract class BaseRoom implements IRoom {
                 defeatPlayers.forEach(player -> Tools.executeCommands(player, huntGame.getDefeatCmd()));
             }, 1);
         }
+
+        this.setStatus(RoomStatus.TASK_NEED_INITIALIZED);
     }
 
     /**

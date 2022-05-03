@@ -26,6 +26,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class AnimalModeRoom extends BaseRoom {
 
+    //每秒最多生成的实体数量
+    private static final int MAX_SPAWN_ENTITY = 100;
+
     @Getter
     protected final HashMap<Player, EntityCamouflageEntityDamage> playerCamouflageEntityDamageMap = new HashMap<>();
     @Getter
@@ -54,9 +57,19 @@ public class AnimalModeRoom extends BaseRoom {
     public void initData() {
         super.initData();
         if (this.playerCamouflageEntityDamageMap != null) {
+            for (EntityCamouflageEntityDamage entity : this.playerCamouflageEntityDamageMap.values()) {
+                if (entity != null && !entity.isClosed()) {
+                    entity.close();
+                }
+            }
             this.playerCamouflageEntityDamageMap.clear();
         }
         if (this.playerCamouflageEntityMap != null) {
+            for (EntityCamouflageEntity entity : this.playerCamouflageEntityMap.values()) {
+                if (entity != null && !entity.isClosed()) {
+                    entity.close();
+                }
+            }
             this.playerCamouflageEntityMap.clear();
         }
         if (this.animalSpawnList != null) {
@@ -107,31 +120,6 @@ public class AnimalModeRoom extends BaseRoom {
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
 
-/*        LinkedList<Position> positions = new LinkedList<>();
-        for (Position position : this.getRandomSpawn()) {
-            int count = Tools.rand(10, 20);
-            for (int c = 0; c < count; c++) {
-                positions.add(position.add(Tools.rand(-30, 30), position.getFloorY(), Tools.rand(-30, 30)));
-            }
-        }
-        for (Position position : positions) {
-            //检查地面
-            for (int y = position.getFloorY() + 5; y > 0; y--) {
-                if (!position.getLevelBlock().canPassThrough()) {
-                    break;
-                }
-                position.setY(y);
-            }
-            if (position.getFloorY() == 0) {
-                continue;
-            }
-            position.y += 1;
-            EntityCamouflageEntity.create(position.getChunk(),
-                    Entity.getDefaultNBT(position),
-                    EntityData.getRandomEntityName()
-            ).spawnToAll();
-        }*/
-
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.huntGame,
                 new AnimalSpawnTask(this.huntGame, this),
@@ -140,40 +128,24 @@ public class AnimalModeRoom extends BaseRoom {
     }
 
     @Override
-    public synchronized void endGame(PlayerIdentity victory) {
-        for (EntityCamouflageEntityDamage entity : this.playerCamouflageEntityDamageMap.values()) {
-            if (entity != null && !entity.isClosed()) {
-                entity.close();
-            }
-        }
-        for (EntityCamouflageEntity entity : this.playerCamouflageEntityMap.values()) {
-            if (entity != null && !entity.isClosed()) {
-                entity.close();
-            }
-        }
-
-        super.endGame(victory);
-    }
-
-    @Override
     public void timeTask() {
         super.timeTask();
 
         int count = 0;
         while (!this.animalSpawnList.isEmpty()) {
-            if (count > 100) {
+            if (count > MAX_SPAWN_ENTITY) {
                 break;
             }
             count++;
-            Position first = this.animalSpawnList.poll();
-            if (first != null) {
-                EntityCamouflageEntityDamage.create(first.getChunk(),
-                        Entity.getDefaultNBT(first),
-                        EntityData.getRandomEntityName()
-                ).spawnToAll();
-            }else {
+            Position position = this.animalSpawnList.poll();
+            if (position == null) {
                 break;
             }
+            EntityCamouflageEntityDamage.create(
+                    position.getChunk(),
+                    Entity.getDefaultNBT(position),
+                    EntityData.getRandomEntityName()
+            ).spawnToAll();
         }
 
         for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
