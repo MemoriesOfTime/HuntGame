@@ -8,6 +8,7 @@ import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
+import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
@@ -52,7 +53,7 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     if (room.getPlayer(player) == PlayerIdentity.PREY) {
                         room.playerDeath(player);
                     }else {
-                        player.teleport(room.getRandomSpawn().get(HuntGame.RANDOM.nextInt(room.getRandomSpawn().size())));
+                        player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
                     }
                 }else {
                     player.teleport(room.getWaitSpawn());

@@ -10,6 +10,7 @@ import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.block.BlockInfo;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
+import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -20,6 +21,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
+import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -52,7 +54,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                 }
                 this.clickToCool.add(player);
                 Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame,
-                        () -> this.clickToCool.remove(player), 10);
+                        () -> this.clickToCool.remove(player), 15);
 
                 Block block = event.getBlock();
                 Language language = this.huntGame.getLanguage(player);
@@ -114,7 +116,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                     if (room.getPlayer(player) == PlayerIdentity.PREY) {
                         room.playerDeath(player);
                     }else {
-                        player.teleport(room.getRandomSpawn().get(HuntGame.RANDOM.nextInt(room.getRandomSpawn().size())));
+                        player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
                     }
                 }else {
                     player.teleport(room.getWaitSpawn());
@@ -151,6 +153,11 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             level.sendBlocks(players.toArray(new Player[0]), new Vector3[] {
                     event.getFrom().add(0, 0.5, 0).floor(), block });
         }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        this.clickToCool.remove(event.getPlayer());
     }
 
 }

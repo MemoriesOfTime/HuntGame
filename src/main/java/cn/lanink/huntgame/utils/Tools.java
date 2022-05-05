@@ -29,13 +29,13 @@ import java.util.SplittableRandom;
 
 public class Tools {
 
-    public static final SplittableRandom random = new SplittableRandom();
+    public static final SplittableRandom RANDOM = new SplittableRandom();
 
     public static int rand(int min, int max) {
         if (min == max) {
             return max;
         }
-        return random.nextInt(max + 1 - min) + min;
+        return RANDOM.nextInt(max + 1 - min) + min;
     }
 
     public static double rand(double min, double max) {
@@ -149,7 +149,10 @@ public class Tools {
                 break;
             case 3:
                 item = Item.get(280);
-                item.setCustomName("伪装道具");
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isHuntGameItem", true)
+                        .putInt("HuntGameType", 3));
+                item.setCustomName(language.translateString("item-name-camouflageProps"));
                 break;
             case 10:
                 item = Item.get(324, 0, 1);
@@ -347,13 +350,13 @@ public class Tools {
         CompoundTag tag = new CompoundTag();
         CompoundTag ex = new CompoundTag();
         ex.putByteArray("FireworkColor",new byte[]{
-                (byte) DyeColor.values()[HuntGame.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
+                (byte) DyeColor.values()[Tools.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
         });
         ex.putByteArray("FireworkFade",new byte[0]);
-        ex.putBoolean("FireworkFlicker", HuntGame.RANDOM.nextBoolean());
-        ex.putBoolean("FireworkTrail", HuntGame.RANDOM.nextBoolean());
+        ex.putBoolean("FireworkFlicker", Tools.RANDOM.nextBoolean());
+        ex.putBoolean("FireworkTrail", Tools.RANDOM.nextBoolean());
         ex.putByte("FireworkType",ItemFirework.FireworkExplosion.ExplosionType.values()
-                [HuntGame.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
+                [Tools.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
         tag.putCompound("Fireworks",(new CompoundTag("Fireworks"))
                 .putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);

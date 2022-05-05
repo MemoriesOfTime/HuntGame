@@ -118,6 +118,7 @@ subtitle-CanNotDisguiseAnimalsRepeatedly: "你已经伪装成 %1% 了！不能�
 
 tip-currentlyDisguisedAnimal: "当前伪装动物：%1%"
 
+item-name-camouflageProps: "伪装道具"
 item-name-currentlyDisguisedBlock: "当前伪装的方块"
 item-name-coolDown: "冷却中"
 item-name-taunt-safe: "安全的嘲讽"

@@ -1,9 +1,9 @@
 package cn.lanink.huntgame.command.usersubcommand;
 
-import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.command.base.BaseSubCommand;
 import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.RoomStatus;
+import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -57,7 +57,7 @@ public class JoinRoom extends BaseSubCommand {
                     }
                 }
                 if (rooms.size() > 0) {
-                    BaseRoom room = rooms.get(HuntGame.RANDOM.nextInt(rooms.size()));
+                    BaseRoom room = rooms.get(Tools.RANDOM.nextInt(rooms.size()));
                     room.joinRoom(player);
                     sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
                     return true;
@@ -78,7 +78,7 @@ public class JoinRoom extends BaseSubCommand {
                         }
                     }
                     if (rooms.size() > 0) {
-                        BaseRoom room = rooms.get(HuntGame.RANDOM.nextInt(rooms.size()));
+                        BaseRoom room = rooms.get(Tools.RANDOM.nextInt(rooms.size()));
                         room.joinRoom(player);
                         sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
                         return true;

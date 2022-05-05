@@ -116,6 +116,7 @@ subtitle-CanNotDisguiseAnimalsRepeatedly: "You have already pretended to be %1%!
 
 tip-currentlyDisguisedAnimal: "Currently disguised animals: %1%"
 
+item-name-camouflageProps: "Camouflage props"
 item-name-currentlyDisguisedBlock: "The currently disguised block"
 item-name-coolDown: "cooling"
 item-name-taunt-safe: "Safe taunts"
