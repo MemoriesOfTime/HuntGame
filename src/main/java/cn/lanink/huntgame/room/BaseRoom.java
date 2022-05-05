@@ -436,7 +436,7 @@ public abstract class BaseRoom implements IRoom {
                 for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
                     entry.getKey().removeAllEffects();
                     if (entry.getValue() == PlayerIdentity.HUNTER) {
-                        entry.getKey().teleport(randomSpawn.get(HuntGame.RANDOM.nextInt(randomSpawn.size())));
+                        entry.getKey().teleport(randomSpawn.get(Tools.RANDOM.nextInt(randomSpawn.size())));
                         this.giveHuntItem(entry.getKey());
                     }
                 }
@@ -565,7 +565,7 @@ public abstract class BaseRoom implements IRoom {
      */
     public void assignIdentity() {
         LinkedHashMap<Player, PlayerIdentity> players = this.getPlayers();
-        int random = HuntGame.RANDOM.nextInt(players.size()) + 1;
+        int random = Tools.RANDOM.nextInt(players.size()) + 1;
         int x = 0;
         for (Player player : players.keySet()) {
             player.getInventory().clearAll();
@@ -650,7 +650,7 @@ public abstract class BaseRoom implements IRoom {
         }
         this.players.put(player, PlayerIdentity.CHANGE_HUNTER);
         this.players.keySet().forEach(p -> p.showPlayer(player));
-        player.teleport(this.randomSpawn.get(HuntGame.RANDOM.nextInt(this.randomSpawn.size())));
+        player.teleport(this.randomSpawn.get(Tools.RANDOM.nextInt(this.randomSpawn.size())));
         Tools.rePlayerState(player, true);
         Tools.setPlayerInvisible(player, false);
 

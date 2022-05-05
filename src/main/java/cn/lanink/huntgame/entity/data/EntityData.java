@@ -1,6 +1,7 @@
 package cn.lanink.huntgame.entity.data;
 
 import cn.lanink.huntgame.HuntGame;
+import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class EntityData implements Cloneable {
     private float length;
 
     public static String getRandomEntityName() {
-        return SUPPORT_ENTITY_NAME_LIST.get(HuntGame.RANDOM.nextInt(SUPPORT_ENTITY_NAME_LIST.size()));
+        return SUPPORT_ENTITY_NAME_LIST.get(Tools.RANDOM.nextInt(SUPPORT_ENTITY_NAME_LIST.size()));
     }
 
     public static EntityData getEntityDataByName(String entityName) {

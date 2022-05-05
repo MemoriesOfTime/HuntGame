@@ -9,6 +9,7 @@ import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.EventHandler;
@@ -94,6 +95,34 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             player.setAllowModifyWorld(false);
         }
+
+        //游戏中禁止与一些方块交互 例如打开箱子
+        if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+            Block block = event.getBlock();
+            switch (block.getId()) {
+                case Item.CRAFTING_TABLE:
+                case Item.CHEST:
+                case Item.ENDER_CHEST:
+                case Item.ANVIL:
+                case Item.SHULKER_BOX:
+                case Item.UNDYED_SHULKER_BOX:
+                case Item.FURNACE:
+                case Item.BURNING_FURNACE:
+                case Item.DISPENSER:
+                case Item.DROPPER:
+                case Item.HOPPER:
+                case Item.BREWING_STAND:
+                case Item.CAULDRON:
+                case Item.BEACON:
+                case Item.FLOWER_POT:
+                case Item.JUKEBOX:
+                    event.setCancelled(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         CompoundTag tag = event.getItem().getNamedTag();
         if (tag == null) {
             return;

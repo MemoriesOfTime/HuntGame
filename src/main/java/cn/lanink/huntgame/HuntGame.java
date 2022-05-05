@@ -5,6 +5,7 @@ import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gamecore.utils.Language;
+import cn.lanink.gamecore.utils.VersionUtils;
 import cn.lanink.huntgame.command.AdminCommand;
 import cn.lanink.huntgame.command.UserCommand;
 import cn.lanink.huntgame.listener.PlayerJoinAndQuit;
@@ -37,7 +38,6 @@ public class HuntGame extends PluginBase {
 
     public static final String VERSION = "?";
     public static boolean debug = false;
-    public static final Random RANDOM = new Random();
 
     private static HuntGame huntGame;
 
@@ -135,6 +135,25 @@ public class HuntGame extends PluginBase {
     public void onEnable() {
         this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         this.getLogger().info("§l§eVersion: " + VERSION);
+
+        //检查依赖版本
+        try {
+            String needGameCoreVersion = "1.5.6";
+            if (!VersionUtils.checkMinimumVersion(GameCore.getInstance(), needGameCoreVersion)) {
+                throw new RuntimeException("[MemoriesOfTime-GameCore] plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
+            }
+        }catch (Exception e) {
+            this.getLogger().error("Please check the dependency plugin version!", e);
+            this.getLogger().error("Please update the plugin to the required version!");
+            //延迟3秒方便查看报错
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException ignored) {
+
+            }
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
