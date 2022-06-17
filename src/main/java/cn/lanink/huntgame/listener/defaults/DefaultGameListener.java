@@ -41,7 +41,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final HuntGame huntGame = HuntGame.getInstance();
 
-    @EventHandler()
+    @EventHandler
     public void onEntityExplosionPrime(EntityExplosionPrimeEvent event) {
         if (event.getEntity() instanceof EntityFirework) {
             Entity entity = event.getEntity();
