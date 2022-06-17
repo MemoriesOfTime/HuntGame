@@ -45,7 +45,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
     public void onEntityExplosionPrime(EntityExplosionPrimeEvent event) {
         if (event.getEntity() instanceof EntityFirework) {
             Entity entity = event.getEntity();
-            if (entity.namedTag != null && entity.namedTag.getBoolean("IsGunWarFirework")) {
+            if (entity.namedTag != null && entity.namedTag.getBoolean("IsHuntGameFirework")) {
                 event.setCancelled();
             }
         }
