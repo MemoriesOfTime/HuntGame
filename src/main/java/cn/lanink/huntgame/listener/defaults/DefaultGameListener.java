@@ -11,9 +11,11 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
+import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
@@ -38,6 +40,16 @@ import java.util.Map;
 public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final HuntGame huntGame = HuntGame.getInstance();
+
+    @EventHandler()
+    public void onEntityExplosionPrime(EntityExplosionPrimeEvent event) {
+        if (event.getEntity() instanceof EntityFirework) {
+            Entity entity = event.getEntity();
+            if (entity.namedTag != null && entity.namedTag.getBoolean("IsGunWarFirework")) {
+                event.setCancelled();
+            }
+        }
+    }
 
     @EventHandler
     public void onShootBow(EntityShootBowEvent event) {
