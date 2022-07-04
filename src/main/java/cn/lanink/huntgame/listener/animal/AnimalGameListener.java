@@ -128,6 +128,9 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                         }
                     }
                 }
+            }else if (event.getEntity() instanceof EntityCamouflageEntity) {
+                event.setDamage(0);
+                event.setCancelled();
             }
         }
     }
