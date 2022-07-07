@@ -89,8 +89,7 @@ public class PlayerJoinAndQuit implements Listener {
         if (!fromLevel.equals(toLevel)) {
             LinkedHashMap<String, BaseRoom> room =  this.huntGame.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
-                event.setCancelled(true);
-                player.sendMessage(this.huntGame.getLanguage(player).translateString("tpQuitRoomLevel"));
+                room.get(fromLevel).quitRoom(player);
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
