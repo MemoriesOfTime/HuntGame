@@ -166,10 +166,6 @@ public class BlockModeRoom extends BaseRoom {
                 BlockInfo blockInfo = this.getPlayerCamouflageBlockInfo(entry.getKey());
                 Block block = Block.get(blockInfo.getId(), blockInfo.getDamage(), entry.getKey().floor());
                 entry.getKey().getLevel().sendBlocks(p.toArray(new Player[0]), new Vector3[] { block });
-                //猎物自己查看的伪装方块无需频繁更新
-                if (this.gameTime%10 == 0) {
-                    this.getEntityCamouflageBlock(entry.getKey()).respawnToAll();
-                }
             }
         }
 
