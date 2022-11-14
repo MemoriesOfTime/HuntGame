@@ -3,6 +3,7 @@ package cn.lanink.huntgame.listener;
 import cn.lanink.huntgame.HuntGame;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.*;
 import cn.nukkit.event.entity.EntityExplodeEvent;
@@ -181,7 +182,7 @@ public class RoomLevelProtection implements Listener {
      * 当一个抛射物击中物体时
      * @param event 事件
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onProjectileHit(ProjectileHitEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
         if (level != null && HuntGame.getInstance().getRooms().containsKey(level.getName())) {

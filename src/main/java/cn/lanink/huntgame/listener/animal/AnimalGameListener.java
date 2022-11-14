@@ -91,9 +91,6 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                 if (room.getPlayer(player) == PlayerIdentity.PREY && (room.getPlayer(damager) == PlayerIdentity.HUNTER || room.getPlayer(damager) == PlayerIdentity.CHANGE_HUNTER)) {
                     player.attack(new EntityDamageEvent(damager, EntityDamageEvent.DamageCause.CUSTOM, event.getDamage()));
                     damager.setHealth(Math.min(damager.getHealth() + 4, damager.getMaxHealth()));
-                }else if ((room.getPlayer(player) == PlayerIdentity.HUNTER || room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER) && room.getPlayer(damager) == PlayerIdentity.PREY) {
-                    event.setDamage(0);
-                    event.setKnockBack(event.getKnockBack() * 1.5f);
                 }
             }else if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
                 EntityCamouflageEntityDamage entity = (EntityCamouflageEntityDamage) event.getEntity();

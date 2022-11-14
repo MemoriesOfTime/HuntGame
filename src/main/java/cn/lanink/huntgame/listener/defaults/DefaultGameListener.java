@@ -14,6 +14,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
+import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
@@ -48,6 +49,25 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             return;
         }
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityDamageByEntity(EntityDamageByChildEntityEvent event) {
+        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
+            Player player = ((Player) event.getEntity());
+            BaseRoom room = this.getListenerRoom(player.getLevel());
+            if (room == null || !room.isPlaying(player)) {
+                return;
+            }
+            Player damager = (Player) event.getDamager();
+            if (event.getChild().getNetworkId() == 80 && //箭
+                    (room.getPlayer(player) == PlayerIdentity.HUNTER || room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER)
+                    && room.getPlayer(damager) == PlayerIdentity.PREY) {
+                event.setDamage(0);
+                event.setKnockBack(event.getKnockBack() * 1.5f);
+                event.setCancelled(false);
+            }
+        }
     }
 
     @EventHandler
