@@ -12,12 +12,13 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-
 /**
+ * 玩家伪装的动物实体 （不计算伤害）
+ * 仅显示给伪装的玩家，无碰撞体积
+ *
  * @author LT_Name
  */
-public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamouflage {
+public class EntityCamouflageEntity extends WalkingEntity {
 
     static {
         Entity.registerEntity("EntityCamouflageEntity", EntityCamouflageEntity.class);
@@ -29,12 +30,6 @@ public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamo
     @Setter
     @Getter
     private Player master;
-
-    private final HashSet<Player> hiddenPlayers = new HashSet<>();
-
-    private double mx;
-    private double mz;
-    private int moveTime;
 
     public static EntityCamouflageEntity create(FullChunk chunk, CompoundTag nbt, String entityName) {
         EntityData entityData = EntityData.getEntityDataByName(entityName);
@@ -161,47 +156,20 @@ public class EntityCamouflageEntity extends WalkingEntity implements IEntityCamo
 
     @Override
     public void spawnTo(Player player) {
-        if (this.canSee(player)) {
+        if (player == this.master) {
             super.spawnTo(player);
         }
+    }
+
+    @Override
+    public void spawnToAll() {
+        this.spawnTo(this.master);
     }
 
     @Override
     public void close() {
         this.setMaster(null);
         super.close();
-    }
-
-    /**
-     * 玩家是否可以看到本实体
-     *
-     * @param player 玩家
-     * @return 玩家是否可以看到本实体
-     */
-    public boolean canSee(Player player) {
-        return player == this.getMaster();
-    }
-
-    /**
-     * 隐藏实体
-     *
-     * @param player 目标玩家
-     */
-    public void hidePlayer(Player player) {
-        this.hiddenPlayers.add(player);
-        this.despawnFrom(player);
-    }
-
-    /**
-     * 显示实体
-     *
-     * @param player 目标玩家
-     */
-    public void showPlayer(Player player) {
-        this.hiddenPlayers.remove(player);
-        if (player.isOnline()) {
-            this.spawnTo(player);
-        }
     }
 
 }

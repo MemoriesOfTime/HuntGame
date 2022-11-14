@@ -8,6 +8,9 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
+ * 猎人用于查找猎物的实体
+ * 仅显示给使用的猎人
+ *
  * @author LT_Name
  */
 public class FindPlayerEntity extends Entity {

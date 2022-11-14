@@ -31,17 +31,17 @@ public class EntityCamouflageBlock extends EntityCreature implements IEntityCamo
 
     @Override
     public float getWidth() {
-        return 0.98f;
+        return 0.001f;
     }
 
     @Override
     public float getLength() {
-        return 0.98f;
+        return 0.001f;
     }
 
     @Override
     public float getHeight() {
-        return 0.98f;
+        return 0.001f;
     }
 
     @Override

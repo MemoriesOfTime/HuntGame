@@ -112,10 +112,10 @@ public class AnimalModeRoom extends BaseRoom {
             camouflageEntity.hidePlayer(player);
             camouflageEntity.spawnToAll();
 
-            EntityCamouflageEntity entityCamouflageEntityTest = EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
-            entityCamouflageEntityTest.setMaster(player);
-            entityCamouflageEntityTest.spawnToAll();
-            this.playerCamouflageEntityMap.put(player, entityCamouflageEntityTest);
+            EntityCamouflageEntity entityCamouflageEntity = EntityCamouflageEntity.create(player.chunk, Entity.getDefaultNBT(player), randomEntityName);
+            entityCamouflageEntity.setMaster(player);
+            entityCamouflageEntity.spawnToAll();
+            this.playerCamouflageEntityMap.put(player, entityCamouflageEntity);
 
             this.players.keySet().forEach(p -> p.hidePlayer(player));
         }
@@ -165,4 +165,16 @@ public class AnimalModeRoom extends BaseRoom {
         }
     }
 
+    @Override
+    public void playerDeath(Player player) {
+        super.playerDeath(player);
+        EntityCamouflageEntity camouflageEntity = this.playerCamouflageEntityMap.remove(player);
+        if (camouflageEntity != null && !camouflageEntity.isClosed()) {
+            camouflageEntity.close();
+        }
+        EntityCamouflageEntityDamage camouflageEntityDamage = this.playerCamouflageEntityDamageMap.remove(player);
+        if (camouflageEntityDamage != null && !camouflageEntityDamage.isClosed()) {
+            camouflageEntityDamage.close();
+        }
+    }
 }

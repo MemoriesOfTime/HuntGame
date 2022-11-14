@@ -15,6 +15,7 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
@@ -66,6 +67,36 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 event.setDamage(0);
                 event.setKnockBack(event.getKnockBack() * 1.5f);
                 event.setCancelled(false);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        BaseRoom room = this.getListenerRoom(event.getEntity().getLevel());
+        if (room == null) {
+            return;
+        }
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            if (!room.isPlaying(player)) {
+                return;
+            }
+            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                if (room.getStatus() == RoomStatus.GAME) {
+                    if (room.getPlayer(player) == PlayerIdentity.PREY) {
+                        room.playerDeath(player);
+                    }else {
+                        player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
+                    }
+                }else {
+                    player.teleport(room.getWaitSpawn());
+                }
+            }if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event instanceof EntityDamageByChildEntityEvent)) {
+                event.setCancelled(true);
+            }else if (event.getFinalDamage() + 1 > player.getHealth()) {
+                event.setDamage(0);
+                room.playerDeath(player);
             }
         }
     }

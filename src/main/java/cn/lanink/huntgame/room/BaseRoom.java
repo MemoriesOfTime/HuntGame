@@ -415,7 +415,7 @@ public abstract class BaseRoom implements IRoom {
      * 计时Task
      */
     public void timeTask() {
-        int time = this.gameTime - (this.getSetGameTime() - 60);
+        int time = this.gameTime - (this.getSetGameTime() - (HuntGame.debug ? 5 : 60));
         if (time >= 0) {
             this.players.keySet().forEach(player -> player.sendTip(this.huntGame.getLanguage(player)
                     .translateString("huntersDispatchedTimeBottom").replace("time%", time + "")));
