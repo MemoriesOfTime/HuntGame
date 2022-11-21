@@ -156,9 +156,8 @@
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>PM1E</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Nukkit-PM1E_1.19.20.2273.jar</systemPath>
+            <version>PM1E_1.19.40.2431</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
