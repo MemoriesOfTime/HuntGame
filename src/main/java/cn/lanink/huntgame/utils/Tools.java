@@ -31,6 +31,10 @@ public class Tools {
 
     public static final SplittableRandom RANDOM = new SplittableRandom();
 
+    public static boolean rand() {
+        return RANDOM.nextBoolean();
+    }
+
     public static int rand(int min, int max) {
         if (min == max) {
             return max;
