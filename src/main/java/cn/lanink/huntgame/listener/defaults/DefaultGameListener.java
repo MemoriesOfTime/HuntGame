@@ -240,8 +240,10 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                             projectile.spawnToAll();
 
                             Item item1 = Tools.getHuntGameItem(30, player);
-                            item1.setCount(32);
+                            item1.setCount(64);
                             player.getInventory().setItem(5, item1);
+
+                            target.sendTitle("", this.huntGame.getLanguage(target).translateString("subtitle-lockedByTracker"), 5, 15, 5);
                         }
                         break;
                 }
