@@ -9,6 +9,7 @@ import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.block.BlockInfo;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
+import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -63,6 +64,10 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                     blockItem.setCustomName(language.translateString("item-name-currentlyDisguisedBlock"));
                     player.getInventory().setItem(8, blockItem);
                     player.sendTitle("", language.translateString("subtitle-successfullySwitchedCamouflageBlocks"));
+
+                    Item item = Tools.getHuntGameItem(20, player);
+                    item.setCount(room.getCamouflageCoolingTime()); //5秒冷却
+                    player.getInventory().setItem(0, item);
                 }else {
                     player.sendTitle("", language.translateString("subtitle-cannotPretendToBeThisBlock"));
                 }

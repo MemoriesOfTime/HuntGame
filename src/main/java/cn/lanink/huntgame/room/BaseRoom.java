@@ -1,6 +1,5 @@
 package cn.lanink.huntgame.room;
 
-import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.huntgame.HuntGame;
@@ -17,8 +16,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -38,7 +35,7 @@ import java.util.*;
  * @author lt_name
  */
 
-public abstract class BaseRoom implements IRoom {
+public abstract class BaseRoom extends RoomConfig {
 
     protected String gameMode = null;
     protected HuntGame huntGame = HuntGame.getInstance();
@@ -47,18 +44,9 @@ public abstract class BaseRoom implements IRoom {
     @Getter
     protected RoomStatus status;
 
-    @Getter
-    protected int minPlayers;
-    @Getter
-    protected int maxPlayers;
-
-    protected final int setWaitTime;
-    protected final int setGameTime;
     public int waitTime;
     public int gameTime;
-    protected final ArrayList<Position> randomSpawn = new ArrayList<>();
-    protected final Position waitSpawn;
-    protected final Level level;
+
     @Getter
     protected final LinkedHashMap<Player, PlayerIdentity> players = new LinkedHashMap<>();
     protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
@@ -70,32 +58,7 @@ public abstract class BaseRoom implements IRoom {
      * @param config 配置文件
      */
     public BaseRoom(@NotNull Config config) {
-        this.level = Server.getInstance().getLevelByName(config.getString("world"));
-
-        this.minPlayers = config.getInt("minPlayers", 3);
-        if (this.minPlayers < 2) {
-            this.minPlayers = 2;
-        }
-        this.maxPlayers = config.getInt("maxPlayers", 16);
-        if (this.maxPlayers < this.minPlayers) {
-            this.maxPlayers = this.minPlayers;
-        }
-
-        this.setWaitTime = config.getInt("waitTime");
-        this.setGameTime = config.getInt("gameTime");
-        String[] s1 = config.getString("waitSpawn").split(":");
-        this.waitSpawn = new Position(Integer.parseInt(s1[0]),
-                Integer.parseInt(s1[1]),
-                Integer.parseInt(s1[2]),
-                this.getLevel());
-        for (String string : config.getStringList("randomSpawn")) {
-            String[] s = string.split(":");
-            this.randomSpawn.add(new Position(
-                    Integer.parseInt(s[0]),
-                    Integer.parseInt(s[1]),
-                    Integer.parseInt(s[2]),
-                    this.level));
-        }
+        super(config);
 
         this.status = RoomStatus.TASK_NEED_INITIALIZED;
         this.initData();
@@ -276,46 +239,7 @@ public abstract class BaseRoom implements IRoom {
         }
     }
 
-    /**
-     * @return 出生点
-     */
-    public Position getWaitSpawn() {
-        return this.waitSpawn;
-    }
 
-    /**
-     * @return 随机出生点列表
-     */
-    public List<Position> getRandomSpawn() {
-        return this.randomSpawn;
-    }
-
-    /**
-     * @return 等待时间
-     */
-    public int getSetWaitTime() {
-        return this.setWaitTime;
-    }
-
-    /**
-     * @return 游戏时间
-     */
-    public int getSetGameTime() {
-        return this.setGameTime;
-    }
-
-    /**
-     * @return 游戏世界
-     */
-    @Override
-    public Level getLevel() {
-        return this.level;
-    }
-
-    @Override
-    public String getLevelName() {
-        return this.getLevel().getName();
-    }
 
     /**
      * 房间开始游戏
@@ -495,7 +419,17 @@ public abstract class BaseRoom implements IRoom {
             //道具
             PlayerInventory inventory = entry.getKey().getInventory();
             Item coolingItem = Tools.getHuntGameItem(20, entry.getKey());
-            Item item = inventory.getItem(4);
+            Item item = inventory.getItem(0);
+            if (coolingItem.equals(item)) {
+                if (item.getCount() > 1) {
+                    item.setCount(item.getCount() - 1);
+                    inventory.setItem(0, item);
+                }else {
+                    inventory.setItem(0, Tools.getHuntGameItem(3, entry.getKey()));
+                }
+            }
+
+            item = inventory.getItem(4);
             if (coolingItem.equals(item)) {
                 if (item.getCount() > 1) {
                     item.setCount(item.getCount() - 1);
@@ -547,9 +481,14 @@ public abstract class BaseRoom implements IRoom {
         }
     }
 
+    /**
+     * 给玩家猎人的物品
+     *
+     * @param player 玩家
+     */
     protected void giveHuntItem(Player player) {
         Item[] armor = new Item[4];
-        armor[0] = Item.get(306).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
+        armor[0] = Item.get(306).setNamedTag(new CompoundTag().putByte("Unbreakable", 1)); //不会受损的盔甲
         armor[1] = Item.get(307).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
         armor[2] = Item.get(308).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));
         armor[3] = Item.get(309).setNamedTag(new CompoundTag().putByte("Unbreakable", 1));

@@ -7,10 +7,12 @@ import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
+import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.*;
+import cn.nukkit.item.Item;
 
 /**
  * @author LT_Name
@@ -94,6 +96,10 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                             entityCamouflageEntity.spawnToAll();
 
                             damager.sendTitle("", language.translateString("subtitle-camouflageAnimalSuccess", entity.getEntityName()));
+
+                            Item item = Tools.getHuntGameItem(20, damager);
+                            item.setCount(room.getCamouflageCoolingTime()); //5秒冷却
+                            damager.getInventory().setItem(0, item);
                         }
                     }
                 }
