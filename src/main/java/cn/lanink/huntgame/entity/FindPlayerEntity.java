@@ -3,17 +3,21 @@ package cn.lanink.huntgame.entity;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
+ * 猎人用于查找猎物的实体
+ * 仅显示给使用的猎人
+ *
  * @author LT_Name
  */
 public class FindPlayerEntity extends Entity {
 
     private Player player;
-    private Player target;
+    private Position target;
 
     @Override
     public int getNetworkId() {
@@ -25,10 +29,11 @@ public class FindPlayerEntity extends Entity {
         super(chunk, nbt);
     }
 
-    public FindPlayerEntity(Player player, Player target) {
+    public FindPlayerEntity(Player player, Player targetPlayer) {
         super(player.chunk, Entity.getDefaultNBT(player.add(0, player.getEyeHeight(), 0)));
         this.player = player;
-        this.target = target;
+        this.target = targetPlayer.add(Tools.rand(-1.5, 1.5), Tools.rand(-1.5, 1.5), Tools.rand(-1.5, 1.5));
+
         Vector3 motion = Tools.getMotion(player, target);
         motion.x *= 0.2;
         motion.y *= 0.2;
@@ -38,7 +43,7 @@ public class FindPlayerEntity extends Entity {
 
     @Override
     public boolean onUpdate(int currentTick) {
-        if (this.age > 200 || this.distance(this.target) < 2) {
+        if (this.age > 100 || this.distance(this.target) <= 3) {
             this.close();
         }
 

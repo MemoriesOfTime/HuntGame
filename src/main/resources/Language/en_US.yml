@@ -112,6 +112,7 @@ subtitle-successfullySwitchedCamouflageBlocks: "Successfully switched camouflage
 subtitle-cannotPretendToBeThisBlock: "Cannot pretend to be this block!"
 subtitle-camouflageAnimalSuccess: "You are pretending to be %1%!"
 subtitle-CanNotDisguiseAnimalsRepeatedly: "You have already pretended to be %1%! Can't pretend to be repeated"
+subtitle-lockedByTracker: "You're locked by the tracker! Please even transfer the position!"
 
 tip-currentlyDisguisedAnimal: "Currently disguised animals: %1%"
 

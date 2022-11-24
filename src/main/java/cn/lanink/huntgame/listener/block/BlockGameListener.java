@@ -5,7 +5,6 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.entity.EntityCamouflageBlockDamage;
-import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.block.BlockInfo;
@@ -18,7 +17,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
@@ -66,6 +64,10 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                     blockItem.setCustomName(language.translateString("item-name-currentlyDisguisedBlock"));
                     player.getInventory().setItem(8, blockItem);
                     player.sendTitle("", language.translateString("subtitle-successfullySwitchedCamouflageBlocks"));
+
+                    Item item = Tools.getHuntGameItem(20, player);
+                    item.setCount(room.getCamouflageCoolingTime()); //5秒冷却
+                    player.getInventory().setItem(0, item);
                 }else {
                     player.sendTitle("", language.translateString("subtitle-cannotPretendToBeThisBlock"));
                 }
@@ -97,34 +99,6 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                     }
                 }
             }
-        }
-    }
-
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        BaseRoom room = this.getListenerRoom(event.getEntity().getLevel());
-        if (room == null) {
-            return;
-        }
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            if (!room.isPlaying(player)) {
-                return;
-            }
-            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getStatus() == RoomStatus.GAME) {
-                    if (room.getPlayer(player) == PlayerIdentity.PREY) {
-                        room.playerDeath(player);
-                    }else {
-                        player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
-                    }
-                }else {
-                    player.teleport(room.getWaitSpawn());
-                }
-            }
-            event.setCancelled(true);
-        }else {
-            event.setDamage(0);
         }
     }
 

@@ -6,13 +6,13 @@ import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
 import cn.lanink.huntgame.room.PlayerIdentity;
-import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.*;
+import cn.nukkit.item.Item;
 
 /**
  * @author LT_Name
@@ -39,33 +39,7 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        AnimalModeRoom room = this.getListenerRoom(event.getEntity().getLevel());
-        if (room == null) {
-            return;
-        }
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            if (!room.isPlaying(player)) {
-                return;
-            }
-            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                if (room.getStatus() == RoomStatus.GAME) {
-                    if (room.getPlayer(player) == PlayerIdentity.PREY) {
-                        room.playerDeath(player);
-                    }else {
-                        player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
-                    }
-                }else {
-                    player.teleport(room.getWaitSpawn());
-                }
-            }
-            if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event instanceof EntityDamageByChildEntityEvent)) {
-                event.setCancelled(true);
-            }else if (event.getFinalDamage() + 1 > player.getHealth()) {
-                event.setDamage(0);
-                room.playerDeath(player);
-            }
-        }else if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
+        if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
             EntityCamouflageEntityDamage entity = (EntityCamouflageEntityDamage) event.getEntity();
             if (entity.getMaster() == null) {
                 event.setDamage(0);
@@ -91,9 +65,6 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                 if (room.getPlayer(player) == PlayerIdentity.PREY && (room.getPlayer(damager) == PlayerIdentity.HUNTER || room.getPlayer(damager) == PlayerIdentity.CHANGE_HUNTER)) {
                     player.attack(new EntityDamageEvent(damager, EntityDamageEvent.DamageCause.CUSTOM, event.getDamage()));
                     damager.setHealth(Math.min(damager.getHealth() + 4, damager.getMaxHealth()));
-                }else if ((room.getPlayer(player) == PlayerIdentity.HUNTER || room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER) && room.getPlayer(damager) == PlayerIdentity.PREY) {
-                    event.setDamage(0);
-                    event.setKnockBack(event.getKnockBack() * 1.5f);
                 }
             }else if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
                 EntityCamouflageEntityDamage entity = (EntityCamouflageEntityDamage) event.getEntity();
@@ -125,6 +96,10 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                             entityCamouflageEntity.spawnToAll();
 
                             damager.sendTitle("", language.translateString("subtitle-camouflageAnimalSuccess", entity.getEntityName()));
+
+                            Item item = Tools.getHuntGameItem(20, damager);
+                            item.setCount(room.getCamouflageCoolingTime()); //5秒冷却
+                            damager.getInventory().setItem(0, item);
                         }
                     }
                 }

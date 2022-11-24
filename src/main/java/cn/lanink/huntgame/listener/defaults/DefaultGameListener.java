@@ -15,10 +15,12 @@ import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
-import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
+import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.player.PlayerChangeSkinEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
@@ -47,6 +49,65 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             Entity entity = event.getEntity();
             if (entity.namedTag != null && entity.namedTag.getBoolean("IsHuntGameFirework")) {
                 event.setCancelled();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerChangeSkin(PlayerChangeSkinEvent event) { //此事件仅玩家主动修改皮肤时触发，不需要针对插件修改特判
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityDamageByEntity(EntityDamageByChildEntityEvent event) {
+        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
+            Player player = ((Player) event.getEntity());
+            BaseRoom room = this.getListenerRoom(player.getLevel());
+            if (room == null || !room.isPlaying(player)) {
+                return;
+            }
+            Player damager = (Player) event.getDamager();
+            if (event.getChild().getNetworkId() == 80 && //箭
+                    (room.getPlayer(player) == PlayerIdentity.HUNTER || room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER)
+                    && room.getPlayer(damager) == PlayerIdentity.PREY) {
+                event.setDamage(0);
+                event.setKnockBack(event.getKnockBack() * 1.5f);
+                event.setCancelled(false);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        BaseRoom room = this.getListenerRoom(event.getEntity().getLevel());
+        if (room == null) {
+            return;
+        }
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            if (!room.isPlaying(player)) {
+                return;
+            }
+            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                if (room.getStatus() == RoomStatus.GAME) {
+                    if (room.getPlayer(player) == PlayerIdentity.PREY) {
+                        room.playerDeath(player);
+                    }else {
+                        player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
+                    }
+                }else {
+                    player.teleport(room.getWaitSpawn());
+                }
+            }if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event instanceof EntityDamageByChildEntityEvent)) {
+                event.setCancelled(true);
+            }else if (event.getFinalDamage() + 1 > player.getHealth()) {
+                event.setDamage(0);
+                room.playerDeath(player);
             }
         }
     }
@@ -190,8 +251,10 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                             projectile.spawnToAll();
 
                             Item item1 = Tools.getHuntGameItem(30, player);
-                            item1.setCount(32);
+                            item1.setCount(64);
                             player.getInventory().setItem(5, item1);
+
+                            target.sendTitle("", this.huntGame.getLanguage(target).translateString("subtitle-lockedByTracker"), 5, 15, 5);
                         }
                         break;
                 }

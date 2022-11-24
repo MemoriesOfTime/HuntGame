@@ -15,7 +15,8 @@ import lombok.Setter;
 import java.util.HashSet;
 
 /**
- * 玩家伪装的动物实体
+ * 玩家伪装的动物实体 （计算伤害）
+ * 为了避免被攻击/遮挡 所以不显示给操作的玩家
  *
  * @author LT_Name
  */
@@ -33,10 +34,6 @@ public class EntityCamouflageEntityDamage extends WalkingEntity implements IEnti
     private Player master;
 
     private final HashSet<Player> hiddenPlayers = new HashSet<>();
-
-    private double mx;
-    private double mz;
-    private int moveTime;
 
     public static EntityCamouflageEntityDamage create(FullChunk chunk, CompoundTag nbt, String entityName) {
         EntityData entityData = EntityData.getEntityDataByName(entityName);
@@ -109,6 +106,8 @@ public class EntityCamouflageEntityDamage extends WalkingEntity implements IEnti
         }
 
         if (this.getMaster() != null) {
+            //单独计算头部朝向
+            //不直接同步玩家数据是为了防止玩家观察时导致伪装实体乱动
             double dx = this.x - this.getMaster().getX();
             double dz = this.z - this.getMaster().getZ();
             double yaw = Math.asin(dx / Math.sqrt(dx * dx + dz * dz)) / 3.14D * 180.0D;

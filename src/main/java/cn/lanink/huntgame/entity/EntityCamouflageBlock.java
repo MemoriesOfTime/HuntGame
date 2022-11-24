@@ -5,7 +5,6 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.level.GlobalBlockPalette;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.Getter;
@@ -32,17 +31,17 @@ public class EntityCamouflageBlock extends EntityCreature implements IEntityCamo
 
     @Override
     public float getWidth() {
-        return 0.98f;
+        return 0.001f;
     }
 
     @Override
     public float getLength() {
-        return 0.98f;
+        return 0.001f;
     }
 
     @Override
     public float getHeight() {
-        return 0.98f;
+        return 0.001f;
     }
 
     @Override
@@ -73,10 +72,6 @@ public class EntityCamouflageBlock extends EntityCreature implements IEntityCamo
             if (tickDiff <= 0) {
                 return false;
             } else {
-                Position newPos = this.getMaster().add(0, 0.5, 0).floor().add(0.5, 0, 0.5);
-                this.x = newPos.x;
-                this.y = newPos.y;
-                this.z = newPos.z;
                 this.lastUpdate = currentTick;
                 boolean hasUpdate = this.entityBaseTick(tickDiff);
                 this.updateMovement();
