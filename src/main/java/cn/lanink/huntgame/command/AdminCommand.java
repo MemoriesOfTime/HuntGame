@@ -2,7 +2,7 @@ package cn.lanink.huntgame.command;
 
 import cn.lanink.huntgame.command.adminsubcommand.*;
 import cn.lanink.huntgame.command.base.BaseCommand;
-import cn.lanink.huntgame.ui.GuiCreate;
+import cn.lanink.huntgame.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -40,7 +40,7 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendUI(CommandSender sender) {
-        GuiCreate.sendAdminMenu((Player) sender);
+        FormHelper.sendAdminMenu((Player) sender);
     }
 
 }

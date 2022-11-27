@@ -17,7 +17,6 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.IntegralConfig;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
-import cn.lanink.huntgame.ui.GuiListener;
 import cn.lanink.huntgame.utils.MetricsLite;
 import cn.lanink.huntgame.utils.RsNpcXVariable;
 import cn.lanink.huntgame.utils.update.ConfigUpdateUtils;
@@ -183,7 +182,6 @@ public class HuntGame extends PluginBase {
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
-        this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
 
         this.loadAllListener();
 
