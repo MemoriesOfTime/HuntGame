@@ -3,9 +3,7 @@ package cn.lanink.huntgame.listener.defaults;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.FindPlayerEntity;
-import cn.lanink.huntgame.room.BaseRoom;
-import cn.lanink.huntgame.room.PlayerIdentity;
-import cn.lanink.huntgame.room.RoomStatus;
+import cn.lanink.huntgame.room.*;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -62,8 +60,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
             Player damager = (Player) event.getDamager();
             if (event.getChild().getNetworkId() == 80 && //箭
-                    (room.getPlayer(player) == PlayerIdentity.HUNTER || room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER)
-                    && room.getPlayer(damager) == PlayerIdentity.PREY) {
+                    (room.getPlayer(player).getIdentity() == PlayerIdentity.HUNTER || room.getPlayer(player).getIdentity() == PlayerIdentity.CHANGE_HUNTER)
+                    && room.getPlayer(damager).getIdentity() == PlayerIdentity.PREY) {
                 event.setDamage(0);
                 event.setKnockBack(event.getKnockBack() * 1.5f);
                 event.setCancelled(false);
@@ -84,7 +82,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == RoomStatus.GAME) {
-                    if (room.getPlayer(player) == PlayerIdentity.PREY) {
+                    if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
                         room.playerDeath(player);
                     }else {
                         player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
@@ -95,6 +93,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event instanceof EntityDamageByChildEntityEvent)) {
                 event.setCancelled(true);
             }else if (event.getFinalDamage() + 1 > player.getHealth()) {
+                //正常情况下玩家不应该受到其他玩家的伤害（因为他们只能打到伪装方块）
                 event.setDamage(0);
                 room.playerDeath(player);
             }
@@ -114,7 +113,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
             event.getProjectile().namedTag.putString("HuntGameDamager", player.getName());
             PlayerInventory inventory = player.getInventory();
-            if (room.getPlayer(player) == PlayerIdentity.PREY) {
+            if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
                 Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
                     if (room.getStatus() == RoomStatus.GAME && room.isPlaying(player)) {
                         Item item = inventory.getItem(2);
@@ -204,6 +203,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         player.getLevel().addSound(player, Sound.RANDOM_ORB);
                         item.setCount(8);
                         player.getInventory().setItem(4, item);
+
+                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_SAFE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_SAFE));
                         break;
                     case 22:
                         player.getLevel().addParticle(new LavaParticle(player));
@@ -212,11 +213,15 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         player.getLevel().addSound(player, Sound.RANDOM_LEVELUP);
                         item.setCount(16);
                         player.getInventory().setItem(5, item);
+
+                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_DANGER, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_DANGER));
                         break;
                     case 23:
                         Tools.spawnFirework(player);
                         item.setCount(32);
                         player.getInventory().setItem(6, item);
+
+                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_FIREWORKS, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_FIREWORKS));
                         break;
                     case 24:
                         EntityLightning lightning = new EntityLightning(player.chunk, Entity.getDefaultNBT(player));
@@ -225,11 +230,13 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + 10));
                         item.setCount(32);
                         player.getInventory().setItem(7, item);
+
+                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_LIGHTNING, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_LIGHTNING));
                         break;
                     case 31:
                         ArrayList<Player> list = new ArrayList<>();
-                        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
-                            if (entry.getValue() == PlayerIdentity.PREY) {
+                        for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
+                            if (entry.getValue().getIdentity() == PlayerIdentity.PREY) {
                                 list.add(entry.getKey());
                             }
                         }
@@ -310,10 +317,10 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         String message = "§7[§a" + Tools.getShowIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
         event.setMessage("");
         event.setCancelled(true);
-        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
-            if (entry.getValue() == room.getPlayer(player) ||
-                    (room.getPlayer(player) == PlayerIdentity.HUNTER && entry.getValue() == PlayerIdentity.CHANGE_HUNTER) ||
-                    (room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER && entry.getValue() == PlayerIdentity.HUNTER)) {
+        for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
+            if (entry.getValue().getIdentity() == room.getPlayer(player).getIdentity() ||
+                    (room.getPlayer(player).getIdentity() == PlayerIdentity.HUNTER && entry.getValue().getIdentity() == PlayerIdentity.CHANGE_HUNTER) ||
+                    (room.getPlayer(player).getIdentity() == PlayerIdentity.CHANGE_HUNTER && entry.getValue().getIdentity() == PlayerIdentity.HUNTER)) {
                 entry.getKey().sendMessage(message);
             }
         }

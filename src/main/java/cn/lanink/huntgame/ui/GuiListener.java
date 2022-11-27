@@ -39,19 +39,6 @@ public class GuiListener implements Listener {
         if (event.getWindow() instanceof FormWindowSimple) {
             FormWindowSimple simple = (FormWindowSimple) event.getWindow();
             switch (cache) {
-                case USER_MENU:
-                    switch (simple.getResponse().getClickedButtonId()) {
-                        case 0:
-                            Server.getInstance().dispatchCommand(player, uName + " join");
-                            break;
-                        case 1:
-                            Server.getInstance().dispatchCommand(player, uName + " quit");
-                            break;
-                        case 2:
-                            GuiCreate.sendRoomListMenu(player);
-                            break;
-                    }
-                    break;
                 case ROOM_LIST_MENU:
                     if (simple.getResponse().getClickedButton().getText().equals(language.translateString("buttonReturn"))) {
                         GuiCreate.sendUserMenu(player);

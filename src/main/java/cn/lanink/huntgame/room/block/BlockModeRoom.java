@@ -4,12 +4,14 @@ import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.entity.EntityCamouflageBlockDamage;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerData;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
@@ -93,7 +95,7 @@ public class BlockModeRoom extends BaseRoom {
         super.gameStart();
         int c = 0;
         for (Player player : this.getPlayers().keySet()) {
-            if (this.getPlayer(player) == PlayerIdentity.HUNTER) {
+            if (this.getPlayer(player).getIdentity() == PlayerIdentity.HUNTER) {
                 continue;
             }
             if (c >= this.getRandomSpawn().size()) {
@@ -157,8 +159,8 @@ public class BlockModeRoom extends BaseRoom {
 
         //防止玩家长时间不动导致方块消失
         if (this.gameTime%5 == 0) {
-            for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
-                if (entry.getValue() != PlayerIdentity.PREY) {
+            for (Map.Entry<Player, PlayerData> entry : this.players.entrySet()) {
+                if (entry.getValue().getIdentity() != PlayerIdentity.PREY) {
                     continue;
                 }
                 Set<Player> p = new HashSet<>(this.players.keySet());
@@ -169,7 +171,16 @@ public class BlockModeRoom extends BaseRoom {
             }
         }
 
-        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerData> entry : this.getPlayers().entrySet()) {
+            //站在伪装方块上时重置浮空时间，防止被反飞行踢出服务器
+            Location floor = entry.getKey().add(0, -1, 0).floor();
+            for (EntityCamouflageBlockDamage entity : this.entityCamouflageBlockDamageMap.values()) {
+                if (entity.floor().equals(floor)) {
+                    entry.getKey().resetInAirTicks();
+                    break;
+                }
+            }
+
             entry.getKey().setNameTag("");
             LinkedList<String> ms = new LinkedList<>();
             for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {

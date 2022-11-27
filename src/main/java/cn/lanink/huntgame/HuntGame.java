@@ -14,11 +14,13 @@ import cn.lanink.huntgame.listener.animal.AnimalGameListener;
 import cn.lanink.huntgame.listener.block.BlockGameListener;
 import cn.lanink.huntgame.listener.defaults.DefaultGameListener;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.IntegralConfig;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
 import cn.lanink.huntgame.ui.GuiListener;
 import cn.lanink.huntgame.utils.MetricsLite;
 import cn.lanink.huntgame.utils.RsNpcXVariable;
+import cn.lanink.huntgame.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -36,7 +38,7 @@ import java.util.*;
  */
 public class HuntGame extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.2.2-SNAPSHOT git-e2a4e0c";
     public static boolean debug = false;
 
     private static HuntGame huntGame;
@@ -81,6 +83,7 @@ public class HuntGame extends PluginBase {
         huntGame = this;
 
         this.saveDefaultConfig();
+        ConfigUpdateUtils.updateConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
 
         if (config.getBoolean("debug", false)) {
@@ -138,7 +141,7 @@ public class HuntGame extends PluginBase {
 
         //检查依赖版本
         try {
-            String needGameCoreVersion = "1.5.6";
+            String needGameCoreVersion = "1.6.5";
             if (!VersionUtils.checkMinimumVersion(GameCore.getInstance(), needGameCoreVersion)) {
                 throw new RuntimeException("[MemoriesOfTime-GameCore] plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
             }
@@ -172,6 +175,8 @@ public class HuntGame extends PluginBase {
         for (String cmd : this.config.getStringList("cmdWhitelist")) {
             this.cmdWhitelist.add(cmd.toLowerCase());
         }
+
+        IntegralConfig.init(this.config);
 
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));

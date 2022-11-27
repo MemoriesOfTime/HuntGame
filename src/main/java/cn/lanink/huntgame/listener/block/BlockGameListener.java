@@ -5,6 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.entity.EntityCamouflageBlockDamage;
+import cn.lanink.huntgame.room.IntegralConfig;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.block.BlockInfo;
@@ -45,7 +46,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (room.getPlayer(player) == PlayerIdentity.PREY) {
+        if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
             if (player.getInventory().getItemInHand().getId() == 280) {
                 if (this.clickToCool.contains(player)) {
                     return;
@@ -86,12 +87,13 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             event.setCancelled(true);
             Entity entity = event.getEntity();
             Item item = damager.getInventory().getItemInHand();
-            if ((room.getPlayer(damager) == PlayerIdentity.HUNTER || room.getPlayer(damager) == PlayerIdentity.CHANGE_HUNTER)
+            if ((room.getPlayer(damager).getIdentity() == PlayerIdentity.HUNTER || room.getPlayer(damager).getIdentity() == PlayerIdentity.CHANGE_HUNTER)
                     && item.getId() == 276 &&
                     entity instanceof EntityCamouflageBlockDamage) {
                 Player player = ((EntityCamouflageBlockDamage) entity).getMaster();
-                if (room.getPlayer(player) == PlayerIdentity.PREY) {
+                if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
                     room.playerDeath(player);
+                    room.getPlayer(damager).addIntegral(IntegralConfig.IntegralType.KILL_PREY, IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_PREY));
                     for (Player p : room.getPlayers().keySet()) {
                         p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
                                 .replace("%damagePlayer%", damager.getName())
@@ -109,7 +111,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             return;
         }
         Player player = event.getPlayer();
-        if (room.getPlayer(player) == PlayerIdentity.PREY) {
+        if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
             Level level = player.getLevel();
             Set<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.remove(player);

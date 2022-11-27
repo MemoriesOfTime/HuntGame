@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 房间抽象类
@@ -48,8 +49,8 @@ public abstract class BaseRoom extends RoomConfig {
     public int gameTime;
 
     @Getter
-    protected final LinkedHashMap<Player, PlayerIdentity> players = new LinkedHashMap<>();
-    protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
+    protected final LinkedHashMap<Player, PlayerData> players = new LinkedHashMap<>();
+    protected final ConcurrentHashMap<Player, Integer> playerRespawnTime = new ConcurrentHashMap<>();
 
 
     /**
@@ -203,18 +204,8 @@ public abstract class BaseRoom extends RoomConfig {
      */
     public void addPlaying(Player player) {
         if (!this.players.containsKey(player)) {
-            this.addPlaying(player, PlayerIdentity.NULL);
+            this.players.put(player, new PlayerData(player));
         }
-    }
-
-    /**
-     * 记录在游戏内的玩家
-     *
-     * @param player 玩家
-     * @param playerIdentity 玩家身份
-     */
-    public void addPlaying(Player player, PlayerIdentity playerIdentity) {
-        this.players.put(player, playerIdentity);
     }
 
     /**
@@ -231,15 +222,13 @@ public abstract class BaseRoom extends RoomConfig {
      * @param player 玩家
      * @return 身份
      */
-    public PlayerIdentity getPlayer(Player player) {
-        if (isPlaying(player)) {
-            return this.players.get(player);
-        }else {
-            return PlayerIdentity.NULL;
-        }
+    public PlayerData getPlayer(Player player) {
+        return this.players.get(player);
     }
 
-
+    public PlayerIdentity getPlayerIdentity(Player player) {
+        return this.players.get(player).getIdentity();
+    }
 
     /**
      * 房间开始游戏
@@ -258,7 +247,9 @@ public abstract class BaseRoom extends RoomConfig {
         this.assignIdentity();
 
         for (Player player: this.players.keySet()) {
-            if (this.getPlayer(player) != PlayerIdentity.PREY) {
+            this.getPlayer(player).addIntegral(IntegralConfig.IntegralType.BASE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.BASE));
+
+            if (this.getPlayerIdentity(player) != PlayerIdentity.PREY) {
                 continue;
             }
 
@@ -297,18 +288,18 @@ public abstract class BaseRoom extends RoomConfig {
 
         HashSet<Player> victoryPlayers = new HashSet<>();
         HashSet<Player> defeatPlayers = new HashSet<>();
-        for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
+        for (Map.Entry<Player, PlayerData> entry : this.players.entrySet()) {
             this.players.keySet().forEach(player -> entry.getKey().showPlayer(player));
             switch (victory) {
                 case PREY:
-                    if (entry.getValue() == PlayerIdentity.PREY) {
+                    if (entry.getValue().getIdentity() == PlayerIdentity.PREY) {
                         victoryPlayers.add(entry.getKey());
                     }else {
                         defeatPlayers.add(entry.getKey());
                     }
                     break;
                 case HUNTER:
-                    if (entry.getValue() == PlayerIdentity.HUNTER) {
+                    if (entry.getValue().getIdentity() == PlayerIdentity.HUNTER) {
                         victoryPlayers.add(entry.getKey());
                     }else {
                         defeatPlayers.add(entry.getKey());
@@ -344,8 +335,8 @@ public abstract class BaseRoom extends RoomConfig {
             this.players.keySet().forEach(player -> player.sendTip(this.huntGame.getLanguage(player)
                     .translateString("huntersDispatchedTimeBottom").replace("time%", time + "")));
             if (time%10 == 0) {
-                for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
-                    if (entry.getValue() == PlayerIdentity.HUNTER) {
+                for (Map.Entry<Player, PlayerData> entry : this.players.entrySet()) {
+                    if (entry.getValue().getIdentity() == PlayerIdentity.HUNTER) {
                         entry.getKey().addEffect(Effect.getEffect(15).setDuration(400).setVisible(false)); //失明
                         entry.getKey().addEffect(Effect.getEffect(2).setAmplifier(2).setDuration(400).setVisible(false)); //缓慢2
                     }else {
@@ -357,19 +348,19 @@ public abstract class BaseRoom extends RoomConfig {
                 Tools.addSound(this, Sound.RANDOM_CLICK);
             }
             if (time == 0) {
-                for (Map.Entry<Player, PlayerIdentity> entry : this.players.entrySet()) {
+                for (Map.Entry<Player, PlayerData> entry : this.players.entrySet()) {
                     entry.getKey().removeAllEffects();
-                    if (entry.getValue() == PlayerIdentity.HUNTER) {
+                    if (entry.getValue().getIdentity() == PlayerIdentity.HUNTER) {
                         entry.getKey().teleport(randomSpawn.get(Tools.RANDOM.nextInt(randomSpawn.size())));
                         this.giveHuntItem(entry.getKey());
                     }
                 }
             }
         }else if (this.gameTime%5 == 0) {
-            for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == PlayerIdentity.HUNTER || entry.getValue() == PlayerIdentity.CHANGE_HUNTER) {
+            for (Map.Entry<Player, PlayerData> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue().getIdentity() == PlayerIdentity.HUNTER || entry.getValue().getIdentity() == PlayerIdentity.CHANGE_HUNTER) {
                     entry.getKey().addEffect(Effect.getEffect(1).setDuration(400).setVisible(false)); //速度提升1
-                } else if (entry.getValue() == PlayerIdentity.PREY) {
+                } else if (entry.getValue().getIdentity() == PlayerIdentity.PREY) {
                     entry.getKey().addEffect(Effect.getEffect(2).setDuration(400).setVisible(false)); //缓慢1
                 }
             }
@@ -380,8 +371,8 @@ public abstract class BaseRoom extends RoomConfig {
             this.gameTime--;
             int x = 0;
             boolean hunters = false;
-            for (PlayerIdentity playerIdentity : this.players.values()) {
-                switch (playerIdentity) {
+            for (PlayerData playerData : this.players.values()) {
+                switch (playerData.getIdentity()) {
                     case PREY:
                         x++;
                         break;
@@ -412,7 +403,7 @@ public abstract class BaseRoom extends RoomConfig {
             }
         }
 
-        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerData> entry : this.getPlayers().entrySet()) {
             if (this.gameTime%5 == 0) {
                 entry.getKey().getFoodData().addFoodLevel(1, 0);
             }
@@ -503,7 +494,7 @@ public abstract class BaseRoom extends RoomConfig {
      * 分配玩家身份
      */
     public void assignIdentity() {
-        LinkedHashMap<Player, PlayerIdentity> players = this.getPlayers();
+        LinkedHashMap<Player, PlayerData> players = this.getPlayers();
         int random = Tools.RANDOM.nextInt(players.size()) + 1;
         int x = 0;
         for (Player player : players.keySet()) {
@@ -511,12 +502,12 @@ public abstract class BaseRoom extends RoomConfig {
             player.getUIInventory().clearAll();
             x++;
             if (x == random) {
-                this.players.put(player, PlayerIdentity.HUNTER);
+                this.getPlayer(player).setIdentity(PlayerIdentity.HUNTER);
                 player.sendTitle(this.huntGame.getLanguage(player).translateString("titleHuntersTitle"),
                         this.huntGame.getLanguage(player).translateString("titleHuntersSubtitle"), 10, 40, 10);
                 continue;
             }
-            this.players.put(player, PlayerIdentity.PREY);
+            this.getPlayer(player).setIdentity(PlayerIdentity.PREY);
             player.sendTitle(this.huntGame.getLanguage(player).translateString("titlePreyTitle"),
                     this.huntGame.getLanguage(player).translateString("titlePreySubtitle"), 10, 40, 10);
         }
@@ -529,8 +520,8 @@ public abstract class BaseRoom extends RoomConfig {
      */
     public int getSurvivorPlayerNumber() {
         int x = 0;
-        for (PlayerIdentity playerIdentity : this.getPlayers().values()) {
-            if (playerIdentity == PlayerIdentity.PREY) {
+        for (PlayerData playerData : this.getPlayers().values()) {
+            if (playerData.getIdentity() == PlayerIdentity.PREY) {
                 x++;
             }
         }
@@ -543,7 +534,7 @@ public abstract class BaseRoom extends RoomConfig {
      * @param player 玩家
      */
     public void playerDeath(Player player) {
-        if (this.getPlayer(player) == PlayerIdentity.NULL) {
+        if (this.getPlayer(player).getIdentity() == PlayerIdentity.NULL) {
             return;
         }
 
@@ -553,7 +544,7 @@ public abstract class BaseRoom extends RoomConfig {
             return;
         }
 
-        if (this.getPlayer(player) == PlayerIdentity.PREY) {
+        if (this.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
             this.playerRespawnTime.put(player, 20);
             this.playerCorpseSpawn(player);
 
@@ -563,7 +554,7 @@ public abstract class BaseRoom extends RoomConfig {
         player.getUIInventory().clearAll();
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(Player.SPECTATOR);
-        this.players.put(player, PlayerIdentity.NULL);
+        this.getPlayer(player).setIdentity(PlayerIdentity.NULL);
         Tools.addSound(this, Sound.GAME_PLAYER_HURT);
     }
 
@@ -587,7 +578,7 @@ public abstract class BaseRoom extends RoomConfig {
                 }
             }
         }
-        this.players.put(player, PlayerIdentity.CHANGE_HUNTER);
+        this.getPlayer(player).setIdentity(PlayerIdentity.CHANGE_HUNTER);
         this.players.keySet().forEach(p -> p.showPlayer(player));
         player.teleport(this.randomSpawn.get(Tools.RANDOM.nextInt(this.randomSpawn.size())));
         Tools.rePlayerState(player, true);

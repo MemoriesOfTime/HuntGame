@@ -2,6 +2,7 @@ package cn.lanink.huntgame.tasks;
 
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerData;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.Tools;
@@ -26,7 +27,7 @@ public class VictoryTask extends PluginTask<HuntGame> {
         this.room = room;
         this.victoryTime = 10;
         this.victory = victory == PlayerIdentity.CHANGE_HUNTER ? PlayerIdentity.HUNTER : victory;
-        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
             this.room.getPlayers().keySet().forEach(player -> entry.getKey().showPlayer(player));
             this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
                     new Vector3[] { entry.getKey().floor() });
@@ -59,13 +60,14 @@ public class VictoryTask extends PluginTask<HuntGame> {
             this.cancel();
         }else {
             this.victoryTime--;
-            for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+            for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
                 if (this.owner.isAutomaticNextRound()) {
                     entry.getKey().sendTip(this.owner.getLanguage(entry.getKey()).translateString("victory_automaticallyJoinTheNextGameCountdown_Bottom", this.victoryTime));
                 }
-                if (entry.getValue() != PlayerIdentity.NULL) {
-                    if (this.victory == PlayerIdentity.PREY && entry.getValue() == PlayerIdentity.PREY ||
-                            this.victory == PlayerIdentity.HUNTER && (entry.getValue() == PlayerIdentity.HUNTER || entry.getValue() == PlayerIdentity.CHANGE_HUNTER)) {
+                PlayerIdentity identity = entry.getValue().getIdentity();
+                if (identity != PlayerIdentity.NULL) {
+                    if (this.victory == PlayerIdentity.PREY && identity == PlayerIdentity.PREY ||
+                            this.victory == PlayerIdentity.HUNTER && (identity == PlayerIdentity.HUNTER || identity == PlayerIdentity.CHANGE_HUNTER)) {
                         Tools.spawnFirework(entry.getKey());
                     }
                 }

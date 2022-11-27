@@ -1,8 +1,11 @@
 package cn.lanink.huntgame.ui;
 
+import cn.lanink.gamecore.form.element.ResponseElementButton;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerData;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -22,7 +25,7 @@ import java.util.Map;
 
 public class GuiCreate {
 
-    public static final String PLUGIN_NAME = "§l§7[§1B§2l§3o§4c§5k§6H§au§cn§bt§7]";
+    public static final String PLUGIN_NAME = "§l§7[§1H§2u§3n§4t§5G§6a§am§ce§7]";
     public static HashMap<Player, HashMap<Integer, GuiType>> UI_CACHE = new HashMap<>(); //ui缓存
 
     /**
@@ -31,14 +34,23 @@ public class GuiCreate {
      */
     public static void sendUserMenu(Player player) {
         Language language = HuntGame.getInstance().getLanguage(player);
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(language.translateString("userMenuButton1"),
-                new ElementButtonImageData("path", "textures/ui/switch_start_button")));
-        simple.addButton(new ElementButton(language.translateString("userMenuButton2"),
-                new ElementButtonImageData("path", "textures/ui/switch_select_button")));
-        simple.addButton(new ElementButton(language.translateString("userMenuButton3"),
-                new ElementButtonImageData("path", "textures/ui/servers")));
-        showFormWindow(player, simple, GuiType.USER_MENU);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
+        simple.addButton(new ResponseElementButton(
+                language.translateString("userMenuButton1"),
+                new ElementButtonImageData("path", "textures/ui/switch_start_button")
+                ).onClicked(cp -> Server.getInstance().dispatchCommand(cp, HuntGame.getInstance().getCmdUser() + " join"))
+        );
+        simple.addButton(new ResponseElementButton(
+                language.translateString("userMenuButton2"),
+                new ElementButtonImageData("path", "textures/ui/switch_select_button")
+                ).onClicked(cp -> Server.getInstance().dispatchCommand(cp, HuntGame.getInstance().getCmdUser() + " quit"))
+        );
+        simple.addButton(new ResponseElementButton(
+                language.translateString("userMenuButton3"),
+                new ElementButtonImageData("path", "textures/ui/servers")
+                ).onClicked(GuiCreate::sendRoomListMenu)
+        );
+        simple.showToPlayer(player);
     }
 
     /**
@@ -141,6 +153,29 @@ public class GuiCreate {
                     language.translateString("buttonReturn"), language.translateString("buttonReturn"));
         }
         showFormWindow(player, modal, GuiType.ROOM_JOIN_OK);
+    }
+
+    /**
+     * 显示游戏积分结算
+     *
+     * @param player 玩家
+     * @param room 房间
+     */
+    public static void sendGameIntegralSettlement(Player player, BaseRoom room) {
+        //TODO 多语言支持
+
+        Language language = HuntGame.getInstance().getLanguage(player);
+        StringBuilder content = new StringBuilder();
+        PlayerData playerData = room.getPlayer(player);
+        content.append("你在本次游戏获得的积分为: ").append(playerData.getAllIntegral()).append(" 分");
+        //TODO 明细
+
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME, content.toString());
+        simple.addButton(new ElementButton(
+                language.translateString("buttonOK"),
+                new ElementButtonImageData("path", "textures/ui/confirm")
+        ));
+        simple.showToPlayer(player);
     }
 
     public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {

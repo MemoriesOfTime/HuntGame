@@ -1,3 +1,4 @@
+ConfigVersion: 1.2.2
 #语言设置
 defaultLanguage: "zh_CN"
 languageMap:
@@ -30,3 +31,18 @@ victoryCmd:
 defeatCmd:
   - me 我失败了
   - tell "@p" 再接再厉！&con
+
+#游戏积分
+integral:
+  #参与游戏基础积分
+  base: 100
+  #安全嘲讽积分
+  taunt-safe: 1
+  #危险嘲讽积分
+  taunt-danger: 2
+  #烟花嘲讽积分
+  taunt-fireworks: 3
+  #闪电嘲讽积分
+  taunt-lightning: 5
+  #击杀猎物积分
+  killPrey: 100
