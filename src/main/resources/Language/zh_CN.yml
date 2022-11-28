@@ -58,7 +58,7 @@ adminReload: "§a配置重载完成！请在后台查看信息！"
 adminUnload: "§a已卸载所有房间！请在后台查看信息！"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 itemQuitRoom: "§c退出房间"
-itemQuitRoomLore: "手持点击,即可退出房间"
+itemQuitRoomLore: "双击即可退出房间"
 gamemode-block: "方块"
 gamemode-animal: "动物"
 prey: "猎物"
@@ -110,11 +110,13 @@ joinRoomOK: "§l§a确认要加入房间: %name% §l§a？"
 buttonOK: "§a确定"
 buttonReturn: "§c返回"
 
+subtitle_clickAgainToQuitRoom: "§c再次点击退出房间"
+
 subtitle-successfullySwitchedCamouflageBlocks: "切换伪装方块成功！"
 subtitle-cannotPretendToBeThisBlock: "无法伪装成此方块！"
 subtitle-camouflageAnimalSuccess: "你伪装成了 %1% ！"
 subtitle-CanNotDisguiseAnimalsRepeatedly: "你已经伪装成 %1% 了！不能重复伪装"
-subtitle-lockedByTracker: "你被追踪器锁定了！请即使转移位置！"
+subtitle-lockedByTracker: "你被追踪器锁定了！请及时转移位置！"
 
 tip-currentlyDisguisedAnimal: "当前伪装动物：%1%"
 

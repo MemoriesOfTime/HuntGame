@@ -37,7 +37,6 @@ import java.util.*;
  */
 public class HuntGame extends PluginBase {
 
-    public static final String VERSION = "1.2.2-SNAPSHOT git-e2a4e0c";
     public static boolean debug = false;
 
     private static HuntGame huntGame;
@@ -84,7 +83,10 @@ public class HuntGame extends PluginBase {
         this.saveDefaultConfig();
         ConfigUpdateUtils.updateConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
-
+        /*Config configDescription = new Config();
+        configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
+        ConfigUtils.addDescription(this.config, configDescription);
+*/
         if (config.getBoolean("debug", false)) {
             debug = true;
             this.getLogger().warning("§c=========================================");
@@ -136,7 +138,7 @@ public class HuntGame extends PluginBase {
     @Override
     public void onEnable() {
         this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        this.getLogger().info("§l§eVersion: " + VERSION);
+        this.getLogger().info("§l§eVersion: " + this.getVersion());
 
         //检查依赖版本
         try {
@@ -403,6 +405,12 @@ public class HuntGame extends PluginBase {
     public void reLoadRooms() {
         this.unloadRooms();
         this.loadRooms();
+    }
+
+    public String getVersion() {
+        Config config = new Config(Config.PROPERTIES);
+        config.load(this.getResource("git.properties"));
+        return config.get("git.build.version", this.getDescription().getVersion()) + " git-" + config.get("git.commit.id.abbrev", "Unknown");
     }
 
 }

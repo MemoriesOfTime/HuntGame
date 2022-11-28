@@ -17,10 +17,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
-import cn.nukkit.event.player.PlayerChangeSkinEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
-import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ParticleEffect;
@@ -65,6 +62,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 event.setDamage(0);
                 event.setKnockBack(event.getKnockBack() * 1.5f);
                 event.setCancelled(false);
+
+                //room.getPlayer(damager).addIntegral(IntegralConfig.IntegralType.PREY_BOW_HIT_HUNTER, IntegralConfig.getIntegral(IntegralConfig.IntegralType.PREY_BOW_HIT_HUNTER));
             }
         }
     }
@@ -185,15 +184,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
 
         CompoundTag tag = event.getItem().getNamedTag();
-        if (tag == null) {
-            return;
-        }
-        if (room.getStatus() == RoomStatus.WAIT) {
-            if (tag.getBoolean("isHuntGameItem") && tag.getInt("HuntGameType") == 10) {
-                room.quitRoom(player);
-                event.setCancelled(true);
-            }
-        }else if (room.getStatus() == RoomStatus.GAME) {
+        if (tag != null && room.getStatus() == RoomStatus.GAME) {
             if (tag.getBoolean("isHuntGameItem")) {
                 event.setCancelled(true);
                 Item item = Tools.getHuntGameItem(20, player);
@@ -253,6 +244,34 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                             target.sendTitle("", this.huntGame.getLanguage(target).translateString("subtitle-lockedByTracker"), 5, 15, 5);
                         }
                         break;
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null) {
+            return;
+        }
+
+        Item item = event.getItem();
+        if (item.hasCompoundTag() && item.getNamedTag().getBoolean("isHuntGameItem")) {
+            if (item.getNamedTag().getInt("HuntGameType") == 10) {
+                int nowTick = Server.getInstance().getTick();
+                int lastTick = item.getNamedTag().getInt("lastTick");
+                if (lastTick == 0 || nowTick - lastTick > 40) {
+                    player.sendTitle("", this.huntGame.getLanguage(player).translateString("subtitle_clickAgainToQuitRoom"), 5, 25, 10);
+                    CompoundTag tag = item.getNamedTag();
+                    tag.putInt("lastTick", nowTick);
+                    item.setNamedTag(tag); //防止tag更改不生效，无法退出房间
+                    player.getInventory().setItem(8, item);
+                    player.getInventory().setHeldItemIndex(7);
+                    event.setCancelled(true);
+                }else {
+                    room.quitRoom(player);
                 }
             }
         }

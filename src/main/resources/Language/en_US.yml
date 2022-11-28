@@ -58,7 +58,7 @@ adminReload: "§aConfig reload complete! Please check the information in the bac
 adminUnload: "§aAll rooms unloaded! Please check the information in the background!"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
 itemQuitRoom: "§cQuit room"
-itemQuitRoomLore: "You can quit room when you click it"
+itemQuitRoomLore: "double click to exit the room"
 gamemode-block: "block"
 gamemode-animal: "animal"
 prey: "prey"
@@ -108,11 +108,13 @@ joinRoomOK: "§l§aCofirm to join the room: %name% §l§a?"
 buttonOK: "§aConfirm"
 buttonReturn: "§cBack"
 
+subtitle_clickAgainToQuitRoom: "§cClick again to exit the room"
+
 subtitle-successfullySwitchedCamouflageBlocks: "Successfully switched camouflage blocks!"
 subtitle-cannotPretendToBeThisBlock: "Cannot pretend to be this block!"
 subtitle-camouflageAnimalSuccess: "You are pretending to be %1%!"
 subtitle-CanNotDisguiseAnimalsRepeatedly: "You have already pretended to be %1%! Can't pretend to be repeated"
-subtitle-lockedByTracker: "You're locked by the tracker! Please even transfer the position!"
+subtitle-lockedByTracker: "You're locked by the tracker! Please transfer location in time!"
 
 tip-currentlyDisguisedAnimal: "Currently disguised animals: %1%"
 

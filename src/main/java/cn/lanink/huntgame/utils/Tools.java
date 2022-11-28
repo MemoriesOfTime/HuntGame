@@ -3,6 +3,7 @@ package cn.lanink.huntgame.utils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -68,7 +69,11 @@ public class Tools {
     }
 
     public static String getShowIdentity(BaseRoom room, Player player) {
-        switch (room.getPlayer(player).getIdentity()) {
+        return getShowIdentity(room.getPlayer(player).getIdentity(), player);
+    }
+
+    public static String getShowIdentity(PlayerIdentity identity, Player player) {
+        switch (identity) {
             case PREY:
                 return HuntGame.getInstance().getLanguage(player).translateString("prey");
             case HUNTER:
