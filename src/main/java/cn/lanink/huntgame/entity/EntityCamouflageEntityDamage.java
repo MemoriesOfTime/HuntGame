@@ -167,12 +167,6 @@ public class EntityCamouflageEntityDamage extends WalkingEntity implements IEnti
         }
     }
 
-    @Override
-    public void close() {
-        this.setMaster(null);
-        super.close();
-    }
-
     /**
      * 玩家是否可以看到本实体
      *

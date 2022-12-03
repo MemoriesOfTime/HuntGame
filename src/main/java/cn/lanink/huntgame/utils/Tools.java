@@ -24,6 +24,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.utils.DyeColor;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.SplittableRandom;
 
@@ -55,6 +56,11 @@ public class Tools {
             return max;
         }
         return min + (float) Math.random() * (max-min);
+    }
+
+    public static String formatCountdown(int time) {
+        DecimalFormat format = new DecimalFormat("00");
+        return format.format(time/60) + ":" + format.format(time%60);
     }
 
     public static String getShowRoomGameMode(BaseRoom room, Player player) {
@@ -351,7 +357,7 @@ public class Tools {
 
     /**
      * 放烟花
-     * GitHub：https://github.com/PetteriM1/FireworkShow
+     * GitHub：<a href="https://github.com/PetteriM1/FireworkShow">https://github.com/PetteriM1/FireworkShow</a>
      * @param position 位置
      */
     public static void spawnFirework(Position position) {

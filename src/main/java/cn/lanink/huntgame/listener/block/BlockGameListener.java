@@ -5,7 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.entity.EntityCamouflageBlockDamage;
-import cn.lanink.huntgame.room.IntegralConfig;
+import cn.lanink.huntgame.room.EventType;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.block.BlockInfo;
@@ -69,6 +69,8 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                     Item item = Tools.getHuntGameItem(20, player);
                     item.setCount(room.getCamouflageCoolingTime()); //5秒冷却
                     player.getInventory().setItem(0, item);
+
+                    room.getPlayer(player).addEventCount(EventType.PREY_SWITCHED_CAMOUFLAGE);
                 }else {
                     player.sendTitle("", language.translateString("subtitle-cannotPretendToBeThisBlock"));
                 }
@@ -93,7 +95,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                 Player player = ((EntityCamouflageBlockDamage) entity).getMaster();
                 if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
                     room.playerDeath(player);
-                    room.getPlayer(damager).addIntegral(IntegralConfig.IntegralType.KILL_PREY, IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_PREY));
+                    room.getPlayer(damager).addEventCount(EventType.HUNTER_KILL_PREY);
                     for (Player p : room.getPlayers().keySet()) {
                         p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
                                 .replace("%damagePlayer%", damager.getName())

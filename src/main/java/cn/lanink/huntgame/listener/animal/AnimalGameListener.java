@@ -5,7 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
-import cn.lanink.huntgame.room.IntegralConfig;
+import cn.lanink.huntgame.room.EventType;
 import cn.lanink.huntgame.room.PlayerData;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
@@ -63,13 +63,13 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                 event.setCancelled(true);
                 return;
             }
-            if (event.getEntity() instanceof Player) {
+            /*if (event.getEntity() instanceof Player) {
                 Player player = ((Player) event.getEntity());
                 if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY && (identity == PlayerIdentity.HUNTER || identity == PlayerIdentity.CHANGE_HUNTER)) {
                     player.attack(new EntityDamageEvent(damager, EntityDamageEvent.DamageCause.CUSTOM, event.getDamage()));
                     damager.setHealth(Math.min(damager.getHealth() + 4, damager.getMaxHealth()));
                 }
-            }else if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
+            }else */if (event.getEntity() instanceof EntityCamouflageEntityDamage) {
                 EntityCamouflageEntityDamage entity = (EntityCamouflageEntityDamage) event.getEntity();
                 if (identity == PlayerIdentity.HUNTER || identity == PlayerIdentity.CHANGE_HUNTER) {
                     if (entity.getMaster() == null) {
@@ -103,6 +103,8 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                             Item item = Tools.getHuntGameItem(20, damager);
                             item.setCount(room.getCamouflageCoolingTime()); //5秒冷却
                             damager.getInventory().setItem(0, item);
+
+                            room.getPlayer(damager).addEventCount(EventType.PREY_SWITCHED_CAMOUFLAGE);
                         }
                     }
                 }
@@ -128,7 +130,7 @@ public class AnimalGameListener extends BaseGameListener<AnimalModeRoom> {
                     Entity damager = ((EntityDamageByEntityEvent) cause).getDamager();
                     if (damager instanceof Player) {
                         PlayerData damagerPlayerData = room.getPlayer((Player) damager);
-                        damagerPlayerData.addIntegral(IntegralConfig.IntegralType.KILL_PREY, IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_PREY));
+                        damagerPlayerData.addEventCount(EventType.HUNTER_KILL_PREY);
                         for (Player p : room.getPlayers().keySet()) {
                             p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
                                     .replace("%damagePlayer%", damager.getName())

@@ -4,6 +4,7 @@ import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.ConfigUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.VersionUtils;
 import cn.lanink.huntgame.command.AdminCommand;
@@ -83,10 +84,10 @@ public class HuntGame extends PluginBase {
         this.saveDefaultConfig();
         ConfigUpdateUtils.updateConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
-        /*Config configDescription = new Config();
+        Config configDescription = new Config();
         configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
         ConfigUtils.addDescription(this.config, configDescription);
-*/
+
         if (config.getBoolean("debug", false)) {
             debug = true;
             this.getLogger().warning("§c=========================================");
@@ -107,7 +108,7 @@ public class HuntGame extends PluginBase {
             this.saveResource("Language/" + l + ".yml", false);
         }
         File[] files = new File(this.getDataFolder() + "/Language").listFiles();
-        if (files != null && files.length > 0) {
+        if (files != null) {
             for (File file : files) {
                 if(file.isFile()) {
                     String name = file.getName().split("\\.")[0];
@@ -345,7 +346,7 @@ public class HuntGame extends PluginBase {
     private void loadRooms() {
         this.getLogger().info(this.getLanguage().translateString("startLoadingRoom"));
         File[] s = new File(this.getDataFolder() + "/Rooms").listFiles();
-        if (s != null && s.length > 0) {
+        if (s != null) {
             for (File file1 : s) {
                 String[] fileName = file1.getName().split("\\.");
                 if (fileName.length > 0) {

@@ -160,7 +160,7 @@ public class AnimalModeRoom extends BaseRoom {
             for (String string : language.translateString("gameTimeScoreBoard").split("\n")) {
                 ms.add(string.replace("%mode%", Tools.getShowIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
-                        .replace("%time%", this.gameTime + ""));
+                        .replace("%time%", Tools.formatCountdown(this.gameTime)));
             }
             this.huntGame.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
         }

@@ -35,14 +35,16 @@ defeatCmd:
 #游戏积分
 integral:
   #参与游戏基础积分
-  base: 100
+  #base: 100
   #安全嘲讽积分
-  taunt-safe: 1
+  prey_taunt_safe: 1
   #危险嘲讽积分
-  taunt-danger: 2
+  prey_taunt_danger: 2
   #烟花嘲讽积分
-  taunt-fireworks: 3
+  prey_taunt_fireworks: 3
   #闪电嘲讽积分
-  taunt-lightning: 5
-  #击杀猎物积分
-  killPrey: 100
+  prey_taunt_lightning: 5
+  #猎人击杀猎物积分
+  hunter_kill_prey: 100
+  #猎物弓箭命中猎人
+  prey_bow_hit_hunter: 10

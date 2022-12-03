@@ -63,7 +63,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 event.setKnockBack(event.getKnockBack() * 1.5f);
                 event.setCancelled(false);
 
-                //room.getPlayer(damager).addIntegral(IntegralConfig.IntegralType.PREY_BOW_HIT_HUNTER, IntegralConfig.getIntegral(IntegralConfig.IntegralType.PREY_BOW_HIT_HUNTER));
+                room.getPlayer(damager).addEventCount(EventType.PREY_BOW_HIT_HUNTER);
             }
         }
     }
@@ -195,7 +195,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         item.setCount(8);
                         player.getInventory().setItem(4, item);
 
-                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_SAFE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_SAFE));
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_SAFE);
                         break;
                     case 22:
                         player.getLevel().addParticle(new LavaParticle(player));
@@ -205,14 +205,14 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         item.setCount(16);
                         player.getInventory().setItem(5, item);
 
-                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_DANGER, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_DANGER));
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_DANGER);
                         break;
                     case 23:
                         Tools.spawnFirework(player);
                         item.setCount(32);
                         player.getInventory().setItem(6, item);
 
-                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_FIREWORKS, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_FIREWORKS));
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_FIREWORKS);
                         break;
                     case 24:
                         EntityLightning lightning = new EntityLightning(player.chunk, Entity.getDefaultNBT(player));
@@ -222,7 +222,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         item.setCount(32);
                         player.getInventory().setItem(7, item);
 
-                        room.getPlayer(player).addIntegral(IntegralConfig.IntegralType.TAUNT_LIGHTNING, IntegralConfig.getIntegral(IntegralConfig.IntegralType.TAUNT_LIGHTNING));
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_LIGHTNING);
                         break;
                     case 31:
                         ArrayList<Player> list = new ArrayList<>();

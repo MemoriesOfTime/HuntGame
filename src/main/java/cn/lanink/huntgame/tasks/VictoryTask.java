@@ -3,7 +3,10 @@ package cn.lanink.huntgame.tasks;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
-import cn.lanink.huntgame.room.*;
+import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerData;
+import cn.lanink.huntgame.room.PlayerIdentity;
+import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.utils.FormHelper;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
@@ -27,30 +30,27 @@ public class VictoryTask extends PluginTask<HuntGame> {
     public VictoryTask(HuntGame owner, BaseRoom room, PlayerIdentity victory) {
         super(owner);
         this.room = room;
-        this.victoryTime = 10;
+        this.victoryTime = 30;
         this.victory = victory == PlayerIdentity.CHANGE_HUNTER ? PlayerIdentity.HUNTER : victory;
         for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
             this.room.getPlayers().keySet().forEach(player -> entry.getKey().showPlayer(player));
             this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
                     new Vector3[] { entry.getKey().floor() }); //清除假方块
 
-            //TODO 改为GUI
+            //GUI显示本轮游戏详情
             if (HuntGame.debug) { ///TODO 开发完成后去除
                 Language language = HuntGame.getInstance().getLanguage(entry.getKey());
                 StringBuilder content = new StringBuilder();
                 PlayerData playerData = room.getPlayer(entry.getKey());
-                if (victory == PlayerIdentity.HUNTER) {
-                    content.append("猎人获得了胜利!\n\n");
-                }else {
-                    content.append("猎物获得了胜利!\n\n");
-                }
-                content.append("你在本次游戏一共获得了 ").append(playerData.getAllIntegral()).append(" 分\n");
-                content.append("积分明细：\n  基础得分： ").append(playerData.getIntegral(IntegralConfig.IntegralType.BASE)).append(" 分\n");
-                content.append("  击杀猎物： ").append(playerData.getIntegral(IntegralConfig.IntegralType.KILL_PREY)).append(" 分\n");
-                content.append("  安全嘲讽： ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_SAFE)).append(" 分\n");
-                content.append("  危险嘲讽： ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_DANGER)).append(" 分\n");
-                content.append("  烟花嘲讽： ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_FIREWORKS)).append(" 分\n");
-                content.append("  闪电嘲讽： ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_LIGHTNING)).append(" 分\n");
+                content.append(Tools.getShowIdentity(victory, entry.getKey())).append("获得了本轮游戏的胜利!\n\n");
+                /*content.append("你在本次游戏一共获得了 ").append(playerData.getAllIntegral()).append(" 分\n");
+                content.append("积分明细：\n  基础得分： ").append(playerData.getIntegral(IntegralConfig.IntegralType.BASE)).append(" 分\n");*/
+                /*content.append("  击杀猎物：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.KILL_PREY)).append(" 分\n");
+                content.append("  安全嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_SAFE)).append(" 分\n");
+                content.append("  危险嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_DANGER)).append(" 分\n");
+                content.append("  烟花嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_FIREWORKS)).append(" 分\n");
+                content.append("  闪电嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_LIGHTNING)).append(" 分\n");
+                content.append("  弓箭击中猎人：").append(playerData.getIntegral(IntegralConfig.IntegralType.PREY_BOW_HIT_HUNTER)).append(" 分\n");*/
 
                 AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(FormHelper.PLUGIN_NAME, content.toString());
                 simple.addButton(new ElementButton(

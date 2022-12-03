@@ -186,7 +186,7 @@ public class BlockModeRoom extends BaseRoom {
             for (String string : this.huntGame.getLanguage(entry.getKey()).translateString("gameTimeScoreBoard").split("\n")) {
                 ms.add(string.replace("%mode%", Tools.getShowIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
-                        .replace("%time%", this.gameTime + ""));
+                        .replace("%time%", Tools.formatCountdown(this.gameTime)));
             }
             this.huntGame.getScoreboard().showScoreboard(entry.getKey(), this.huntGame.getLanguage(entry.getKey()).translateString("scoreBoardTitle"), ms);
         }

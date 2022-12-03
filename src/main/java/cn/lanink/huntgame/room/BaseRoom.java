@@ -247,7 +247,6 @@ public abstract class BaseRoom extends RoomConfig {
         this.assignIdentity();
 
         for (Player player: this.players.keySet()) {
-            this.getPlayer(player).addIntegral(IntegralConfig.IntegralType.BASE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.BASE));
 
             if (this.getPlayerIdentity(player) != PlayerIdentity.PREY) {
                 continue;
@@ -370,7 +369,7 @@ public abstract class BaseRoom extends RoomConfig {
         if (this.gameTime > 0) {
             this.gameTime--;
             int x = 0;
-            boolean hunters = false;
+            boolean hasHunter = false;
             for (PlayerData playerData : this.players.values()) {
                 switch (playerData.getIdentity()) {
                     case PREY:
@@ -378,11 +377,11 @@ public abstract class BaseRoom extends RoomConfig {
                         break;
                     case HUNTER:
                     case CHANGE_HUNTER:
-                        hunters = true;
+                        hasHunter = true;
                         break;
                 }
             }
-            if (!hunters) {
+            if (!hasHunter) {
                 this.victory(PlayerIdentity.PREY);
             }else if (x <= 0) {
                 this.victory(PlayerIdentity.HUNTER);

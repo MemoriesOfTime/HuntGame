@@ -1,1 +1,30 @@
-#TODO
+header: |-
+  HuntGame 插件配置文件
+footer: |-
+  你已经到达配置文件的底部啦
+
+ConfigVersion: |-
+  -
+  -
+  配置文件的版本号
+  警告！ 除非您明确知道您在干什么，否则不要尝试改动此项配置！
+
+defaultLanguage: "插件默认语言设置"
+#languageMap: "Unkown"
+cmdUser: "HuntGame命令"
+cmdAdmin: "HuntGame管理命令"
+cmdWhitelist: "可以在游戏房间中使用的命令"
+QuitRoom.cmd: "退出房间执行命令"
+AutomaticNextRound: "游戏结束后自动加入下一局"
+
+victoryCmd: "玩家胜利执行命令"
+defeatCmd: "玩家失败执行命令"
+
+integral: "游戏积分"
+integral.base: "参与游戏基础积分"
+integral.prey_taunt_safe: "安全嘲讽积分"
+integral.prey_taunt_danger: "危险嘲讽积分"
+integral.prey_taunt_fireworks: "烟花嘲讽积分"
+integral.prey_taunt_lightning: "闪电嘲讽积分"
+integral.hunter_kill_prey: "猎人击杀猎物积分"
+integral.prey_bow_hit_hunter: "猎物弓箭命中猎人积分"

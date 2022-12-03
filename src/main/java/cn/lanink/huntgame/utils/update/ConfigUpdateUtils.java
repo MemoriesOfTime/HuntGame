@@ -26,13 +26,28 @@ public class ConfigUpdateUtils {
 
         config.set("ConfigVersion", "1.2.2");
 
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        map.put("base", "100");
-        map.put("taunt-safe", "1");
-        map.put("taunt-danger", "2");
-        map.put("taunt-fireworks", "3");
-        map.put("taunt-lightning", "5");
-        map.put("killPrey", "100");
+        LinkedHashMap<String, Integer> map = config.get("integral", new LinkedHashMap<>());
+        /*if (!map.containsKey("base")) {
+            map.put("base", 100);
+        }*/
+        if (!map.containsKey("prey_taunt_safe")) {
+            map.put("prey_taunt_safe", 1);
+        }
+        if (!map.containsKey("prey_taunt_danger")) {
+            map.put("prey_taunt_danger", 2);
+        }
+        if (!map.containsKey("prey_taunt_fireworks")) {
+            map.put("prey_taunt_fireworks", 3);
+        }
+        if (!map.containsKey("prey_taunt_lightning")) {
+            map.put("prey_taunt_lightning", 5);
+        }
+        if (!map.containsKey("hunter_kill_prey")) {
+            map.put("hunter_kill_prey", 100);
+        }
+        if (!map.containsKey("prey_bow_hit_hunter")) {
+            map.put("prey_bow_hit_hunter", 10);
+        }
         config.set("integral", map);
 
         config.save();
