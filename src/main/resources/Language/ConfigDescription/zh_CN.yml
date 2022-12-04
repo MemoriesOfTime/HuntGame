@@ -21,7 +21,7 @@ victoryCmd: "玩家胜利执行命令"
 defeatCmd: "玩家失败执行命令"
 
 integral: "游戏积分"
-integral.base: "参与游戏基础积分"
+integral.complete_game: "参与游戏基础积分"
 integral.prey_taunt_safe: "安全嘲讽积分"
 integral.prey_taunt_danger: "危险嘲讽积分"
 integral.prey_taunt_fireworks: "烟花嘲讽积分"

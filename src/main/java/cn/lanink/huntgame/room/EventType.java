@@ -50,7 +50,12 @@ public enum EventType {
     /**
      * 猎人使用追踪器
      */
-    HUNTER_USE_TRACKER(false);
+    HUNTER_USE_TRACKER(false),
+
+    /**
+     * 参与游戏
+     */
+    COMPLETE_GAME(true);
 
     @Getter
     private final boolean hasIntegral;

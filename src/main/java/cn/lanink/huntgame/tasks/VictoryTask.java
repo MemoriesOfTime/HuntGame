@@ -7,8 +7,6 @@ import cn.lanink.huntgame.room.*;
 import cn.lanink.huntgame.utils.FormHelper;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
-import cn.nukkit.form.element.ElementButton;
-import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -36,30 +34,27 @@ public class VictoryTask extends PluginTask<HuntGame> {
 
             Language language = HuntGame.getInstance().getLanguage(entry.getKey());
             //GUI显示本轮游戏详情
-            if (HuntGame.debug) { ///TODO 开发完成后去除
-                StringBuilder content = new StringBuilder();
-                PlayerData playerData = room.getPlayer(entry.getKey());
-                content.append(Tools.getShowIdentity(victory, entry.getKey())).append("获得了本轮游戏的胜利!\n\n");
-                content.append("你在本次游戏一共获得了 ").append(playerData.getAllIntegral()).append(" 分\n");
-                content.append("积分明细：\n");
-                for (EventType eventType : EventType.values()) {
-                    if (!eventType.isHasIntegral()) {
-                        continue;
-                    }
-                    int count = playerData.getEventCount(eventType);
-                    if (count > 0) {
-                        content.append("  ").append(language.translateString("event-" + eventType.name().toLowerCase()))
-                                .append(" : ").append(count * IntegralConfig.getIntegral(eventType)).append(" 分\n");
-                    }
+            PlayerData playerData = room.getPlayer(entry.getKey());
+            StringBuilder content = new StringBuilder();
+            for (EventType eventType : EventType.values()) {
+                if (!eventType.isHasIntegral()) {
+                    continue;
                 }
-
-                AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(FormHelper.PLUGIN_NAME, content.toString());
-                simple.addButton(new ElementButton(
-                        language.translateString("buttonOK"),
-                        new ElementButtonImageData("path", "textures/ui/confirm")
-                ));
-                simple.showToPlayer(entry.getKey());
+                int count = playerData.getEventCount(eventType);
+                if (count > 0) {
+                    content.append("  ").append(language.translateString("event-" + eventType.name().toLowerCase()))
+                            .append(" : ").append(count * IntegralConfig.getIntegral(eventType)).append(" 分\n");
+                }
             }
+            new AdvancedFormWindowSimple(
+                    FormHelper.PLUGIN_NAME,
+                    language.translateString(
+                            "gui_victory_content",
+                            Tools.getShowIdentity(victory, entry.getKey()),
+                            playerData.getAllIntegral(),
+                            content
+                    )
+            ).showToPlayer(entry.getKey());
 
             if (victory == PlayerIdentity.HUNTER) {
                 entry.getKey().sendTitle(language.translateString("titleVictoryHuntersTitle"),

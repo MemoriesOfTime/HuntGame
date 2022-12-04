@@ -35,7 +35,7 @@ defeatCmd:
 #游戏积分
 integral:
   #参与游戏基础积分
-  #base: 100
+  complete_game: 100
   #安全嘲讽积分
   prey_taunt_safe: 1
   #危险嘲讽积分

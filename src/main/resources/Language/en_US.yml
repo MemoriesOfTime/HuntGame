@@ -92,6 +92,15 @@ waitTimeBottom: "§aThere is: %time% seconds to start!"
 huntersDispatchedTimeBottom: "§aHunters will be dispatched in §e%time%§a seconds"
 respawnTimeBottom: "§aWill be resurrected as a hunter in %time% seconds!"
 huntersKillPrey: "%damagePlayer% Caught %player%"
+
+gui_victory_content: |
+  %1% got the win of this round!
+  
+  
+  You scored a total of %2% integral for this game
+  Breakdown of scores:
+  %3%
+
 userMenuButton1: "§eJoin a room randomly"
 userMenuButton2: "§eQuit this room"
 userMenuButton3: "§eList all the rooms"

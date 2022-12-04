@@ -94,6 +94,15 @@ gameTimeScoreBoard: |-
 huntersDispatchedTimeBottom: "§a猎人将在§e%time%§a秒后出动"
 respawnTimeBottom: "§a将在%time%秒后复活成为猎人！"
 huntersKillPrey: "%damagePlayer% 抓到了 %player%"
+
+gui_victory_content: |
+  %1% hat die Runde gewonnen!
+  
+  
+  Du hast in diesem Spiel insgesamt %2% der Punkte erreicht!
+  Aufschlüsselung der Punkte:
+  %3%
+
 userMenuButton1: "§e随机加入房间"
 userMenuButton2: "§e退出当前房间"
 userMenuButton3: "§e查看房间列表"
@@ -139,6 +148,7 @@ animal-name-Sheep: "羊"
 animal-name-Rabbit: "兔子"
 animal-name-Wolf: "狼"
 
+event-complete_game: "参与游戏"
 event-prey_switched_camouflage: "猎物切换伪装"
 event-prey_bow_hit_hunter: "猎物用弓箭射中猎人"
 event-prey_taunt_safe: "猎物使用安全嘲讽"

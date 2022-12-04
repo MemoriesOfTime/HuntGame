@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 public class ConfigUpdateUtils {
 
     public static void updateConfig() {
-        //update1_X_X_To_1_2_2();
+        update1_X_X_To_1_2_2();
     }
 
     private static void update1_X_X_To_1_2_2() {
@@ -27,9 +27,9 @@ public class ConfigUpdateUtils {
         config.set("ConfigVersion", "1.2.2");
 
         LinkedHashMap<String, Integer> map = config.get("integral", new LinkedHashMap<>());
-        /*if (!map.containsKey("base")) {
-            map.put("base", 100);
-        }*/
+        if (!map.containsKey("complete_game")) {
+            map.put("complete_game", 100);
+        }
         if (!map.containsKey("prey_taunt_safe")) {
             map.put("prey_taunt_safe", 1);
         }

@@ -247,7 +247,6 @@ public abstract class BaseRoom extends RoomConfig {
         this.assignIdentity();
 
         for (Player player: this.players.keySet()) {
-
             if (this.getPlayerIdentity(player) != PlayerIdentity.PREY) {
                 continue;
             }
@@ -633,6 +632,7 @@ public abstract class BaseRoom extends RoomConfig {
             this.setStatus(RoomStatus.VICTORY);
             for (Player player : this.players.keySet()) {
                 player.getInventory().setItem(8, Tools.getHuntGameItem(10, player));
+                this.getPlayer(player).addEventCount(EventType.COMPLETE_GAME);
             }
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.huntGame,
                     new VictoryTask(this.huntGame, this, victoryMode), 20);
