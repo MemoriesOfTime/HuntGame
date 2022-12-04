@@ -86,7 +86,7 @@ waitScoreBoard: |-
 gameTimeScoreBoard: |-
     §l§aRolle:§e %mode%
     §l§aAnzahl der Versteckten:§e %playerNumber%
-    §l§aRestzeit:§e %time% §aSekunden
+    §l§aRestzeit:§e %time%
 waitBottom: "§cBitte auf weiter Spieler warten"
 waitTimeBottom: "§aDas Spiel beginnt in: §e%time% §aSek.!"
 huntersDispatchedTimeBottom: "§aDer Sucher Startet in §e%time%§aSek."
@@ -127,13 +127,22 @@ item-name-taunt-fireworks: "Feuerwerk verspotten (Google Translate)"
 item-name-taunt-lightning: "Blitzverspottung (Google Translate)"
 item-name-preyTracker: "Beute-Tracker (Google Translate)"
 
-#TODO translation
-animal-name-Fox: "Fox"
-animal-name-Horse: "Horse"
-animal-name-Cat: "Cat"
-animal-name-Cow: "Cow"
+animal-name-Fox: "Fuchs"
+animal-name-Horse: "Pferd"
+animal-name-Cat: "Katze"
+animal-name-Cow: "Kuh"
 animal-name-Panda: "Panda"
-animal-name-Pig: "Pig"
-animal-name-Sheep: "Sheep"
-animal-name-Rabbit: "Rabbit"
+animal-name-Pig: "Schwein"
+animal-name-Sheep: "Schafe"
+animal-name-Rabbit: "Kaninchen"
 animal-name-Wolf: "Wolf"
+
+event-prey_switched_camouflage: "Beutetier schaltet Tarnung um"
+event-prey_bow_hit_hunter: "Beute traf Jäger mit Pfeil und Bogen"
+event-prey_taunt_safe: "Beute verwendet sicheren Spott"
+event-prey_taunt_danger: "Beute benutzt Gefahrenspott"
+event-prey_taunt_fireworks: "Beute verwendet Feuerwerksspott"
+event-prey_taunt_lightning: "Beute verwendet Blitzspott"
+event-hunter_kill_prey: "Jäger tötet Beute"
+event-hunter_bow_hit_prey: "Jäger trifft Beute mit Pfeil und Bogen"
+event-hunter_use_tracker: "Der Jäger benutzt einen Tracker"

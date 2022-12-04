@@ -90,7 +90,7 @@ waitTimeBottom: "§a游戏还有: §e%time% §a秒开始!"
 gameTimeScoreBoard: |-
   §l§a当前身份:§e %mode%
   §l§a存活人数:§e %playerNumber%
-  §l§a剩余时间:§e %time% §a秒
+  §l§a剩余时间:§e %time%
 huntersDispatchedTimeBottom: "§a猎人将在§e%time%§a秒后出动"
 respawnTimeBottom: "§a将在%time%秒后复活成为猎人！"
 huntersKillPrey: "%damagePlayer% 抓到了 %player%"
@@ -138,3 +138,13 @@ animal-name-Pig: "猪"
 animal-name-Sheep: "羊"
 animal-name-Rabbit: "兔子"
 animal-name-Wolf: "狼"
+
+event-prey_switched_camouflage: "猎物切换伪装"
+event-prey_bow_hit_hunter: "猎物用弓箭射中猎人"
+event-prey_taunt_safe: "猎物使用安全嘲讽"
+event-prey_taunt_danger: "猎物使用危险嘲讽"
+event-prey_taunt_fireworks: "猎物使用烟花嘲讽"
+event-prey_taunt_lightning: "猎物使用闪电嘲讽"
+event-hunter_kill_prey: "猎人杀死猎物"
+event-hunter_bow_hit_prey: "猎人用弓箭射中猎物"
+event-hunter_use_tracker: "猎人使用追踪器"

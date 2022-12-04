@@ -86,7 +86,7 @@ waitScoreBoard: |-
 gameTimeScoreBoard: |-
   §l§aIdentity:§e %mode%
   §l§aSurvivors:§e %playerNumber%
-  §l§aTime:§e %time% §as
+  §l§aTime:§e %time%
 waitBottom: "§cWaiting for players to join"
 waitTimeBottom: "§aThere is: %time% seconds to start!"
 huntersDispatchedTimeBottom: "§aHunters will be dispatched in §e%time%§a seconds"
@@ -136,3 +136,13 @@ animal-name-Pig: "Pig"
 animal-name-Sheep: "Sheep"
 animal-name-Rabbit: "Rabbit"
 animal-name-Wolf: "Wolf"
+
+event-prey_switched_camouflage: "Prey switches camouflage"
+event-prey_bow_hit_hunter: "The prey shoots the hunter with a bow and arrow"
+event-prey_taunt_safe: "Prey uses safety taunts"
+event-prey_taunt_danger: "Prey uses dangerous taunts"
+event-prey_taunt_fireworks: "Prey uses fireworks to taunt"
+event-prey_taunt_lightning: "Prey uses lightning taunts"
+event-hunter_kill_prey: "The hunter kills the prey"
+event-hunter_bow_hit_prey: "The hunter shoots his prey with a bow and arrow"
+event-hunter_use_tracker: "Hunters use trackers"

@@ -3,10 +3,7 @@ package cn.lanink.huntgame.tasks;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
-import cn.lanink.huntgame.room.BaseRoom;
-import cn.lanink.huntgame.room.PlayerData;
-import cn.lanink.huntgame.room.PlayerIdentity;
-import cn.lanink.huntgame.room.RoomStatus;
+import cn.lanink.huntgame.room.*;
 import cn.lanink.huntgame.utils.FormHelper;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
@@ -37,20 +34,24 @@ public class VictoryTask extends PluginTask<HuntGame> {
             this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
                     new Vector3[] { entry.getKey().floor() }); //清除假方块
 
+            Language language = HuntGame.getInstance().getLanguage(entry.getKey());
             //GUI显示本轮游戏详情
             if (HuntGame.debug) { ///TODO 开发完成后去除
-                Language language = HuntGame.getInstance().getLanguage(entry.getKey());
                 StringBuilder content = new StringBuilder();
                 PlayerData playerData = room.getPlayer(entry.getKey());
                 content.append(Tools.getShowIdentity(victory, entry.getKey())).append("获得了本轮游戏的胜利!\n\n");
-                /*content.append("你在本次游戏一共获得了 ").append(playerData.getAllIntegral()).append(" 分\n");
-                content.append("积分明细：\n  基础得分： ").append(playerData.getIntegral(IntegralConfig.IntegralType.BASE)).append(" 分\n");*/
-                /*content.append("  击杀猎物：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.KILL_PREY)).append(" 分\n");
-                content.append("  安全嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_SAFE)).append(" 分\n");
-                content.append("  危险嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_DANGER)).append(" 分\n");
-                content.append("  烟花嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_FIREWORKS)).append(" 分\n");
-                content.append("  闪电嘲讽：   ").append(playerData.getIntegral(IntegralConfig.IntegralType.TAUNT_LIGHTNING)).append(" 分\n");
-                content.append("  弓箭击中猎人：").append(playerData.getIntegral(IntegralConfig.IntegralType.PREY_BOW_HIT_HUNTER)).append(" 分\n");*/
+                content.append("你在本次游戏一共获得了 ").append(playerData.getAllIntegral()).append(" 分\n");
+                content.append("积分明细：\n");
+                for (EventType eventType : EventType.values()) {
+                    if (!eventType.isHasIntegral()) {
+                        continue;
+                    }
+                    int count = playerData.getEventCount(eventType);
+                    if (count > 0) {
+                        content.append("  ").append(language.translateString("event-" + eventType.name().toLowerCase()))
+                                .append(" : ").append(count * IntegralConfig.getIntegral(eventType)).append(" 分\n");
+                    }
+                }
 
                 AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(FormHelper.PLUGIN_NAME, content.toString());
                 simple.addButton(new ElementButton(
@@ -61,19 +62,19 @@ public class VictoryTask extends PluginTask<HuntGame> {
             }
 
             if (victory == PlayerIdentity.HUNTER) {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).translateString("titleVictoryHuntersTitle"),
+                entry.getKey().sendTitle(language.translateString("titleVictoryHuntersTitle"),
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).translateString("victoryHuntersBottom"));
+                entry.getKey().sendActionBar(language.translateString("victoryHuntersBottom"));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
-                        owner.getLanguage(entry.getKey()).translateString("scoreBoardTitle"),
-                        Arrays.asList(owner.getLanguage(entry.getKey()).translateString("victoryHuntersScoreBoard").split("\n")));
+                        language.translateString("scoreBoardTitle"),
+                        Arrays.asList(language.translateString("victoryHuntersScoreBoard").split("\n")));
             }else {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).translateString("titleVictoryPreySubtitle"),
+                entry.getKey().sendTitle(language.translateString("titleVictoryPreySubtitle"),
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).translateString("victoryPreyBottom"));
+                entry.getKey().sendActionBar(language.translateString("victoryPreyBottom"));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
-                        owner.getLanguage(entry.getKey()).translateString("scoreBoardTitle"),
-                        Arrays.asList(owner.getLanguage(entry.getKey()).translateString("victoryPreyScoreBoard").split("\n")));
+                        language.translateString("scoreBoardTitle"),
+                        Arrays.asList(language.translateString("victoryPreyScoreBoard").split("\n")));
             }
         }
     }
