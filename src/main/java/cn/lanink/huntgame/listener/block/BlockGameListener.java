@@ -109,10 +109,10 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         BlockModeRoom room = this.getListenerRoom(event.getTo().getLevel());
-        if (room == null || room.getStatus() != RoomStatus.GAME) {
+        Player player = event.getPlayer();
+        if (room == null || room.getStatus() != RoomStatus.GAME || !room.isPlaying(player)) {
             return;
         }
-        Player player = event.getPlayer();
         if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
             Level level = player.getLevel();
             Set<Player> players = new HashSet<>(room.getPlayers().keySet());
