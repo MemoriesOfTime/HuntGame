@@ -347,19 +347,18 @@ public class HuntGame extends PluginBase {
         this.getLogger().info(this.getLanguage().translateString("startLoadingRoom"));
         File[] s = new File(this.getDataFolder() + "/Rooms").listFiles();
         if (s != null) {
-            for (File file1 : s) {
-                String[] fileName = file1.getName().split("\\.");
+            for (File file : s) {
+                String[] fileName = file.getName().split("\\.");
                 if (fileName.length > 0) {
-                    Config config = getRoomConfig(fileName[0]);
+                    String levelName = fileName[0];
+                    Config config = getRoomConfig(levelName);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
                             "".equals(config.getString("waitSpawn", "").trim()) ||
-                            config.getStringList("randomSpawn").size() == 0 ||
-                            "".equals(config.getString("world", "").trim())) {
+                            config.getStringList("randomSpawn").size() == 0) {
                         this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByConfig").replace("%name%", fileName[0]));
                         continue;
                     }
-                    String levelName = config.getString("world");
                     if (this.getServer().getLevelByName(levelName) == null && !getServer().loadLevel(levelName)) {
                         this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByLevel").replace("%name%", fileName[0]));
                         continue;
@@ -369,8 +368,8 @@ public class HuntGame extends PluginBase {
                         if (!ROOM_CLASS.containsKey(gameMode)) {
                             gameMode = "block";
                         }
-                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Config.class);
-                        BaseRoom baseRoom = constructor.newInstance(config);
+                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
+                        BaseRoom baseRoom = constructor.newInstance(this.getServer().getLevelByName(levelName), config);
                         baseRoom.setGameName(gameMode);
                         this.rooms.put(fileName[0], baseRoom);
                         this.getLogger().info(this.getLanguage().translateString("roomLoadedSuccess").replace("%name%", fileName[0]));

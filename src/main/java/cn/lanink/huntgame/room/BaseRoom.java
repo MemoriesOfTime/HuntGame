@@ -16,6 +16,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -56,10 +57,11 @@ public abstract class BaseRoom extends RoomConfig {
     /**
      * 初始化
      *
+     * @param level 游戏世界
      * @param config 配置文件
      */
-    public BaseRoom(@NotNull Config config) {
-        super(config);
+    public BaseRoom(@NotNull Level level, @NotNull Config config) {
+        super(level, config);
 
         this.status = RoomStatus.TASK_NEED_INITIALIZED;
         this.initData();

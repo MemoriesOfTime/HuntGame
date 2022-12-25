@@ -12,9 +12,11 @@ import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,10 +43,11 @@ public class AnimalModeRoom extends BaseRoom {
     /**
      * 初始化
      *
+     * @param level 游戏世界
      * @param config 配置文件
      */
-    public AnimalModeRoom(Config config) {
-        super(config);
+    public AnimalModeRoom(@NotNull Level level, @NotNull Config config) {
+        super(level, config);
     }
 
     @Override

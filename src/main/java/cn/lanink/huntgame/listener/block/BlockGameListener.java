@@ -128,8 +128,11 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                 entityCamouflageBlock.setPosition(newPos);
                 entityCamouflageBlock.respawnToAll();
             }
-            level.sendBlocks(players.toArray(new Player[0]), new Vector3[] {
-                    event.getFrom().add(0, 0.5, 0).floor(), block });
+            HashSet<Vector3> set = new HashSet<>();
+            set.add(block);
+            set.add(event.getFrom().add(0, 0.5, 0).floor());
+            set.add(event.getFrom().floor());
+            level.sendBlocks(players.toArray(new Player[0]), set.toArray(new Vector3[0]));
         }
     }
 

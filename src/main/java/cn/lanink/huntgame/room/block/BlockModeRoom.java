@@ -11,12 +11,14 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -37,10 +39,11 @@ public class BlockModeRoom extends BaseRoom {
     /**
      * 初始化
      *
+     * @param level 游戏世界
      * @param config 配置文件
      */
-    public BlockModeRoom(Config config) {
-        super(config);
+    public BlockModeRoom(@NotNull Level level, @NotNull Config config) {
+        super(level, config);
     }
 
     public List<String> getListeners() {
