@@ -38,7 +38,7 @@ public class AnimalSpawnTask extends PluginTask<HuntGame> {
             if (this.room.getAnimalSpawnList().size() > 200) {
                 break;
             }
-            if (this.room.getPlayer(player) != PlayerIdentity.PREY) {
+            if (this.room.getPlayer(player).getIdentity() != PlayerIdentity.PREY) {
                 continue;
             }
             int count = 0;

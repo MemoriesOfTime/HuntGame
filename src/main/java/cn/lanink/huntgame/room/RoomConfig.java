@@ -2,7 +2,6 @@ package cn.lanink.huntgame.room;
 
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.huntgame.HuntGame;
-import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
@@ -33,8 +32,8 @@ public class RoomConfig implements IRoom {
 
     protected final Position waitSpawn;
 
-    public RoomConfig(@NotNull Config config) {
-        this.level = Server.getInstance().getLevelByName(config.getString("world"));
+    public RoomConfig(@NotNull Level level, @NotNull Config config) {
+        this.level = level;
 
         this.minPlayers = config.getInt("minPlayers", 3);
         if (this.minPlayers < 2) {

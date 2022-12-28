@@ -5,6 +5,8 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.EntityCamouflageBlock;
 import cn.lanink.huntgame.entity.EntityCamouflageBlockDamage;
+import cn.lanink.huntgame.room.EventType;
+import cn.lanink.huntgame.room.PlayerData;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.room.RoomStatus;
 import cn.lanink.huntgame.room.block.BlockInfo;
@@ -15,8 +17,11 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
@@ -45,7 +50,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (room.getPlayer(player) == PlayerIdentity.PREY) {
+        if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
             if (player.getInventory().getItemInHand().getId() == 280) {
                 if (this.clickToCool.contains(player)) {
                     return;
@@ -68,6 +73,8 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                     Item item = Tools.getHuntGameItem(20, player);
                     item.setCount(room.getCamouflageCoolingTime()); //5秒冷却
                     player.getInventory().setItem(0, item);
+
+                    room.getPlayer(player).addEventCount(EventType.PREY_SWITCHED_CAMOUFLAGE);
                 }else {
                     player.sendTitle("", language.translateString("subtitle-cannotPretendToBeThisBlock"));
                 }
@@ -75,7 +82,7 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player) {
             Player damager = (Player) event.getDamager();
@@ -86,16 +93,38 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             event.setCancelled(true);
             Entity entity = event.getEntity();
             Item item = damager.getInventory().getItemInHand();
-            if ((room.getPlayer(damager) == PlayerIdentity.HUNTER || room.getPlayer(damager) == PlayerIdentity.CHANGE_HUNTER)
+            if ((room.getPlayer(damager).getIdentity() == PlayerIdentity.HUNTER || room.getPlayer(damager).getIdentity() == PlayerIdentity.CHANGE_HUNTER)
                     && item.getId() == 276 &&
                     entity instanceof EntityCamouflageBlockDamage) {
                 Player player = ((EntityCamouflageBlockDamage) entity).getMaster();
-                if (room.getPlayer(player) == PlayerIdentity.PREY) {
-                    room.playerDeath(player);
-                    for (Player p : room.getPlayers().keySet()) {
-                        p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
-                                .replace("%damagePlayer%", damager.getName())
-                                .replace("%player%", player.getName()));
+                if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
+                    event.setCancelled(false);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (event.getEntity() instanceof EntityCamouflageBlockDamage) {
+            EntityCamouflageBlockDamage entity = (EntityCamouflageBlockDamage) event.getEntity();
+            BlockModeRoom room = this.getListenerRoom(entity.getLevel());
+            if (room == null) {
+                return;
+            }
+            if (entity.getMaster() != null) {
+                room.playerDeath(entity.getMaster());
+                EntityDamageEvent cause = entity.getLastDamageCause();
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    Entity damager = ((EntityDamageByEntityEvent) cause).getDamager();
+                    if (damager instanceof Player) {
+                        PlayerData damagerPlayerData = room.getPlayer((Player) damager);
+                        damagerPlayerData.addEventCount(EventType.HUNTER_KILL_PREY);
+                        for (Player p : room.getPlayers().keySet()) {
+                            p.sendMessage(this.huntGame.getLanguage(p).translateString("huntersKillPrey")
+                                    .replace("%damagePlayer%", damager.getName())
+                                    .replace("%player%", entity.getMaster().getName()));
+                        }
                     }
                 }
             }
@@ -105,11 +134,11 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         BlockModeRoom room = this.getListenerRoom(event.getTo().getLevel());
-        if (room == null || room.getStatus() != RoomStatus.GAME) {
+        Player player = event.getPlayer();
+        if (room == null || room.getStatus() != RoomStatus.GAME || !room.isPlaying(player)) {
             return;
         }
-        Player player = event.getPlayer();
-        if (room.getPlayer(player) == PlayerIdentity.PREY) {
+        if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
             Level level = player.getLevel();
             Set<Player> players = new HashSet<>(room.getPlayers().keySet());
             players.remove(player);
@@ -124,8 +153,11 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
                 entityCamouflageBlock.setPosition(newPos);
                 entityCamouflageBlock.respawnToAll();
             }
-            level.sendBlocks(players.toArray(new Player[0]), new Vector3[] {
-                    event.getFrom().add(0, 0.5, 0).floor(), block });
+            HashSet<Vector3> set = new HashSet<>();
+            set.add(block);
+            set.add(event.getFrom().add(0, 0.5, 0).floor());
+            set.add(event.getFrom().floor());
+            level.sendBlocks(players.toArray(new Player[0]), set.toArray(new Vector3[0]));
         }
     }
 

@@ -4,6 +4,7 @@ import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.ConfigUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.VersionUtils;
 import cn.lanink.huntgame.command.AdminCommand;
@@ -14,12 +15,13 @@ import cn.lanink.huntgame.listener.animal.AnimalGameListener;
 import cn.lanink.huntgame.listener.block.BlockGameListener;
 import cn.lanink.huntgame.listener.defaults.DefaultGameListener;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.IntegralConfig;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
 import cn.lanink.huntgame.tasks.FStageTask;
-import cn.lanink.huntgame.ui.GuiListener;
 import cn.lanink.huntgame.utils.MetricsLite;
 import cn.lanink.huntgame.utils.RsNpcXVariable;
+import cn.lanink.huntgame.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -38,7 +40,6 @@ import java.util.*;
  */
 public class HuntGame extends PluginBase {
 
-    public static final String VERSION = "?";
     public static boolean debug = false;
 
     private static HuntGame huntGame;
@@ -83,7 +84,11 @@ public class HuntGame extends PluginBase {
         huntGame = this;
 
         this.saveDefaultConfig();
+        ConfigUpdateUtils.updateConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
+        Config configDescription = new Config();
+        configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
+        ConfigUtils.addDescription(this.config, configDescription);
 
         if (config.getBoolean("debug", false)) {
             debug = true;
@@ -105,7 +110,7 @@ public class HuntGame extends PluginBase {
             this.saveResource("Language/" + l + ".yml", false);
         }
         File[] files = new File(this.getDataFolder() + "/Language").listFiles();
-        if (files != null && files.length > 0) {
+        if (files != null) {
             for (File file : files) {
                 if(file.isFile()) {
                     String name = file.getName().split("\\.")[0];
@@ -136,11 +141,11 @@ public class HuntGame extends PluginBase {
     @Override
     public void onEnable() {
         this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        this.getLogger().info("§l§eVersion: " + VERSION);
+        this.getLogger().info("§l§eVersion: " + this.getVersion());
 
         //检查依赖版本
         try {
-            String needGameCoreVersion = "1.5.6";
+            String needGameCoreVersion = "1.6.5";
             if (!VersionUtils.checkMinimumVersion(GameCore.getInstance(), needGameCoreVersion)) {
                 throw new RuntimeException("[MemoriesOfTime-GameCore] plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
             }
@@ -175,18 +180,18 @@ public class HuntGame extends PluginBase {
             this.cmdWhitelist.add(cmd.toLowerCase());
         }
 
+        IntegralConfig.init(this.config);
+
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
-        this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
 
         this.loadAllListener();
 
         this.loadRooms();
 
-        //注册RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
             VariableManage.addVariableV2("HuntGame", RsNpcXVariable.class);
@@ -350,20 +355,19 @@ public class HuntGame extends PluginBase {
     private void loadRooms() {
         this.getLogger().info(this.getLanguage().translateString("startLoadingRoom"));
         File[] s = new File(this.getDataFolder() + "/Rooms").listFiles();
-        if (s != null && s.length > 0) {
-            for (File file1 : s) {
-                String[] fileName = file1.getName().split("\\.");
+        if (s != null) {
+            for (File file : s) {
+                String[] fileName = file.getName().split("\\.");
                 if (fileName.length > 0) {
-                    Config config = getRoomConfig(fileName[0]);
+                    String levelName = fileName[0];
+                    Config config = getRoomConfig(levelName);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
                             "".equals(config.getString("waitSpawn", "").trim()) ||
-                            config.getStringList("randomSpawn").size() == 0 ||
-                            "".equals(config.getString("world", "").trim())) {
+                            config.getStringList("randomSpawn").size() == 0) {
                         this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByConfig").replace("%name%", fileName[0]));
                         continue;
                     }
-                    String levelName = config.getString("world");
                     if (this.getServer().getLevelByName(levelName) == null && !getServer().loadLevel(levelName)) {
                         this.getLogger().warning(this.getLanguage().translateString("roomLoadedFailureByLevel").replace("%name%", fileName[0]));
                         continue;
@@ -373,8 +377,8 @@ public class HuntGame extends PluginBase {
                         if (!ROOM_CLASS.containsKey(gameMode)) {
                             gameMode = "block";
                         }
-                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Config.class);
-                        BaseRoom baseRoom = constructor.newInstance(config);
+                        Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
+                        BaseRoom baseRoom = constructor.newInstance(this.getServer().getLevelByName(levelName), config);
                         baseRoom.setGameName(gameMode);
                         this.rooms.put(fileName[0], baseRoom);
                         this.getLogger().info(this.getLanguage().translateString("roomLoadedSuccess").replace("%name%", fileName[0]));
@@ -410,6 +414,12 @@ public class HuntGame extends PluginBase {
     public void reLoadRooms() {
         this.unloadRooms();
         this.loadRooms();
+    }
+
+    public String getVersion() {
+        Config config = new Config(Config.PROPERTIES);
+        config.load(this.getResource("git.properties"));
+        return config.get("git.build.version", this.getDescription().getVersion()) + " git-" + config.get("git.commit.id.abbrev", "Unknown");
     }
 
 }

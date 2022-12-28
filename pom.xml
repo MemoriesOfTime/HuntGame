@@ -83,15 +83,9 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>${project.basedir}/src/main/java/cn/lanink/huntgame/HuntGame.java</include>
                                 <include>${project.basedir}/src/main/resources/plugin.yml</include>
                             </includes>
                             <replacements>
-                                <replacement>
-                                    <token>VERSION = ".*"</token>
-                                    <!--suppress UnresolvedMavenProperty -->
-                                    <value>VERSION = "${project.version} git-${git.commit.id.abbrev}"</value>
-                                </replacement>
                                 <replacement>
                                     <token>version: ".*"</token>
                                     <value>version: "${project.version}"</value>
@@ -142,7 +136,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>23.1.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -163,14 +157,14 @@
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.5.6</version>
+            <version>1.6.8</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.smallaswater.npc</groupId>
-            <artifactId>RsNPCX</artifactId>
-            <version>1.8.8</version>
+            <groupId>com.smallaswater</groupId>
+            <artifactId>RsNPC</artifactId>
+            <version>2.2.4</version>
             <scope>provided</scope>
         </dependency>
 

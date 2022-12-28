@@ -1,3 +1,4 @@
+ConfigVersion: 1.2.2
 #语言设置
 defaultLanguage: "zh_CN"
 languageMap:
@@ -30,3 +31,27 @@ victoryCmd:
 defeatCmd:
   - me 我失败了
   - tell "@p" 再接再厉！&con
+
+#游戏积分
+integral:
+  #参与游戏基础积分
+  complete_game: 100
+  #安全嘲讽积分
+  prey_taunt_safe: 1
+  #危险嘲讽积分
+  prey_taunt_danger: 2
+  #烟花嘲讽积分
+  prey_taunt_fireworks: 3
+  #闪电嘲讽积分
+  prey_taunt_lightning: 5
+  #猎人击杀猎物积分
+  hunter_kill_prey: 60
+  #猎物弓箭命中猎人
+  prey_bow_hit_hunter: 10
+
+  #游戏结算命令（根据积分）
+  victoryRewardCmd:
+    "0-120":
+      - tell "@p" 参与奖！&con
+    "121-150":
+      - tell "@p" 表现出色！&con

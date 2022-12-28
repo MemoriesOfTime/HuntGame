@@ -3,6 +3,7 @@ package cn.lanink.huntgame.utils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -23,6 +24,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.utils.DyeColor;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.SplittableRandom;
 
@@ -56,6 +58,11 @@ public class Tools {
         return min + (float) Math.random() * (max-min);
     }
 
+    public static String formatCountdown(int time) {
+        DecimalFormat format = new DecimalFormat("00");
+        return format.format(time/60) + ":" + format.format(time%60);
+    }
+
     public static String getShowRoomGameMode(BaseRoom room, Player player) {
         switch (room.getGameMode()) {
             case "block":
@@ -68,7 +75,11 @@ public class Tools {
     }
 
     public static String getShowIdentity(BaseRoom room, Player player) {
-        switch (room.getPlayer(player)) {
+        return getShowIdentity(room.getPlayer(player).getIdentity(), player);
+    }
+
+    public static String getShowIdentity(PlayerIdentity identity, Player player) {
+        switch (identity) {
             case PREY:
                 return HuntGame.getInstance().getLanguage(player).translateString("prey");
             case HUNTER:
@@ -346,7 +357,7 @@ public class Tools {
 
     /**
      * 放烟花
-     * GitHub：https://github.com/PetteriM1/FireworkShow
+     * GitHub：<a href="https://github.com/PetteriM1/FireworkShow">https://github.com/PetteriM1/FireworkShow</a>
      * @param position 位置
      */
     public static void spawnFirework(Position position) {

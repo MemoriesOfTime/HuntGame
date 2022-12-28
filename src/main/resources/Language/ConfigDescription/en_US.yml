@@ -1,0 +1,30 @@
+header: |-
+  HuntGame Plugin configuration file
+footer: |-
+  You have reached the bottom of the configuration file
+
+ConfigVersion: |-
+  -
+  -
+  The version number of the configuration file
+  Warning! Don't try to change this configuration unless you know exactly what you are doing!
+
+defaultLanguage: "Plugin default language settings"
+#languageMap: "Unkown"
+cmdUser: "HuntGame command"
+cmdAdmin: "HuntGame management command"
+cmdWhitelist: "Commands that can be used in game rooms"
+QuitRoom.cmd: "Exit the room and execute the command."
+AutomaticNextRound: "Automatically join the next game after the game is over"
+
+victoryCmd: "The player successfully executes the command"
+defeatCmd: "The player failed to execute the command"
+
+integral: "Game points"
+integral.complete_game: "Basic Points for Participating in Games"
+integral.prey_taunt_safe: "Safety taunt points"
+integral.prey_taunt_danger: "Danger taunt points"
+integral.prey_taunt_fireworks: "Fireworks taunt points"
+integral.prey_taunt_lightning: "Lightning taunt points"
+integral.hunter_kill_prey: "Hunter kill prey points"
+integral.prey_bow_hit_hunter: "Game Bow and Arrow Hit Hunter Points"

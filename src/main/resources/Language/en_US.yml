@@ -58,7 +58,7 @@ adminReload: "§aConfig reload complete! Please check the information in the bac
 adminUnload: "§aAll rooms unloaded! Please check the information in the background!"
 tpJoinRoomLevel: "§e >> §cPlease join a map before you start playing"
 itemQuitRoom: "§cQuit room"
-itemQuitRoomLore: "You can quit room when you click it"
+itemQuitRoomLore: "double click to exit the room"
 gamemode-block: "block"
 gamemode-animal: "animal"
 prey: "prey"
@@ -86,12 +86,21 @@ waitScoreBoard: |-
 gameTimeScoreBoard: |-
   §l§aIdentity:§e %mode%
   §l§aSurvivors:§e %playerNumber%
-  §l§aTime:§e %time% §as
+  §l§aTime:§e %time%
 waitBottom: "§cWaiting for players to join"
 waitTimeBottom: "§aThere is: %time% seconds to start!"
 huntersDispatchedTimeBottom: "§aHunters will be dispatched in §e%time%§a seconds"
 respawnTimeBottom: "§aWill be resurrected as a hunter in %time% seconds!"
 huntersKillPrey: "%damagePlayer% Caught %player%"
+
+gui_victory_content: |
+  %1% got the win of this round!
+  
+  
+  You scored a total of %2% integral for this game
+  Breakdown of scores:
+  %3%
+
 userMenuButton1: "§eJoin a room randomly"
 userMenuButton2: "§eQuit this room"
 userMenuButton3: "§eList all the rooms"
@@ -108,11 +117,13 @@ joinRoomOK: "§l§aCofirm to join the room: %name% §l§a?"
 buttonOK: "§aConfirm"
 buttonReturn: "§cBack"
 
+subtitle_clickAgainToQuitRoom: "§cClick again to exit the room"
+
 subtitle-successfullySwitchedCamouflageBlocks: "Successfully switched camouflage blocks!"
 subtitle-cannotPretendToBeThisBlock: "Cannot pretend to be this block!"
 subtitle-camouflageAnimalSuccess: "You are pretending to be %1%!"
 subtitle-CanNotDisguiseAnimalsRepeatedly: "You have already pretended to be %1%! Can't pretend to be repeated"
-subtitle-lockedByTracker: "You're locked by the tracker! Please even transfer the position!"
+subtitle-lockedByTracker: "You're locked by the tracker! Please transfer location in time!"
 
 tip-currentlyDisguisedAnimal: "Currently disguised animals: %1%"
 
@@ -134,3 +145,13 @@ animal-name-Pig: "Pig"
 animal-name-Sheep: "Sheep"
 animal-name-Rabbit: "Rabbit"
 animal-name-Wolf: "Wolf"
+
+event-prey_switched_camouflage: "Prey switches camouflage"
+event-prey_bow_hit_hunter: "The prey shoots the hunter with a bow and arrow"
+event-prey_taunt_safe: "Prey uses safety taunts"
+event-prey_taunt_danger: "Prey uses dangerous taunts"
+event-prey_taunt_fireworks: "Prey uses fireworks to taunt"
+event-prey_taunt_lightning: "Prey uses lightning taunts"
+event-hunter_kill_prey: "The hunter kills the prey"
+event-hunter_bow_hit_prey: "The hunter shoots his prey with a bow and arrow"
+event-hunter_use_tracker: "Hunters use trackers"

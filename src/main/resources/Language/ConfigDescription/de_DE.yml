@@ -1,0 +1,30 @@
+header: |-
+  HuntGame Plugin Konfigurationsdatei
+footer: |-
+  Sie haben das Ende der Konfigurationsdatei erreicht
+
+ConfigVersion: |-
+  -
+  -
+  Die Versionsnummer der Konfigurationsdatei
+  Warnung! Versuchen Sie nicht, diese Konfiguration zu ändern, wenn Sie nicht genau wissen, was Sie tun!
+
+defaultLanguage: "Plugin-Standard-Spracheinstellungen"
+#languageMap: "Unbekannt"
+cmdUser: "HuntGame-Befehl"
+cmdAdmin: "HuntGame-Verwaltungsbefehl"
+cmdWhitelist: "Befehle, die in Spielräumen verwendet werden können"
+QuitRoom.cmd: "Verlasse den Raum und führe den Befehl aus".
+AutomaticNextRound: "Dem nächsten Spiel automatisch beitreten, wenn das Spiel zu Ende ist"
+
+victoryCmd: "Der Spieler führt den Befehl erfolgreich aus"
+defeatCmd: "Der Spieler konnte den Befehl nicht ausführen"
+
+integral: "Spielpunkte"
+integral.complete_game: "Basispunkte für die Teilnahme an Spielen"
+integral.prey_taunt_safe: "Sicherheits-Taunt-Punkte"
+integral.prey_taunt_danger: "Gefahr-Punkte"
+integral.prey_taunt_fireworks: "Feuerwerks-Spottpunkte"
+integral.prey_taunt_lightning: "Blitzschlag-Spottpunkte"
+integral.hunter_kill_prey: "Jäger tötet Beute Punkte"
+integral.prey_bow_hit_hunter: "Wildbogen und Pfeil treffen Jäger Punkte"

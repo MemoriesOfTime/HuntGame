@@ -1,9 +1,10 @@
 package cn.lanink.huntgame.tasks;
 
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.huntgame.HuntGame;
-import cn.lanink.huntgame.room.BaseRoom;
-import cn.lanink.huntgame.room.PlayerIdentity;
-import cn.lanink.huntgame.room.RoomStatus;
+import cn.lanink.huntgame.room.*;
+import cn.lanink.huntgame.utils.FormHelper;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
@@ -24,26 +25,51 @@ public class VictoryTask extends PluginTask<HuntGame> {
     public VictoryTask(HuntGame owner, BaseRoom room, PlayerIdentity victory) {
         super(owner);
         this.room = room;
-        this.victoryTime = 10;
+        this.victoryTime = 30;
         this.victory = victory == PlayerIdentity.CHANGE_HUNTER ? PlayerIdentity.HUNTER : victory;
-        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
             this.room.getPlayers().keySet().forEach(player -> entry.getKey().showPlayer(player));
             this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
-                    new Vector3[] { entry.getKey().floor() });
+                    new Vector3[] { entry.getKey().floor() }); //清除假方块
+
+            Language language = HuntGame.getInstance().getLanguage(entry.getKey());
+            //GUI显示本轮游戏详情
+            PlayerData playerData = room.getPlayer(entry.getKey());
+            StringBuilder content = new StringBuilder();
+            for (EventType eventType : EventType.values()) {
+                if (!eventType.isHasIntegral()) {
+                    continue;
+                }
+                int count = playerData.getEventCount(eventType);
+                if (count > 0) {
+                    content.append("  ").append(language.translateString("event-" + eventType.name().toLowerCase()))
+                            .append(" : ").append(count * IntegralConfig.getIntegral(eventType)).append(" 分\n");
+                }
+            }
+            new AdvancedFormWindowSimple(
+                    FormHelper.PLUGIN_NAME,
+                    language.translateString(
+                            "gui_victory_content",
+                            Tools.getShowIdentity(victory, entry.getKey()),
+                            playerData.getAllIntegral(),
+                            content
+                    )
+            ).showToPlayer(entry.getKey());
+
             if (victory == PlayerIdentity.HUNTER) {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).translateString("titleVictoryHuntersTitle"),
+                entry.getKey().sendTitle(language.translateString("titleVictoryHuntersTitle"),
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).translateString("victoryHuntersBottom"));
+                entry.getKey().sendActionBar(language.translateString("victoryHuntersBottom"));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
-                        owner.getLanguage(entry.getKey()).translateString("scoreBoardTitle"),
-                        Arrays.asList(owner.getLanguage(entry.getKey()).translateString("victoryHuntersScoreBoard").split("\n")));
+                        language.translateString("scoreBoardTitle"),
+                        Arrays.asList(language.translateString("victoryHuntersScoreBoard").split("\n")));
             }else {
-                entry.getKey().sendTitle(owner.getLanguage(entry.getKey()).translateString("titleVictoryPreySubtitle"),
+                entry.getKey().sendTitle(language.translateString("titleVictoryPreySubtitle"),
                         "", 10, 30, 10);
-                entry.getKey().sendActionBar(owner.getLanguage(entry.getKey()).translateString("victoryPreyBottom"));
+                entry.getKey().sendActionBar(language.translateString("victoryPreyBottom"));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
-                        owner.getLanguage(entry.getKey()).translateString("scoreBoardTitle"),
-                        Arrays.asList(owner.getLanguage(entry.getKey()).translateString("victoryPreyScoreBoard").split("\n")));
+                        language.translateString("scoreBoardTitle"),
+                        Arrays.asList(language.translateString("victoryPreyScoreBoard").split("\n")));
             }
         }
     }
@@ -59,13 +85,14 @@ public class VictoryTask extends PluginTask<HuntGame> {
             this.cancel();
         }else {
             this.victoryTime--;
-            for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
+            for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
                 if (this.owner.isAutomaticNextRound()) {
                     entry.getKey().sendTip(this.owner.getLanguage(entry.getKey()).translateString("victory_automaticallyJoinTheNextGameCountdown_Bottom", this.victoryTime));
                 }
-                if (entry.getValue() != PlayerIdentity.NULL) {
-                    if (this.victory == PlayerIdentity.PREY && entry.getValue() == PlayerIdentity.PREY ||
-                            this.victory == PlayerIdentity.HUNTER && (entry.getValue() == PlayerIdentity.HUNTER || entry.getValue() == PlayerIdentity.CHANGE_HUNTER)) {
+                PlayerIdentity identity = entry.getValue().getIdentity();
+                if (identity != PlayerIdentity.NULL) {
+                    if (this.victory == PlayerIdentity.PREY && identity == PlayerIdentity.PREY ||
+                            this.victory == PlayerIdentity.HUNTER && (identity == PlayerIdentity.HUNTER || identity == PlayerIdentity.CHANGE_HUNTER)) {
                         Tools.spawnFirework(entry.getKey());
                     }
                 }

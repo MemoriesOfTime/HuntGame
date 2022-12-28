@@ -3,7 +3,7 @@ package cn.lanink.huntgame.command;
 import cn.lanink.huntgame.command.base.BaseCommand;
 import cn.lanink.huntgame.command.usersubcommand.JoinRoom;
 import cn.lanink.huntgame.command.usersubcommand.QuitRoom;
-import cn.lanink.huntgame.ui.GuiCreate;
+import cn.lanink.huntgame.utils.FormHelper;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 
@@ -29,7 +29,7 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendUI(CommandSender sender) {
-        GuiCreate.sendUserMenu((Player) sender);
+        FormHelper.sendUserMenu((Player) sender);
     }
 
 }

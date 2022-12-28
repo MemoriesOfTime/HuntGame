@@ -3,9 +3,7 @@ package cn.lanink.huntgame.listener.defaults;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.entity.FindPlayerEntity;
-import cn.lanink.huntgame.room.BaseRoom;
-import cn.lanink.huntgame.room.PlayerIdentity;
-import cn.lanink.huntgame.room.RoomStatus;
+import cn.lanink.huntgame.room.*;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -17,10 +15,7 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.InventoryClickEvent;
-import cn.nukkit.event.player.PlayerChangeSkinEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
-import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ParticleEffect;
@@ -73,11 +68,13 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
             Player damager = (Player) event.getDamager();
             if (event.getChild().getNetworkId() == 80 && //箭
-                    (room.getPlayer(player) == PlayerIdentity.HUNTER || room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER)
-                    && room.getPlayer(damager) == PlayerIdentity.PREY) {
+                    (room.getPlayer(player).getIdentity() == PlayerIdentity.HUNTER || room.getPlayer(player).getIdentity() == PlayerIdentity.CHANGE_HUNTER)
+                    && room.getPlayer(damager).getIdentity() == PlayerIdentity.PREY) {
                 event.setDamage(0);
                 event.setKnockBack(event.getKnockBack() * 1.5f);
                 event.setCancelled(false);
+
+                room.getPlayer(damager).addEventCount(EventType.PREY_BOW_HIT_HUNTER);
             }
         }
     }
@@ -95,7 +92,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if (room.getStatus() == RoomStatus.GAME) {
-                    if (room.getPlayer(player) == PlayerIdentity.PREY) {
+                    if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
                         room.playerDeath(player);
                     }else {
                         player.teleport(room.getRandomSpawn().get(Tools.RANDOM.nextInt(room.getRandomSpawn().size())));
@@ -106,6 +103,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM && !(event instanceof EntityDamageByChildEntityEvent)) {
                 event.setCancelled(true);
             }else if (event.getFinalDamage() + 1 > player.getHealth()) {
+                //正常情况下玩家不应该受到其他玩家的伤害（因为他们只能打到伪装方块）
                 event.setDamage(0);
                 room.playerDeath(player);
             }
@@ -125,7 +123,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
             event.getProjectile().namedTag.putString("HuntGameDamager", player.getName());
             PlayerInventory inventory = player.getInventory();
-            if (room.getPlayer(player) == PlayerIdentity.PREY) {
+            if (room.getPlayer(player).getIdentity() == PlayerIdentity.PREY) {
                 Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
                     if (room.getStatus() == RoomStatus.GAME && room.isPlaying(player)) {
                         Item item = inventory.getItem(2);
@@ -197,15 +195,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
 
         CompoundTag tag = event.getItem().getNamedTag();
-        if (tag == null) {
-            return;
-        }
-        if (room.getStatus() == RoomStatus.WAIT) {
-            if (tag.getBoolean("isHuntGameItem") && tag.getInt("HuntGameType") == 10) {
-                room.quitRoom(player);
-                event.setCancelled(true);
-            }
-        }else if (room.getStatus() == RoomStatus.GAME) {
+        if (tag != null && room.getStatus() == RoomStatus.GAME) {
             if (tag.getBoolean("isHuntGameItem")) {
                 event.setCancelled(true);
                 Item item = Tools.getHuntGameItem(20, player);
@@ -215,6 +205,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         player.getLevel().addSound(player, Sound.RANDOM_ORB);
                         item.setCount(8);
                         player.getInventory().setItem(4, item);
+
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_SAFE);
                         break;
                     case 22:
                         player.getLevel().addParticle(new LavaParticle(player));
@@ -223,11 +215,15 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         player.getLevel().addSound(player, Sound.RANDOM_LEVELUP);
                         item.setCount(16);
                         player.getInventory().setItem(5, item);
+
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_DANGER);
                         break;
                     case 23:
                         Tools.spawnFirework(player);
                         item.setCount(32);
                         player.getInventory().setItem(6, item);
+
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_FIREWORKS);
                         break;
                     case 24:
                         EntityLightning lightning = new EntityLightning(player.chunk, Entity.getDefaultNBT(player));
@@ -236,11 +232,13 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                         player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + 10));
                         item.setCount(32);
                         player.getInventory().setItem(7, item);
+
+                        room.getPlayer(player).addEventCount(EventType.PREY_TAUNT_LIGHTNING);
                         break;
                     case 31:
                         ArrayList<Player> list = new ArrayList<>();
-                        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
-                            if (entry.getValue() == PlayerIdentity.PREY) {
+                        for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
+                            if (entry.getValue().getIdentity() == PlayerIdentity.PREY) {
                                 list.add(entry.getKey());
                             }
                         }
@@ -257,6 +255,34 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                             target.sendTitle("", this.huntGame.getLanguage(target).translateString("subtitle-lockedByTracker"), 5, 15, 5);
                         }
                         break;
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null) {
+            return;
+        }
+
+        Item item = event.getItem();
+        if (item.hasCompoundTag() && item.getNamedTag().getBoolean("isHuntGameItem")) {
+            if (item.getNamedTag().getInt("HuntGameType") == 10) {
+                int nowTick = Server.getInstance().getTick();
+                int lastTick = item.getNamedTag().getInt("lastTick");
+                if (lastTick == 0 || nowTick - lastTick > 40) {
+                    player.sendTitle("", this.huntGame.getLanguage(player).translateString("subtitle_clickAgainToQuitRoom"), 5, 25, 10);
+                    CompoundTag tag = item.getNamedTag();
+                    tag.putInt("lastTick", nowTick);
+                    item.setNamedTag(tag); //防止tag更改不生效，无法退出房间
+                    player.getInventory().setItem(8, item);
+                    player.getInventory().setHeldItemIndex(7);
+                    event.setCancelled(true);
+                }else {
+                    room.quitRoom(player);
                 }
             }
         }
@@ -321,10 +347,10 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         String message = "§7[§a" + Tools.getShowIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
         event.setMessage("");
         event.setCancelled(true);
-        for (Map.Entry<Player, PlayerIdentity> entry : room.getPlayers().entrySet()) {
-            if (entry.getValue() == room.getPlayer(player) ||
-                    (room.getPlayer(player) == PlayerIdentity.HUNTER && entry.getValue() == PlayerIdentity.CHANGE_HUNTER) ||
-                    (room.getPlayer(player) == PlayerIdentity.CHANGE_HUNTER && entry.getValue() == PlayerIdentity.HUNTER)) {
+        for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
+            if (entry.getValue().getIdentity() == room.getPlayer(player).getIdentity() ||
+                    (room.getPlayer(player).getIdentity() == PlayerIdentity.HUNTER && entry.getValue().getIdentity() == PlayerIdentity.CHANGE_HUNTER) ||
+                    (room.getPlayer(player).getIdentity() == PlayerIdentity.CHANGE_HUNTER && entry.getValue().getIdentity() == PlayerIdentity.HUNTER)) {
                 entry.getKey().sendMessage(message);
             }
         }

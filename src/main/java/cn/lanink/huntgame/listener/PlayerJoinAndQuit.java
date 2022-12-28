@@ -4,7 +4,6 @@ import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.huntgame.HuntGame;
 import cn.lanink.huntgame.room.BaseRoom;
-import cn.lanink.huntgame.ui.GuiCreate;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -77,7 +76,6 @@ public class PlayerJoinAndQuit implements Listener {
             }
         }
         this.huntGame.getPlayerLanguageHashMap().remove(player);
-        GuiCreate.UI_CACHE.remove(player);
     }
 
     @EventHandler

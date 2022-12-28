@@ -5,15 +5,18 @@ import cn.lanink.huntgame.entity.EntityCamouflageEntity;
 import cn.lanink.huntgame.entity.EntityCamouflageEntityDamage;
 import cn.lanink.huntgame.entity.data.EntityData;
 import cn.lanink.huntgame.room.BaseRoom;
+import cn.lanink.huntgame.room.PlayerData;
 import cn.lanink.huntgame.room.PlayerIdentity;
 import cn.lanink.huntgame.tasks.game.AnimalSpawnTask;
 import cn.lanink.huntgame.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,10 +43,11 @@ public class AnimalModeRoom extends BaseRoom {
     /**
      * 初始化
      *
+     * @param level 游戏世界
      * @param config 配置文件
      */
-    public AnimalModeRoom(Config config) {
-        super(config);
+    public AnimalModeRoom(@NotNull Level level, @NotNull Config config) {
+        super(level, config);
     }
 
     @Override
@@ -96,7 +100,7 @@ public class AnimalModeRoom extends BaseRoom {
         super.gameStart();
         int x = 0;
         for (Player player: this.players.keySet()) {
-            if (this.getPlayer(player) != PlayerIdentity.PREY) {
+            if (this.getPlayer(player).getIdentity() != PlayerIdentity.PREY) {
                 continue;
             }
             if (x >= this.getRandomSpawn().size()) {
@@ -148,10 +152,10 @@ public class AnimalModeRoom extends BaseRoom {
             ).spawnToAll();
         }
 
-        for (Map.Entry<Player, PlayerIdentity> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerData> entry : this.getPlayers().entrySet()) {
             entry.getKey().setNameTag("");
             final Language language = this.huntGame.getLanguage(entry.getKey());
-            if (entry.getValue() == PlayerIdentity.PREY) {
+            if (entry.getValue().getIdentity() == PlayerIdentity.PREY) {
                 entry.getKey().sendTip(language.translateString("tip-currentlyDisguisedAnimal",
                         language.translateString("animal-name-" + this.playerCamouflageEntityDamageMap.get(entry.getKey()).getEntityName())));
             }
@@ -159,7 +163,7 @@ public class AnimalModeRoom extends BaseRoom {
             for (String string : language.translateString("gameTimeScoreBoard").split("\n")) {
                 ms.add(string.replace("%mode%", Tools.getShowIdentity(this, entry.getKey()))
                         .replace("%playerNumber%", this.getSurvivorPlayerNumber() + "")
-                        .replace("%time%", this.gameTime + ""));
+                        .replace("%time%", Tools.formatCountdown(this.gameTime)));
             }
             this.huntGame.getScoreboard().showScoreboard(entry.getKey(), language.translateString("scoreBoardTitle"), ms);
         }

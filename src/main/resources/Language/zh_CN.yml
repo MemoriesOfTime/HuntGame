@@ -58,7 +58,7 @@ adminReload: "§a配置重载完成！请在后台查看信息！"
 adminUnload: "§a已卸载所有房间！请在后台查看信息！"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 itemQuitRoom: "§c退出房间"
-itemQuitRoomLore: "手持点击,即可退出房间"
+itemQuitRoomLore: "双击即可退出房间"
 gamemode-block: "方块"
 gamemode-animal: "动物"
 prey: "猎物"
@@ -90,10 +90,19 @@ waitTimeBottom: "§a游戏还有: §e%time% §a秒开始!"
 gameTimeScoreBoard: |-
   §l§a当前身份:§e %mode%
   §l§a存活人数:§e %playerNumber%
-  §l§a剩余时间:§e %time% §a秒
+  §l§a剩余时间:§e %time%
 huntersDispatchedTimeBottom: "§a猎人将在§e%time%§a秒后出动"
 respawnTimeBottom: "§a将在%time%秒后复活成为猎人！"
 huntersKillPrey: "%damagePlayer% 抓到了 %player%"
+
+gui_victory_content: |
+  %1% hat die Runde gewonnen!
+  
+  
+  Du hast in diesem Spiel insgesamt %2% der Punkte erreicht!
+  Aufschlüsselung der Punkte:
+  %3%
+
 userMenuButton1: "§e随机加入房间"
 userMenuButton2: "§e退出当前房间"
 userMenuButton3: "§e查看房间列表"
@@ -110,11 +119,13 @@ joinRoomOK: "§l§a确认要加入房间: %name% §l§a？"
 buttonOK: "§a确定"
 buttonReturn: "§c返回"
 
+subtitle_clickAgainToQuitRoom: "§c再次点击退出房间"
+
 subtitle-successfullySwitchedCamouflageBlocks: "切换伪装方块成功！"
 subtitle-cannotPretendToBeThisBlock: "无法伪装成此方块！"
 subtitle-camouflageAnimalSuccess: "你伪装成了 %1% ！"
 subtitle-CanNotDisguiseAnimalsRepeatedly: "你已经伪装成 %1% 了！不能重复伪装"
-subtitle-lockedByTracker: "你被追踪器锁定了！请即使转移位置！"
+subtitle-lockedByTracker: "你被追踪器锁定了！请及时转移位置！"
 
 tip-currentlyDisguisedAnimal: "当前伪装动物：%1%"
 
@@ -136,3 +147,14 @@ animal-name-Pig: "猪"
 animal-name-Sheep: "羊"
 animal-name-Rabbit: "兔子"
 animal-name-Wolf: "狼"
+
+event-complete_game: "参与游戏"
+event-prey_switched_camouflage: "猎物切换伪装"
+event-prey_bow_hit_hunter: "猎物用弓箭射中猎人"
+event-prey_taunt_safe: "猎物使用安全嘲讽"
+event-prey_taunt_danger: "猎物使用危险嘲讽"
+event-prey_taunt_fireworks: "猎物使用烟花嘲讽"
+event-prey_taunt_lightning: "猎物使用闪电嘲讽"
+event-hunter_kill_prey: "猎人杀死猎物"
+event-hunter_bow_hit_prey: "猎人用弓箭射中猎物"
+event-hunter_use_tracker: "猎人使用追踪器"
