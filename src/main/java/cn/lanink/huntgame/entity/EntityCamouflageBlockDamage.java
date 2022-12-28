@@ -91,6 +91,23 @@ public class EntityCamouflageBlockDamage extends EntityHuman implements IEntityC
     }
 
     @Override
+    public void setHealth(float health) {
+        super.setHealth(health);
+        if (this.getMaster() != null) {
+            this.getMaster().setHealth(Math.max(health, 1.5f));
+        }
+    }
+
+    @Override
+    public void knockBack(Entity attacker, double damage, double x, double z, double base) {
+        if (this.getMaster() != null) {
+            this.getMaster().knockBack(attacker, damage, x, z, base);
+        }else {
+            super.knockBack(attacker, damage, x, z, base);
+        }
+    }
+
+    @Override
     public void spawnTo(Player player) {
         if (this.canSee(player)) {
             super.spawnTo(player);
