@@ -158,6 +158,8 @@ public class BlockGameListener extends BaseGameListener<BlockModeRoom> implement
             set.add(event.getFrom().add(0, 0.5, 0).floor());
             set.add(event.getFrom().floor());
             level.sendBlocks(players.toArray(new Player[0]), set.toArray(new Vector3[0]));
+
+            room.updateBlockList.add(player.clone());
         }
     }
 
