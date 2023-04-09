@@ -36,6 +36,9 @@ public class BlockModeRoom extends BaseRoom {
     @Getter
     protected final HashMap<Player, EntityCamouflageBlock> entityCamouflageBlockMap = new HashMap<>();
 
+    //尝试解决方块不消失问题
+    public final LinkedList<Vector3> updateBlockList = new LinkedList<>();
+
     /**
      * 初始化
      *
@@ -74,6 +77,7 @@ public class BlockModeRoom extends BaseRoom {
             }
             this.entityCamouflageBlockMap.clear();
         }
+        this.updateBlockList.clear();
     }
 
     @Override
@@ -159,6 +163,19 @@ public class BlockModeRoom extends BaseRoom {
     @Override
     public void timeTask() {
         super.timeTask();
+
+        Vector3 vector3;
+        while ((vector3 = this.updateBlockList.poll()) != null) {
+            boolean hasPlayer = false;
+            for (Player player : this.players.keySet()) {
+                if (player.getFloorX() == vector3.getFloorX() && player.getFloorY() == vector3.getFloorY() && player.getFloorZ() == vector3.getFloorZ()) {
+                    hasPlayer = true;
+                }
+            }
+            if (!hasPlayer) {
+                level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[]{vector3});
+            }
+        }
 
         //防止玩家长时间不动导致方块消失
         if (this.gameTime%5 == 0) {
