@@ -166,17 +166,21 @@ public class BlockModeRoom extends BaseRoom {
     public void timeTask() {
         super.timeTask();
 
-        Vector3 vector3;
-        while ((vector3 = this.updateBlockList.poll()) != null) {
-            boolean hasPlayer = false;
-            for (Player player : this.players.keySet()) {
-                if (player.getFloorX() == vector3.getFloorX() && player.getFloorY() == vector3.getFloorY() && player.getFloorZ() == vector3.getFloorZ()) {
-                    hasPlayer = true;
+        if (!this.updateBlockList.isEmpty()) {
+            ArrayList<Vector3> vList = new ArrayList<>();
+            Vector3 vector3;
+            while ((vector3 = this.updateBlockList.poll()) != null) {
+                boolean hasPlayer = false;
+                for (Player player : this.players.keySet()) {
+                    if (player.getFloorX() == vector3.getFloorX() && player.getFloorY() == vector3.getFloorY() && player.getFloorZ() == vector3.getFloorZ()) {
+                        hasPlayer = true;
+                    }
+                }
+                if (!hasPlayer) {
+                    vList.add(vector3);
                 }
             }
-            if (!hasPlayer) {
-                level.sendBlocks(this.players.keySet().toArray(new Player[0]), new Vector3[]{vector3});
-            }
+            level.sendBlocks(this.players.keySet().toArray(new Player[0]), vList.toArray(new Vector3[0]));
         }
 
         //防止玩家长时间不动导致方块消失

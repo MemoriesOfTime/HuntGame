@@ -28,6 +28,8 @@ public class RoomConfig implements IRoom {
     protected final int setWaitTime;
     protected final int setGameTime;
 
+    protected final int camouflageCoolingTime;
+
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
 
     protected final Position waitSpawn;
@@ -46,6 +48,9 @@ public class RoomConfig implements IRoom {
 
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
+
+        this.camouflageCoolingTime = config.getInt("camouflageCoolingTime", 30);
+
         String[] s1 = config.getString("waitSpawn").split(":");
         this.waitSpawn = new Position(Integer.parseInt(s1[0]),
                 Integer.parseInt(s1[1]),
@@ -97,6 +102,9 @@ public class RoomConfig implements IRoom {
         return this.level;
     }
 
+    /**
+     * @return 游戏世界名称
+     */
     @Override
     public String getLevelName() {
         return this.getLevel().getName();
@@ -105,8 +113,8 @@ public class RoomConfig implements IRoom {
     /**
      * @return 猎物伪装切换冷却时间（秒）
      */
-    public int getCamouflageCoolingTime () {
-        return 5;
+    public int getCamouflageCoolingTime() {
+        return this.camouflageCoolingTime;
     }
 
 }
