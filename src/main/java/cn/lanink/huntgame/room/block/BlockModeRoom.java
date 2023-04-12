@@ -77,7 +77,9 @@ public class BlockModeRoom extends BaseRoom {
             }
             this.entityCamouflageBlockMap.clear();
         }
-        this.updateBlockList.clear();
+        if (this.updateBlockList != null) {
+            this.updateBlockList.clear();
+        }
     }
 
     @Override
