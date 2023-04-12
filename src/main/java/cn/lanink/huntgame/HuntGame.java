@@ -6,7 +6,6 @@ import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gamecore.utils.ConfigUtils;
 import cn.lanink.gamecore.utils.Language;
-import cn.lanink.gamecore.utils.VersionUtils;
 import cn.lanink.huntgame.command.AdminCommand;
 import cn.lanink.huntgame.command.UserCommand;
 import cn.lanink.huntgame.listener.PlayerJoinAndQuit;
@@ -18,10 +17,12 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.IntegralConfig;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
+import cn.lanink.huntgame.utils.GameCoreDownload;
 import cn.lanink.huntgame.utils.MetricsLite;
 import cn.lanink.huntgame.utils.RsNpcXVariable;
 import cn.lanink.huntgame.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -30,6 +31,7 @@ import com.smallaswater.npc.variable.VariableManage;
 import lombok.Getter;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
@@ -80,13 +82,27 @@ public class HuntGame extends PluginBase {
     @Override
     public void onLoad() {
         huntGame = this;
+    }
+
+    @Override
+    public void onEnable() {
+        this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        this.getLogger().info("§l§eVersion: " + this.getVersion());
+
+        //检查依赖
+        switch (GameCoreDownload.checkAndDownload()) {
+            case 1:
+                Server.getInstance().getPluginManager().disablePlugin(this);
+                return;
+            case 2:
+                this.getServer().getScheduler().scheduleTask(this, () ->
+                        this.getLogger().warning(this.getLanguage().translateString("MemoriesOfTime-GameCore Dependency download complete! It is strongly recommended to restart the server to ensure proper loading!"))
+                );
+                break;
+        }
 
         this.saveDefaultConfig();
-        ConfigUpdateUtils.updateConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
-        Config configDescription = new Config();
-        configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
-        ConfigUtils.addDescription(this.config, configDescription);
 
         if (config.getBoolean("debug", false)) {
             debug = true;
@@ -101,64 +117,20 @@ public class HuntGame extends PluginBase {
             }
         }
 
-        this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
-        //语言文件
-        List<String> languages = Arrays.asList("zh_CN", "en_US", "de_DE");
-        for (String l : languages) {
-            this.saveResource("Language/" + l + ".yml", false);
-        }
-        File[] files = new File(this.getDataFolder() + "/Language").listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if(file.isFile()) {
-                    String name = file.getName().split("\\.")[0];
-                    Language language = new Language(new Config(file, Config.YAML));
-                    this.languageHashMap.put(name, language);
-                    if (languages.contains(name)) {
-                        this.saveResource("Language/" + name + ".yml", "Language/cache/new.yml", true);
-                        language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
-                    }
-                    this.getLogger().info("§aLanguage: " + name + " loaded !");
-                }
-            }
-        }
-
         this.automaticNextRound = this.config.getBoolean("AutomaticNextRound", false);
 
         this.victoryCmd = this.config.getStringList("victoryCmd");
         this.defeatCmd = this.config.getStringList("defeatCmd");
 
-        registerListeners("DefaultGameListener", DefaultGameListener.class);
-        registerListeners("BlockGameListener", BlockGameListener.class);
-        registerListeners("AnimalGameListener", AnimalGameListener.class);
+        ConfigUpdateUtils.updateConfig();
+        Config configDescription = new Config();
+        configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
+        ConfigUtils.addDescription(this.config, configDescription);
 
-        registerRoom("block", BlockModeRoom.class);
-        registerRoom("animal", AnimalModeRoom.class);
-    }
+        this.loadLanguage();
 
-    @Override
-    public void onEnable() {
-        this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        this.getLogger().info("§l§eVersion: " + this.getVersion());
-
-        //检查依赖版本
-        try {
-            String needGameCoreVersion = "1.6.5";
-            if (!VersionUtils.checkMinimumVersion(GameCore.getInstance(), needGameCoreVersion)) {
-                throw new RuntimeException("[MemoriesOfTime-GameCore] plugin version is too low! At least version " + needGameCoreVersion + " is needed!");
-            }
-        }catch (Exception e) {
-            this.getLogger().error("Please check the dependency plugin version!", e);
-            this.getLogger().error("Please update the plugin to the required version!");
-            //延迟3秒方便查看报错
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ignored) {
-
-            }
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+        this.registerListeners();
+        this.registerRooms();
 
         //加载计分板
         this.scoreboard = ScoreboardUtil.getScoreboard();
@@ -204,6 +176,41 @@ public class HuntGame extends PluginBase {
         }
 
         this.getLogger().info(this.getLanguage().translateString("pluginEnable"));
+    }
+
+    private void loadLanguage() {
+        this.languageMappingTable = this.config.get("languageMap", new HashMap<>());
+        //语言文件
+        List<String> languages = Arrays.asList("zh_CN", "en_US", "de_DE");
+        for (String l : languages) {
+            this.saveResource("Language/" + l + ".yml", false);
+        }
+        File[] files = new File(this.getDataFolder() + "/Language").listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if(file.isFile()) {
+                    String name = file.getName().split("\\.")[0];
+                    Language language = new Language(new Config(file, Config.YAML));
+                    this.languageHashMap.put(name, language);
+                    if (languages.contains(name)) {
+                        this.saveResource("Language/" + name + ".yml", "Language/cache/new.yml", true);
+                        language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+                    }
+                    this.getLogger().info("§aLanguage: " + name + " loaded !");
+                }
+            }
+        }
+    }
+
+    private void registerListeners() {
+        registerListeners("DefaultGameListener", DefaultGameListener.class);
+        registerListeners("BlockGameListener", BlockGameListener.class);
+        registerListeners("AnimalGameListener", AnimalGameListener.class);
+    }
+
+    private void registerRooms() {
+        registerRoom("block", BlockModeRoom.class);
+        registerRoom("animal", AnimalModeRoom.class);
     }
 
     @Override
@@ -373,6 +380,13 @@ public class HuntGame extends PluginBase {
                         baseRoom.setGameName(gameMode);
                         this.rooms.put(fileName[0], baseRoom);
                         this.getLogger().info(this.getLanguage().translateString("roomLoadedSuccess").replace("%name%", fileName[0]));
+
+                        InputStream resource = this.getResource("Language/RoomConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml");
+                        if (resource != null) {
+                            Config configDescription = new Config();
+                            configDescription.load(resource);
+                            ConfigUtils.addDescription(config, configDescription);
+                        }
                     } catch (Exception e) {
                         this.getLogger().error("加载房间时出错：", e);
                     }

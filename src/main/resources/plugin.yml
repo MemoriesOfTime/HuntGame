@@ -4,8 +4,6 @@ version: "1.2.2-SNAPSHOT"
 api: ["1.0.9"]
 load: POSTWORLD
 author: "LT_Name"
-depend:
-  - "MemoriesOfTime-GameCore"
 softdepend:
   - "ScoreboardPlugin"
   - "ScoreboardAPI"

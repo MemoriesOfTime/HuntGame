@@ -1,0 +1,13 @@
+header: |-
+  HuntGame Plugin room configuration file
+footer: |-
+  You have reached the bottom of the configuration file
+
+gameMode: "Game mode (block/animal)"
+minPlayers: "Minimum number of people in the room"
+maxPlayers: "Maximum number of people in the room"
+waitTime: "The waiting time before starting the game after meeting the minimum number of people"
+gameTime: "game time"
+camouflageCoolingTime: "Prey switching camouflage cooling time (unit: second)"
+waitSpawn: "Waiting for the birth point (the location where you teleport after joining the game)"
+randomSpawn: "Game random spawn points (players will be randomly teleported to these locations after the game starts)"

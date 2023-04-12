@@ -19,6 +19,7 @@ public class RoomConfig implements IRoom {
     protected HuntGame huntGame = HuntGame.getInstance();
 
     protected final Level level;
+    protected final Config config;
 
     @Getter
     protected int minPlayers;
@@ -36,6 +37,7 @@ public class RoomConfig implements IRoom {
 
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
         this.level = level;
+        this.config = config;
 
         this.minPlayers = config.getInt("minPlayers", 3);
         if (this.minPlayers < 2) {
@@ -64,6 +66,28 @@ public class RoomConfig implements IRoom {
                     Integer.parseInt(s[2]),
                     this.level));
         }
+
+        this.saveConfig();
+    }
+
+    public void saveConfig() {
+        this.config.set("minPlayers", this.minPlayers);
+        this.config.set("maxPlayers", this.maxPlayers);
+
+        this.config.set("waitTime", this.setWaitTime);
+        this.config.set("gameTime", this.setGameTime);
+
+        this.config.set("camouflageCoolingTime", this.camouflageCoolingTime);
+
+        this.config.set("waitSpawn", this.waitSpawn.getFloorX() + ":" + this.waitSpawn.getFloorY() + ":" + this.waitSpawn.getFloorZ());
+
+        List<String> list = new ArrayList<>();
+        for (Position position : this.randomSpawn) {
+            list.add(position.getFloorX() + ":" + position.getFloorY() + ":" + position.getFloorZ());
+        }
+        this.config.set("randomSpawn", list);
+
+        this.config.save();
     }
 
     /**

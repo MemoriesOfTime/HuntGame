@@ -1,0 +1,13 @@
+header: |-
+  Raumkonfigurationsdatei des HuntGame Plugins
+footer: |-
+  Sie haben das Ende der Konfigurationsdatei erreicht
+
+gameMode: "Spielmodus (block/animal)"
+minPlayers: "Mindestanzahl von Personen im Raum"
+maxPlayers: "Maximale Personenanzahl im Raum"
+waitTime: "Die Wartezeit vor Spielbeginn nach Erreichen der Mindestteilnehmerzahl"
+gameTime: "Spielzeit"
+camouflageCoolingTime: "Abkühlzeit der Beutewechsel-Tarnung (Einheit: Sekunde)"
+waitSpawn: "Warten auf den Geburtsort (der Ort, an den Sie teleportieren, nachdem Sie dem Spiel beigetreten sind)"
+randomSpawn: "Zufällige Spawn-Punkte des Spiels (Spieler werden nach dem Spielstart zufällig an diese Orte teleportiert)"
