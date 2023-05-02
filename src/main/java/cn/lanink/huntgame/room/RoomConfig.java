@@ -19,6 +19,7 @@ public class RoomConfig implements IRoom {
     protected HuntGame huntGame = HuntGame.getInstance();
 
     protected final Level level;
+    protected final Config config;
 
     @Getter
     protected int minPlayers;
@@ -28,12 +29,15 @@ public class RoomConfig implements IRoom {
     protected final int setWaitTime;
     protected final int setGameTime;
 
+    protected final int camouflageCoolingTime;
+
     protected final ArrayList<Position> randomSpawn = new ArrayList<>();
 
     protected final Position waitSpawn;
 
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
         this.level = level;
+        this.config = config;
 
         this.minPlayers = config.getInt("minPlayers", 3);
         if (this.minPlayers < 2) {
@@ -46,6 +50,9 @@ public class RoomConfig implements IRoom {
 
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
+
+        this.camouflageCoolingTime = config.getInt("camouflageCoolingTime", 30);
+
         String[] s1 = config.getString("waitSpawn").split(":");
         this.waitSpawn = new Position(Integer.parseInt(s1[0]),
                 Integer.parseInt(s1[1]),
@@ -59,6 +66,28 @@ public class RoomConfig implements IRoom {
                     Integer.parseInt(s[2]),
                     this.level));
         }
+
+        this.saveConfig();
+    }
+
+    public void saveConfig() {
+        this.config.set("minPlayers", this.minPlayers);
+        this.config.set("maxPlayers", this.maxPlayers);
+
+        this.config.set("waitTime", this.setWaitTime);
+        this.config.set("gameTime", this.setGameTime);
+
+        this.config.set("camouflageCoolingTime", this.camouflageCoolingTime);
+
+        this.config.set("waitSpawn", this.waitSpawn.getFloorX() + ":" + this.waitSpawn.getFloorY() + ":" + this.waitSpawn.getFloorZ());
+
+        List<String> list = new ArrayList<>();
+        for (Position position : this.randomSpawn) {
+            list.add(position.getFloorX() + ":" + position.getFloorY() + ":" + position.getFloorZ());
+        }
+        this.config.set("randomSpawn", list);
+
+        this.config.save();
     }
 
     /**
@@ -97,6 +126,9 @@ public class RoomConfig implements IRoom {
         return this.level;
     }
 
+    /**
+     * @return 游戏世界名称
+     */
     @Override
     public String getLevelName() {
         return this.getLevel().getName();
@@ -105,8 +137,8 @@ public class RoomConfig implements IRoom {
     /**
      * @return 猎物伪装切换冷却时间（秒）
      */
-    public int getCamouflageCoolingTime () {
-        return 5;
+    public int getCamouflageCoolingTime() {
+        return this.camouflageCoolingTime;
     }
 
 }

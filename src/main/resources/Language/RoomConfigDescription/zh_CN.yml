@@ -1,0 +1,13 @@
+header: |-
+  HuntGame 房间配置文件
+footer: |-
+  你已经到达配置文件的底部啦
+
+gameMode: "游戏模式（block/animal）"
+minPlayers: "房间最少人数"
+maxPlayers: "房间最大人数"
+waitTime: "满足最少人数后的开始游戏前等待时间"
+gameTime: "游戏时间"
+camouflageCoolingTime: "猎物切换伪装冷却时间(单位：秒)"
+waitSpawn: "等待出生点（加入游戏后传送的位置）"
+randomSpawn: "游戏随机出生点（游戏开始后玩家将被随机传送到这些位置）"
