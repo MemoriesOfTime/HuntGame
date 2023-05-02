@@ -330,19 +330,32 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             return;
         }
         BaseRoom room = this.getListenerRoom(player.getLevel());
-        if (room == null || !room.isPlaying(player) || room.getStatus() != RoomStatus.GAME) {
+        if (room == null || !room.isPlaying(player)) {
+            for (BaseRoom r : this.huntGame.getRooms().values()) {
+                for (Player p : r.getPlayers().keySet()) {
+                    event.getRecipients().remove(p);
+                }
+            }
             return;
         }
-        String message = "§7[§a" + Tools.getShowIdentity(room, player) + "§7]§r " + player.getName() + " §b>>>§r " + event.getMessage();
-        event.setMessage("");
-        event.setCancelled(true);
-        for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
-            if (entry.getValue().getIdentity() == room.getPlayer(player).getIdentity() ||
-                    (room.getPlayer(player).getIdentity() == PlayerIdentity.HUNTER && entry.getValue().getIdentity() == PlayerIdentity.CHANGE_HUNTER) ||
-                    (room.getPlayer(player).getIdentity() == PlayerIdentity.CHANGE_HUNTER && entry.getValue().getIdentity() == PlayerIdentity.HUNTER)) {
-                entry.getKey().sendMessage(message);
+        String message = player.getName() + " §b>>>§r " + event.getMessage();
+        if (room.getStatus() == RoomStatus.GAME) {
+            message = "§7[§a" + Tools.getShowIdentity(room, player) + "§7]§r " + message;
+            for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
+                if (entry.getValue().getIdentity() == room.getPlayer(player).getIdentity() ||
+                        (room.getPlayer(player).getIdentity() == PlayerIdentity.HUNTER && entry.getValue().getIdentity() == PlayerIdentity.CHANGE_HUNTER) ||
+                        (room.getPlayer(player).getIdentity() == PlayerIdentity.CHANGE_HUNTER && entry.getValue().getIdentity() == PlayerIdentity.HUNTER)) {
+                    entry.getKey().sendMessage(message);
+                }
+            }
+        } else {
+            message = "§7[§aPlayer§7]§r " + message;
+            for (Player p : room.getPlayers().keySet()) {
+                p.sendMessage(message);
             }
         }
+        event.setMessage("");
+        event.setCancelled(true);
     }
 
 }
