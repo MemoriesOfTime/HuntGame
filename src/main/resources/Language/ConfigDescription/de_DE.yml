@@ -19,6 +19,7 @@ AutomaticNextRound: "Dem nächsten Spiel automatisch beitreten, wenn das Spiel z
 
 victoryCmd: "Der Spieler führt den Befehl erfolgreich aus"
 defeatCmd: "Der Spieler konnte den Befehl nicht ausführen"
+victoryRewardCmd: "Spielabwicklungsbefehl (basierend auf Punkten)"
 
 integral: "Spielpunkte"
 integral.complete_game: "Basispunkte für die Teilnahme an Spielen"

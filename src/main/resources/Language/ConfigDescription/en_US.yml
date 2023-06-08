@@ -19,6 +19,7 @@ AutomaticNextRound: "Automatically join the next game after the game is over"
 
 victoryCmd: "The player successfully executes the command"
 defeatCmd: "The player failed to execute the command"
+victoryRewardCmd: "Game settlement command (based on points)"
 
 integral: "Game points"
 integral.complete_game: "Basic Points for Participating in Games"

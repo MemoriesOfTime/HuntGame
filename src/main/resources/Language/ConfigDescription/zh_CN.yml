@@ -19,6 +19,7 @@ AutomaticNextRound: "游戏结束后自动加入下一局"
 
 victoryCmd: "玩家胜利执行命令"
 defeatCmd: "玩家失败执行命令"
+victoryRewardCmd: "游戏结算命令（根据积分）"
 
 integral: "游戏积分"
 integral.complete_game: "参与游戏基础积分"

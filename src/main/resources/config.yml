@@ -49,9 +49,10 @@ integral:
   #猎物弓箭命中猎人
   prey_bow_hit_hunter: 10
 
-  #游戏结算命令（根据积分）
-  victoryRewardCmd:
-    "0-120":
-      - tell "@p" 参与奖！&con
-    "121-150":
-      - tell "@p" 表现出色！&con
+#TODO
+#游戏结算命令（根据积分）
+victoryRewardCmd:
+  "0-120":
+    - tell "@p" 参与奖！&con
+  "121-150":
+    - tell "@p" 表现出色！&con
