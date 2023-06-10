@@ -286,23 +286,23 @@ public abstract class BaseRoom extends RoomConfig {
 
         this.setStatus(RoomStatus.ROOM_PREPARE);
 
-        HashSet<Player> victoryPlayers = new HashSet<>();
-        HashSet<Player> defeatPlayers = new HashSet<>();
+        HashMap<Player, Integer> victoryPlayers = new HashMap<>();
+        HashMap<Player, Integer> defeatPlayers = new HashMap<>();
         for (Map.Entry<Player, PlayerData> entry : this.players.entrySet()) {
             this.players.keySet().forEach(player -> entry.getKey().showPlayer(player));
             switch (victory) {
                 case PREY:
                     if (entry.getValue().getIdentity() == PlayerIdentity.PREY) {
-                        victoryPlayers.add(entry.getKey());
+                        victoryPlayers.put(entry.getKey(), entry.getValue().getAllIntegral());
                     }else {
-                        defeatPlayers.add(entry.getKey());
+                        defeatPlayers.put(entry.getKey(), entry.getValue().getAllIntegral());
                     }
                     break;
                 case HUNTER:
                     if (entry.getValue().getIdentity() == PlayerIdentity.HUNTER) {
-                        victoryPlayers.add(entry.getKey());
+                        victoryPlayers.put(entry.getKey(), entry.getValue().getAllIntegral());
                     }else {
-                        defeatPlayers.add(entry.getKey());
+                        defeatPlayers.put(entry.getKey(), entry.getValue().getAllIntegral());
                     }
                     break;
             }
@@ -318,8 +318,14 @@ public abstract class BaseRoom extends RoomConfig {
         //所有玩家退出房间后再给奖励，防止物品被清
         if (!victoryPlayers.isEmpty() && !defeatPlayers.isEmpty()) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
-                victoryPlayers.forEach(player -> Tools.executeCommands(player, huntGame.getVictoryCmd()));
-                defeatPlayers.forEach(player -> Tools.executeCommands(player, huntGame.getDefeatCmd()));
+                victoryPlayers.forEach((player, points) -> {
+                    Tools.executeCommands(player, huntGame.getVictoryCmd());
+                    Tools.executeCommands(player, huntGame.getRewardCmd(points));
+                });
+                defeatPlayers.forEach((player, points) -> {
+                    Tools.executeCommands(player, huntGame.getDefeatCmd());
+                    Tools.executeCommands(player, huntGame.getRewardCmd(points));
+                });
             }, 1);
         }
 

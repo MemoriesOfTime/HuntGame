@@ -52,7 +52,10 @@ integral:
 #TODO
 #游戏结算命令（根据积分）
 victoryRewardCmd:
-  "0-120":
+  "0":
     - tell "@p" 参与奖！&con
-  "121-150":
+  "60":
+    - tell "@p" 表现良好！&con
+  "121":
     - tell "@p" 表现出色！&con
+    - me I am the best
