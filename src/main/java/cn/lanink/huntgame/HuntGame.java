@@ -125,21 +125,6 @@ public class HuntGame extends PluginBase {
         this.victoryCmd = this.config.getStringList("victoryCmd");
         this.defeatCmd = this.config.getStringList("defeatCmd");
 
-        Map<String, Object> victoryRewardCmd = this.config.getSection("victoryRewardCmd").getAllMap();
-        for (Map.Entry<String, Object> entry : victoryRewardCmd.entrySet()) {
-            try {
-                int bound = Integer.parseInt(entry.getKey());
-                List<String> cmds = (List<String>) entry.getValue();
-                this.rewardCmd.put(bound, cmds);
-            } catch (NumberFormatException ignored) {
-                this.getLogger().info("§c Parsing 'victoryRewardCmd' failed!, invalid key '" + entry.getKey() + "' skip it.");
-            } catch (ClassCastException ignored) {
-                this.getLogger().info("§c Parsing 'victoryRewardCmd' failed!, invalid value '" + entry.getValue() + "' skip it.");
-            }
-        }
-        this.rewardBound = this.rewardCmd.keySet().toArray(new Integer[0]);
-        Arrays.sort(this.rewardBound);
-
         ConfigUpdateUtils.updateConfig();
         Config configDescription = new Config();
         configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
@@ -169,6 +154,22 @@ public class HuntGame extends PluginBase {
         }
 
         IntegralConfig.init(this.config);
+
+        // 加载 victoryRewardCmd
+        Map<String, Object> victoryRewardCmd = this.config.getSection("victoryRewardCmd").getAllMap();
+        for (Map.Entry<String, Object> entry : victoryRewardCmd.entrySet()) {
+            try {
+                int bound = Integer.parseInt(entry.getKey());
+                List<String> cmds = (List<String>) entry.getValue();
+                this.rewardCmd.put(bound, cmds);
+            } catch (NumberFormatException ignored) {
+                this.getLogger().info("§c Parsing 'victoryRewardCmd' failed!, invalid key '" + entry.getKey() + "' skip it.");
+            } catch (ClassCastException ignored) {
+                this.getLogger().info("§c Parsing 'victoryRewardCmd' failed!, invalid value '" + entry.getValue() + "' skip it.");
+            }
+        }
+        this.rewardBound = this.rewardCmd.keySet().toArray(new Integer[0]);
+        Arrays.sort(this.rewardBound);
 
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
