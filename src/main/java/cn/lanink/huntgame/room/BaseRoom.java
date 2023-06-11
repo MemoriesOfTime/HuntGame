@@ -316,7 +316,7 @@ public abstract class BaseRoom extends RoomConfig {
         Tools.cleanEntity(this.getLevel(), true);
 
         //所有玩家退出房间后再给奖励，防止物品被清
-        if (!victoryPlayers.isEmpty() && !defeatPlayers.isEmpty()) {
+        if (!victoryPlayers.isEmpty() || !defeatPlayers.isEmpty()) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.huntGame, () -> {
                 victoryPlayers.forEach((player, points) -> {
                     Tools.executeCommands(player, huntGame.getVictoryCmd());
