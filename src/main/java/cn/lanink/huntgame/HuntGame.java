@@ -40,6 +40,8 @@ import java.util.*;
  */
 public class HuntGame extends PluginBase {
 
+    public static final String VERSION = "?";
+
     public static boolean debug = false;
 
     private static HuntGame huntGame;
@@ -452,9 +454,10 @@ public class HuntGame extends PluginBase {
     }
 
     public String getVersion() {
-        Config config = new Config(Config.PROPERTIES);
+        return VERSION;
+        /*Config config = new Config(Config.PROPERTIES);
         config.load(this.getResource("git.properties"));
-        return config.get("git.build.version", this.getDescription().getVersion()) + " git-" + config.get("git.commit.id.abbrev", "Unknown");
+        return config.get("git.build.version", this.getDescription().getVersion()) + " git-" + config.get("git.commit.id.abbrev", "Unknown");*/
     }
 
 }
