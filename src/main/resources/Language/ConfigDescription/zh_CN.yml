@@ -19,7 +19,12 @@ AutomaticNextRound: "游戏结束后自动加入下一局"
 
 victoryCmd: "玩家胜利执行命令"
 defeatCmd: "玩家失败执行命令"
-victoryRewardCmd: "游戏结算命令（根据积分）"
+victoryRewardCmd: |-
+  游戏结算命令（根据积分）
+  例如：
+    "121": #玩家本局获得积分综合大于等于此值时执行
+     - tell "@p" 表现出色！&con #控制台权限执行命令
+     - me I am the best #玩家权限执行命令
 
 integral: "游戏积分"
 integral.complete_game: "参与游戏基础积分"

@@ -19,7 +19,12 @@ AutomaticNextRound: "Dem nächsten Spiel automatisch beitreten, wenn das Spiel z
 
 victoryCmd: "Der Spieler führt den Befehl erfolgreich aus"
 defeatCmd: "Der Spieler konnte den Befehl nicht ausführen"
-victoryRewardCmd: "Spielabwicklungsbefehl (basierend auf Punkten)"
+victoryRewardCmd: |-
+  Spielabwicklungsbefehl (basierend auf Punkten):
+  Zum Beispiel:
+   "121": #Ausführen, wenn die Gesamtpunktzahl des Spielers für diese Runde größer oder gleich diesem Wert ist
+     - tell "@p" Du hast außergewöhnlich gute Leistungen erbracht!&con #Konsolenbefehl mit Erlaubnis ausführen
+     - me ich bin der Beste #Spielerbefehl mit Erlaubnis ausführen
 
 integral: "Spielpunkte"
 integral.complete_game: "Basispunkte für die Teilnahme an Spielen"
