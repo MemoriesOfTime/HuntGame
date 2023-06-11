@@ -1,4 +1,4 @@
-ConfigVersion: 1.2.2
+ConfigVersion: 1.3.0
 #语言设置
 defaultLanguage: "zh_CN"
 languageMap:
@@ -49,10 +49,12 @@ integral:
   #猎物弓箭命中猎人
   prey_bow_hit_hunter: 10
 
-#TODO
 #游戏结算命令（根据积分）
 victoryRewardCmd:
-  "0-120":
+  "0":
     - tell "@p" 参与奖！&con
-  "121-150":
+  "60":
+    - tell "@p" 表现良好！&con
+  "121":
     - tell "@p" 表现出色！&con
+    - me I am the best

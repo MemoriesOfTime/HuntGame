@@ -72,6 +72,8 @@ public class HuntGame extends PluginBase {
 
     private List<String> victoryCmd;
     private List<String> defeatCmd;
+    private Integer[] rewardBound; // 排序的 victoryRewardCmd 中的 key，使用二分查找找到某个积分的前驱
+    private final HashMap<Integer, List<String>> rewardCmd = new HashMap<>(); // 积分下限 => 命令列表
 
     private boolean hasTips = false;
 
@@ -85,6 +87,7 @@ public class HuntGame extends PluginBase {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onEnable() {
         this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         this.getLogger().info("§l§eVersion: " + this.getVersion());
@@ -117,15 +120,15 @@ public class HuntGame extends PluginBase {
             }
         }
 
-        this.automaticNextRound = this.config.getBoolean("AutomaticNextRound", false);
-
-        this.victoryCmd = this.config.getStringList("victoryCmd");
-        this.defeatCmd = this.config.getStringList("defeatCmd");
-
         ConfigUpdateUtils.updateConfig();
         Config configDescription = new Config();
         configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
         ConfigUtils.addDescription(this.config, configDescription);
+
+        this.automaticNextRound = this.config.getBoolean("AutomaticNextRound", false);
+
+        this.victoryCmd = this.config.getStringList("victoryCmd");
+        this.defeatCmd = this.config.getStringList("defeatCmd");
 
         this.loadLanguage();
 
@@ -151,6 +154,22 @@ public class HuntGame extends PluginBase {
         }
 
         IntegralConfig.init(this.config);
+
+        // 加载 victoryRewardCmd
+        Map<String, Object> victoryRewardCmd = this.config.getSection("victoryRewardCmd").getAllMap();
+        for (Map.Entry<String, Object> entry : victoryRewardCmd.entrySet()) {
+            try {
+                int bound = Integer.parseInt(entry.getKey());
+                List<String> cmds = (List<String>) entry.getValue();
+                this.rewardCmd.put(bound, cmds);
+            } catch (NumberFormatException ignored) {
+                this.getLogger().info("§c Parsing 'victoryRewardCmd' failed!, invalid key '" + entry.getKey() + "' skip it.");
+            } catch (ClassCastException ignored) {
+                this.getLogger().info("§c Parsing 'victoryRewardCmd' failed!, invalid value '" + entry.getValue() + "' skip it.");
+            }
+        }
+        this.rewardBound = this.rewardCmd.keySet().toArray(new Integer[0]);
+        Arrays.sort(this.rewardBound);
 
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
@@ -291,6 +310,17 @@ public class HuntGame extends PluginBase {
 
     public List<String> getDefeatCmd() {
         return this.defeatCmd;
+    }
+
+    public List<String> getRewardCmd(int points) {
+        int idx = Arrays.binarySearch(this.rewardBound, points);
+        int bound;
+        if (idx >= 0) {
+            bound = this.rewardBound[idx];
+        } else {
+            bound = this.rewardBound[-idx - 2];
+        }
+        return this.rewardCmd.get(bound);
     }
 
     public String getCmdUser() {
