@@ -315,7 +315,7 @@ public class HuntGame extends PluginBase {
     public List<String> getRewardCmd(int points) {
         int idx = Arrays.binarySearch(this.rewardBound, points);
         int bound;
-        if (idx > 0) {
+        if (idx >= 0) {
             bound = this.rewardBound[idx];
         } else {
             bound = this.rewardBound[-idx - 2];
