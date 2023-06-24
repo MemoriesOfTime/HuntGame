@@ -30,7 +30,7 @@ public class VictoryTask extends PluginTask<HuntGame> {
         for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
             this.room.getPlayers().keySet().forEach(player -> entry.getKey().showPlayer(player));
             this.room.getLevel().sendBlocks(this.room.getPlayers().keySet().toArray(new Player[0]),
-                    new Vector3[] { entry.getKey().floor() }); //清除假方块
+                    new Vector3[]{entry.getKey().floor()}); //清除假方块
 
             Language language = HuntGame.getInstance().getLanguage(entry.getKey());
             //GUI显示本轮游戏详情
@@ -57,16 +57,10 @@ public class VictoryTask extends PluginTask<HuntGame> {
             ).showToPlayer(entry.getKey());
 
             if (victory == PlayerIdentity.HUNTER) {
-                entry.getKey().sendTitle(language.translateString("titleVictoryHuntersTitle"),
-                        "", 10, 30, 10);
-                entry.getKey().sendActionBar(language.translateString("victoryHuntersBottom"));
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         language.translateString("scoreBoardTitle"),
                         Arrays.asList(language.translateString("victoryHuntersScoreBoard").split("\n")));
-            }else {
-                entry.getKey().sendTitle(language.translateString("titleVictoryPreySubtitle"),
-                        "", 10, 30, 10);
-                entry.getKey().sendActionBar(language.translateString("victoryPreyBottom"));
+            } else {
                 owner.getScoreboard().showScoreboard(entry.getKey(),
                         language.translateString("scoreBoardTitle"),
                         Arrays.asList(language.translateString("victoryPreyScoreBoard").split("\n")));
@@ -80,14 +74,16 @@ public class VictoryTask extends PluginTask<HuntGame> {
             this.cancel();
             return;
         }
-        if (this.victoryTime < 1) {
+        if (this.victoryTime < 1 || this.room.getPlayers().isEmpty()) {
             this.room.endGame(this.victory);
             this.cancel();
-        }else {
+        } else {
             this.victoryTime--;
             for (Map.Entry<Player, PlayerData> entry : room.getPlayers().entrySet()) {
                 if (this.owner.isAutomaticNextRound()) {
                     entry.getKey().sendTip(this.owner.getLanguage(entry.getKey()).translateString("victory_automaticallyJoinTheNextGameCountdown_Bottom", this.victoryTime));
+                } else {
+                    entry.getKey().sendTip(this.owner.getLanguage(entry.getKey()).translateString("victory_quitRoom_Bottom", this.victoryTime));
                 }
                 PlayerIdentity identity = entry.getValue().getIdentity();
                 if (identity != PlayerIdentity.NULL) {

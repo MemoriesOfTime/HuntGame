@@ -68,13 +68,10 @@ titlePreyTitle: "§a猎物"
 titlePreySubtitle: "活下去，就是胜利"
 titleHuntersTitle: "§e猎人"
 titleHuntersSubtitle: "抓到所有藏起来的猎物"
-titleVictoryHuntersTitle: "§a猎人获得胜利！"
-titleVictoryPreySubtitle: "§a猎物获得胜利！"
-victoryHuntersBottom: "§e恭喜猎人获得胜利"
 victoryHuntersScoreBoard: "§e恭喜猎人获得胜利!"
-victoryPreyBottom: "§e恭喜猎物获得胜利！"
 victoryPreyScoreBoard: "§e恭喜猎物获得胜利！"
 victory_automaticallyJoinTheNextGameCountdown_Bottom: "§a将在 §e%1% §a秒自动后加入下一局游戏"
+victory_quitRoom_Bottom: "§a将在 §e%1% §a秒自动退出房间"
 scoreBoardTitle: "§e躲猫猫"
 waitScoreBoard: |-
   游戏模式：%gamemode%
@@ -96,11 +93,10 @@ respawnTimeBottom: "§a将在%time%秒后复活成为猎人！"
 huntersKillPrey: "%damagePlayer% 抓到了 %player%"
 
 gui_victory_content: |
-  %1% hat die Runde gewonnen!
+  %1% 赢得了本轮游戏胜利！
   
-  
-  Du hast in diesem Spiel insgesamt %2% der Punkte erreicht!
-  Aufschlüsselung der Punkte:
+  你在本轮游戏一共获得了 %2% 分
+  得分详情:
   %3%
 
 userMenuButton1: "§e随机加入房间"
