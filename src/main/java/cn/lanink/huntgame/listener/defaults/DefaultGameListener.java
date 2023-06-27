@@ -152,13 +152,19 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (room == null || event.getItem() == null) {
             return;
         }
+        Block block = event.getBlock();
+        //耕地保护
+        if (event.getAction() == PlayerInteractEvent.Action.PHYSICAL && block.getId() == Block.FARMLAND) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             player.setAllowModifyWorld(false);
         }
 
         //游戏中禁止与一些方块交互 例如打开箱子
         if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-            Block block = event.getBlock();
             switch (block.getId()) {
                 case Item.CRAFTING_TABLE:
                 case Item.CHEST:
