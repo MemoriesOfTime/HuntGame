@@ -639,6 +639,8 @@ public abstract class BaseRoom extends RoomConfig {
         if (this.getPlayers().size() > 0) {
             this.setStatus(RoomStatus.VICTORY);
             for (Player player : this.players.keySet()) {
+                player.getUIInventory().clearAll();
+                player.getInventory().clearAll();
                 player.getInventory().setItem(8, Tools.getHuntGameItem(10, player));
                 this.getPlayer(player).addEventCount(EventType.COMPLETE_GAME);
             }
