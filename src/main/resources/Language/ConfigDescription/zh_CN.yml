@@ -14,6 +14,7 @@ defaultLanguage: "插件默认语言设置"
 cmdUser: "HuntGame命令"
 cmdAdmin: "HuntGame管理命令"
 cmdWhitelist: "可以在游戏房间中使用的命令"
+AutomaticJoinGame: "玩家进入服务器后自动加入游戏房间（适用于群组服游戏子服场景）"
 QuitRoom.cmd: "退出房间执行命令"
 AutomaticNextRound: "游戏结束后自动加入下一局"
 

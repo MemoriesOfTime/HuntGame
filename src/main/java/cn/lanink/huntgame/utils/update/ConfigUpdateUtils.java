@@ -5,6 +5,7 @@ import cn.lanink.huntgame.HuntGame;
 import cn.nukkit.utils.Config;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -17,10 +18,31 @@ public class ConfigUpdateUtils {
     public static void updateConfig() {
         update1_X_X_To_1_2_2();
         update1_2_2_To_1_3_0();
+        update1_3_0_To_1_3_1();
+    }
+
+    @NotNull
+    private static Config getConfig() {
+        return new Config(HuntGame.getInstance().getDataFolder() + "/config.yml", Config.YAML);
+    }
+
+    private static void update1_3_0_To_1_3_1() {
+        Config config = getConfig();
+        if (VersionUtils.compareVersion(config.getString("ConfigVersion", "1.0.0"), "1.3.1") >= 0) {
+            return;
+        }
+
+        config.set("ConfigVersion", "1.3.1");
+
+        if (!config.exists("AutomaticJoinGame")) {
+            config.set("AutomaticJoinGame", false);
+        }
+
+        config.save();
     }
 
     private static void update1_2_2_To_1_3_0() {
-        Config config = new Config(HuntGame.getInstance().getDataFolder() + "/config.yml", Config.YAML);
+        Config config = getConfig();
         if (VersionUtils.compareVersion(config.getString("ConfigVersion", "1.0.0"), "1.3.0") >= 0) {
             return;
         }
@@ -40,7 +62,7 @@ public class ConfigUpdateUtils {
     }
 
     private static void update1_X_X_To_1_2_2() {
-        Config config = new Config(HuntGame.getInstance().getDataFolder() + "/config.yml", Config.YAML);
+        Config config = getConfig();
         if (VersionUtils.compareVersion(config.getString("ConfigVersion", "1.0.0"), "1.2.2") >= 0) {
             return;
         }

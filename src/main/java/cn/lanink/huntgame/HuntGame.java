@@ -70,6 +70,9 @@ public class HuntGame extends PluginBase {
     private final HashMap<Player, String> playerLanguageHashMap = new HashMap<>();
 
     @Getter
+    private boolean automaticJoinGame = false;
+
+    @Getter
     private boolean automaticNextRound = false; //游戏结束后自动加入新房间
 
     private List<String> victoryCmd;
@@ -126,6 +129,8 @@ public class HuntGame extends PluginBase {
         Config configDescription = new Config();
         configDescription.load(this.getResource("Language/ConfigDescription/" + this.config.getString("language", "zh_CN") + ".yml"));
         ConfigUtils.addDescription(this.config, configDescription);
+
+        this.automaticJoinGame = this.config.getBoolean("AutomaticJoinGame", false);
 
         this.automaticNextRound = this.config.getBoolean("AutomaticNextRound", false);
 

@@ -636,7 +636,7 @@ public abstract class BaseRoom extends RoomConfig {
      */
     protected synchronized void victory(PlayerIdentity victoryMode) {
         victoryMode = victoryMode == PlayerIdentity.CHANGE_HUNTER ? PlayerIdentity.HUNTER : victoryMode;
-        if (this.getPlayers().size() > 0) {
+        if (!this.getPlayers().isEmpty()) {
             this.setStatus(RoomStatus.VICTORY);
             for (Player player : this.players.keySet()) {
                 player.getUIInventory().clearAll();
