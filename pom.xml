@@ -156,14 +156,14 @@
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>PM1E_1.20.0.2815</version>
+            <version>MOT-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.6.9</version>
+            <version>1.6.9-PM1E</version>
             <scope>provided</scope>
         </dependency>
 
@@ -172,14 +172,6 @@
             <artifactId>RsNPC</artifactId>
             <version>2.3.1</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>FakeFStage</groupId>
-            <artifactId>FakeFStage</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/FakeFStage.jar</systemPath>
         </dependency>
     </dependencies>
 

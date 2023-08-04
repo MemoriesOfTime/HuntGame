@@ -17,7 +17,6 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.IntegralConfig;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
-import cn.lanink.huntgame.tasks.FStageTask;
 import cn.lanink.huntgame.utils.GameCoreDownload;
 import cn.lanink.huntgame.utils.MetricsLite;
 import cn.lanink.huntgame.utils.RsNpcXVariable;
@@ -188,13 +187,6 @@ public class HuntGame extends PluginBase {
             Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
             VariableManage.addVariableV2("HuntGame", RsNpcXVariable.class);
         }catch (Exception ignored) {
-
-        }
-        //检查FAP群组服插件
-        try {
-            Class.forName("net.fap.stage.FStage");
-            Server.getInstance().getScheduler().scheduleRepeatingTask(this, new FStageTask(this), 20, true);
-        } catch (Exception ignored) {
 
         }
 
