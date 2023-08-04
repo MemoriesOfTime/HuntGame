@@ -32,7 +32,7 @@ public class JoinRoom extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (this.huntGame.getRooms().size() > 0) {
+        if (!this.huntGame.getRooms().isEmpty()) {
             Player player = (Player) sender;
             for (BaseRoom room : this.huntGame.getRooms().values()) {
                 if (room.isPlaying(player)) {
@@ -48,7 +48,7 @@ public class JoinRoom extends BaseSubCommand {
                 LinkedList<BaseRoom> rooms = new LinkedList<>();
                 for (BaseRoom room : this.huntGame.getRooms().values()) {
                     if (room.canJoin()) {
-                        if (room.getPlayers().size() > 0) {
+                        if (!room.getPlayers().isEmpty()) {
                             room.joinRoom(player);
                             sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
                             return true;
@@ -56,7 +56,7 @@ public class JoinRoom extends BaseSubCommand {
                         rooms.add(room);
                     }
                 }
-                if (rooms.size() > 0) {
+                if (!rooms.isEmpty()) {
                     BaseRoom room = rooms.get(Tools.RANDOM.nextInt(rooms.size()));
                     room.joinRoom(player);
                     sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
@@ -64,12 +64,12 @@ public class JoinRoom extends BaseSubCommand {
                 }
             }else {
                 String[] s = args[1].split(":");
-                if (s.length == 2 && s[0].toLowerCase().trim().equals("mode")) {
+                if (s.length == 2 && "mode".equals(s[0].toLowerCase().trim())) {
                     String modeName = s[1].toLowerCase().trim();
                     LinkedList<BaseRoom> rooms = new LinkedList<>();
                     for (BaseRoom room : this.huntGame.getRooms().values()) {
                         if (room.canJoin() && room.getGameMode().equals(modeName)) {
-                            if (room.getPlayers().size() > 0) {
+                            if (!room.getPlayers().isEmpty()) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));
                                 return true;
@@ -77,7 +77,7 @@ public class JoinRoom extends BaseSubCommand {
                             rooms.add(room);
                         }
                     }
-                    if (rooms.size() > 0) {
+                    if (!rooms.isEmpty()) {
                         BaseRoom room = rooms.get(Tools.RANDOM.nextInt(rooms.size()));
                         room.joinRoom(player);
                         sender.sendMessage(this.huntGame.getLanguage(sender).translateString("joinRandomRoom"));

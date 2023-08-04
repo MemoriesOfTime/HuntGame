@@ -14,6 +14,7 @@ defaultLanguage: "Plugin default language settings"
 cmdUser: "HuntGame command"
 cmdAdmin: "HuntGame management command"
 cmdWhitelist: "Commands that can be used in game rooms"
+AutomaticJoinGame: "Players automatically join the game room after entering the server (applicable to the group service game sub-service scene)"
 QuitRoom.cmd: "Exit the room and execute the command."
 AutomaticNextRound: "Automatically join the next game after the game is over"
 

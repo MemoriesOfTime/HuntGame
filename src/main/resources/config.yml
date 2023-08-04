@@ -1,4 +1,4 @@
-ConfigVersion: 1.3.0
+ConfigVersion: 1.3.1
 #语言设置
 defaultLanguage: "zh_CN"
 languageMap:
@@ -17,6 +17,8 @@ cmdWhitelist:
   - kick
   - report
 
+#玩家进入服务器后自动加入游戏房间（适用于群组服游戏子服场景）
+AutomaticJoinGame: false
 QuitRoom:
   #退出房间执行命令
   cmd: []
