@@ -36,13 +36,13 @@ public class PlayerJoinAndQuit implements Listener {
     }
 
     @EventHandler
-    public void onPlayer(PlayerLocallyInitializedEvent event) {
+    public void onPlayerLocallyInitialized(PlayerLocallyInitializedEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
             return;
         }
         if (this.huntGame.isAutomaticJoinGame()) {
-            Server.getInstance().dispatchCommand(player, HuntGame.getInstance().getCmdUser() + " join");
+            Server.getInstance().dispatchCommand(player, this.huntGame.getCmdUser() + " join");
         }
     }
 
