@@ -8,6 +8,7 @@ softdepend:
   - "ScoreboardPlugin"
   - "ScoreboardAPI"
   - "Tips"
+  - "NsGameBase"
 
 permissions:
   huntgame.command.user:
