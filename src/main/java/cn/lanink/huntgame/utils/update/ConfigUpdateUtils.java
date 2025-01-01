@@ -96,4 +96,42 @@ public class ConfigUpdateUtils {
         config.save();
     }
 
+    // 需要在NsGB加载后检查，放到onEnable里
+    public static void checkFapNsGB(HuntGame huntGame) {
+        try {
+            Class.forName("cn.nsgamebase.NsGameBaseMain");
+
+            Config config = getConfig();
+
+            LinkedHashMap<String, Object> fapRewardIntegral = new LinkedHashMap<>();
+
+            LinkedHashMap<String, Object> map1 = new LinkedHashMap<>();
+            map1.put("money", 10);
+            map1.put("point", 0);
+            map1.put("exp", 10);
+            map1.put("maxMultiplier", 1);
+
+            LinkedHashMap<String, Object> map2 = new LinkedHashMap<>();
+            map2.put("money", 100);
+            map2.put("point", 0);
+            map2.put("exp", 100);
+            map2.put("maxMultiplier", 1);
+
+            fapRewardIntegral.put("0", map1);
+            fapRewardIntegral.put("60", map2);
+
+            boolean needSave = false;
+            if (!config.exists("fapRewardIntegral")) {
+                config.set("fapRewardIntegral", fapRewardIntegral);
+                needSave = true;
+            }
+
+            if (needSave) {
+                config.save();
+            }
+        } catch (Exception ignored) {
+
+        }
+    }
+
 }

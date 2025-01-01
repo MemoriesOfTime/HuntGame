@@ -9,6 +9,8 @@ import cn.lanink.huntgame.tasks.VictoryTask;
 import cn.lanink.huntgame.tasks.WaitTask;
 import cn.lanink.huntgame.tasks.game.TimeTask;
 import cn.lanink.huntgame.utils.Tools;
+import cn.lanink.huntgame.utils.nsgb.HuntGameDataGamePlayerPojo;
+import cn.nsgamebase.api.GbGameApi;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -321,10 +323,30 @@ public abstract class BaseRoom extends RoomConfig {
                 victoryPlayers.forEach((player, points) -> {
                     Tools.executeCommands(player, huntGame.getVictoryCmd());
                     Tools.executeCommands(player, huntGame.getRewardCmd(points));
+                    if (this.huntGame.isHasNsGB()) {
+                        Map<String, Integer> integerMap = this.huntGame.getfapReward(points);
+                        HuntGameDataGamePlayerPojo pojo = new HuntGameDataGamePlayerPojo();
+                        pojo.add("played");
+                        int money = integerMap.get("money");
+                        int point = integerMap.get("point");
+                        int exp = integerMap.get("exp");
+                        int maxMultiplier = integerMap.get("maxMultiplier");
+                        GbGameApi.saveAndReward(player.getName(), "HuntGame", pojo, money, exp, maxMultiplier);
+                    }
                 });
                 defeatPlayers.forEach((player, points) -> {
                     Tools.executeCommands(player, huntGame.getDefeatCmd());
                     Tools.executeCommands(player, huntGame.getRewardCmd(points));
+                    if (this.huntGame.isHasNsGB()) {
+                        Map<String, Integer> integerMap = this.huntGame.getfapReward(points);
+                        HuntGameDataGamePlayerPojo pojo = new HuntGameDataGamePlayerPojo();
+                        pojo.add("played");
+                        int money = integerMap.get("money");
+                        int point = integerMap.get("point");
+                        int exp = integerMap.get("exp");
+                        int maxMultiplier = integerMap.get("maxMultiplier");
+                        GbGameApi.saveAndReward(player.getName(), "HuntGame", pojo, money, exp, maxMultiplier);
+                    }
                 });
             }, 1);
         }

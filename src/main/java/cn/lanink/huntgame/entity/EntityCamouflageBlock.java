@@ -1,5 +1,6 @@
 package cn.lanink.huntgame.entity;
 
+import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.lanink.huntgame.room.block.BlockInfo;
 import cn.nukkit.Player;
 import cn.nukkit.entity.EntityCreature;
@@ -57,7 +58,13 @@ public class EntityCamouflageBlock extends EntityCreature implements IEntityCamo
 
     public void setBlockInfo(@NonNull BlockInfo blockInfo) {
         this.blockInfo = blockInfo;
-        this.setDataProperty(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getOrCreateRuntimeId(this.blockInfo.getId(), this.blockInfo.getDamage())));
+        int runtimeId = 0;
+        if (NukkitTypeUtils.getNukkitType() == NukkitTypeUtils.NukkitType.MOT) {
+            runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(this.getMaster().protocol, this.blockInfo.getId(), this.blockInfo.getDamage());
+        } else {
+            runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(this.blockInfo.getId(), this.blockInfo.getDamage());
+        }
+        this.setDataProperty(new IntEntityData(DATA_VARIANT, runtimeId));
         this.respawnToAll();
     }
 

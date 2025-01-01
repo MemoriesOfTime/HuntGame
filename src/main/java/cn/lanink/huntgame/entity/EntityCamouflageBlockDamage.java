@@ -6,10 +6,10 @@ import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.SerializedImage;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Base64;
 import java.util.HashSet;
 
 /**
@@ -22,8 +22,8 @@ public class EntityCamouflageBlockDamage extends EntityHuman implements IEntityC
     public static final Skin EMPTY_SKIN = new Skin();
 
     static {
-        EMPTY_SKIN.setSkinData(SerializedImage.fromLegacy(new byte[Skin.DOUBLE_SKIN_SIZE]));
-        EMPTY_SKIN.generateSkinId("EntityCamouflageBlock");
+        EMPTY_SKIN.setSkinId("Standard_Custom");
+        EMPTY_SKIN.setSkinData(Base64.getDecoder().decode(Skin.STEVE_SKIN));
     }
 
     @Setter

@@ -17,12 +17,10 @@ import cn.lanink.huntgame.room.BaseRoom;
 import cn.lanink.huntgame.room.IntegralConfig;
 import cn.lanink.huntgame.room.animal.AnimalModeRoom;
 import cn.lanink.huntgame.room.block.BlockModeRoom;
-import cn.lanink.huntgame.utils.GameCoreDownload;
 import cn.lanink.huntgame.utils.MetricsLite;
 import cn.lanink.huntgame.utils.RsNpcXVariable;
 import cn.lanink.huntgame.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -81,6 +79,11 @@ public class HuntGame extends PluginBase {
     private final HashMap<Integer, List<String>> rewardCmd = new HashMap<>(); // 积分下限 => 命令列表
 
     private boolean hasTips = false;
+    @Getter
+    private boolean hasNsGB = false;
+
+    private final HashMap<Integer, Map<String, Integer>> fapRewardIntegral = new HashMap<>();
+    private Integer[] fapRewardBound;
 
     public static HuntGame getInstance() {
         return huntGame;
@@ -98,7 +101,7 @@ public class HuntGame extends PluginBase {
         this.getLogger().info("§l§eVersion: " + this.getVersion());
 
         //检查依赖
-        switch (GameCoreDownload.checkAndDownload()) {
+        /*switch (GameCoreDownload.checkAndDownload()) {
             case 1:
                 Server.getInstance().getPluginManager().disablePlugin(this);
                 return;
@@ -107,7 +110,7 @@ public class HuntGame extends PluginBase {
                         this.getLogger().warning(this.getLanguage().translateString("MemoriesOfTime-GameCore Dependency download complete! It is strongly recommended to restart the server to ensure proper loading!"))
                 );
                 break;
-        }
+        }*/
 
         this.saveDefaultConfig();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
@@ -152,6 +155,14 @@ public class HuntGame extends PluginBase {
         } catch (Exception ignored) {
 
         }
+        //检查FAP基础插件
+        try {
+            Class.forName("cn.nsgamebase.NsGameBaseMain");
+            ConfigUpdateUtils.checkFapNsGB(this);
+            this.hasNsGB = true;
+        } catch (Exception ignored) {
+
+        }
 
         this.cmdUser = this.config.getString("cmdUser", "HuntGame").toLowerCase();
         this.cmdAdmin = this.config.getString("cmdAdmin", "HuntGameAdmin").toLowerCase();
@@ -177,6 +188,21 @@ public class HuntGame extends PluginBase {
         }
         this.rewardBound = this.rewardCmd.keySet().toArray(new Integer[0]);
         Arrays.sort(this.rewardBound);
+
+        if (this.hasNsGB) {
+            Map<String, Object> fapRewardIntegral = this.config.getSection("fapRewardIntegral").getAllMap();
+            for (Map.Entry<String, Object> entry : fapRewardIntegral.entrySet()) {
+                try {
+                    int bound = Integer.parseInt(entry.getKey());
+                    this.fapRewardIntegral.put(bound, (Map<String, Integer>) entry.getValue());
+                } catch (NumberFormatException ignored) {
+                    this.getLogger().info("§c Parsing 'fapRewardIntegral' failed!, invalid key '" + entry.getKey() + "' skip it.");
+                } catch (ClassCastException ignored) {
+                    this.getLogger().info("§c Parsing 'fapRewardIntegral' failed!, invalid value '" + entry.getValue() + "' skip it.");
+                }
+            }
+            this.fapRewardBound = this.fapRewardIntegral.keySet().toArray(new Integer[0]);
+        }
 
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
@@ -336,6 +362,20 @@ public class HuntGame extends PluginBase {
 
     public String getCmdAdmin() {
         return this.cmdAdmin;
+    }
+
+    public Map<String, Integer> getfapReward(int points) {
+        if (!this.hasNsGB) {
+            return null;
+        }
+        int idx = Arrays.binarySearch(this.fapRewardBound, points);
+        int bound;
+        if (idx >= 0) {
+            bound = this.fapRewardBound[idx];
+        } else {
+            bound = this.fapRewardBound[-idx - 2];
+        }
+        return this.fapRewardIntegral.get(bound);
     }
 
     public IScoreboard getScoreboard() {
